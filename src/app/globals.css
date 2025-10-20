@@ -2,4 +2,37 @@
 @tailwind components;
 @tailwind utilities;
 
-:root { color-scheme: light; }
+:root {
+  color-scheme: light;
+  --brand-primary: #0ea5e9;
+  --brand-secondary: #f97316;
+  --brand-font-body: var(--font-geist-sans);
+  --brand-font-heading: var(--font-geist-sans);
+  --brand-on-primary: #ffffff;
+  --brand-on-secondary: #ffffff;
+}
+
+body {
+  font-family: var(--brand-font-body, var(--font-geist-sans));
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--brand-font-heading, var(--font-geist-sans));
+}
+
+.bg-brand {
+  background-color: var(--brand-primary);
+  color: var(--brand-on-primary);
+}
+
+.bg-brand:hover {
+  filter: brightness(0.92);
+}
+
+.text-brand {
+  color: var(--brand-primary);
+}
+
+.border-brand {
+  border-color: var(--brand-primary);
+}
