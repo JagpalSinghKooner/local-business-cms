@@ -113,5 +113,18 @@ export default defineType({
     defineField({ name: 'seo', type: 'seo' }),
   ],
   orderings: [{ name: 'titleAsc', title: 'Title A→Z', by: [{ field: 'title', direction: 'asc' }] }],
-  preview: { select: { title: 'title', media: 'heroImage', subtitle: 'category->title' } },
+  preview: {
+    select: {
+      title: 'title',
+      media: 'heroImage',
+      slug: 'slug.current'
+    },
+    prepare({ title, media, slug }) {
+      return {
+        title: title || 'Untitled',
+        subtitle: slug ? `/${slug}` : 'No slug',
+        media,
+      }
+    }
+  },
 })

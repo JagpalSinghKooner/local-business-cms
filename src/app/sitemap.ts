@@ -79,7 +79,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         if (!location?.slug) continue;
         const locationUpdated = location.updatedAt ? new Date(location.updatedAt) : lastModified;
         urls.push({
-          url: `${base}/${service.slug}-${location.slug}`,
+          url: `${base}/services/${service.slug}-${location.slug}`,
           lastModified: locationUpdated > lastModified ? locationUpdated : lastModified,
           changeFrequency: "monthly",
           priority: 0.6,

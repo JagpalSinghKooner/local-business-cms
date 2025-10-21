@@ -1,15 +1,4 @@
-import { StructureBuilder } from 'sanity/desk'
-import IframePreview from './components/IframePreview'
-import VisualDiffPane from './components/VisualDiffPane'
-
-const documentWithPreview = (S: StructureBuilder, schemaType: string) =>
-  S.document()
-    .schemaType(schemaType)
-    .views([
-      S.view.form(),
-      S.view.component(IframePreview).title('Preview'),
-      S.view.component(VisualDiffPane).title('Visual diff'),
-    ])
+import { StructureBuilder } from 'sanity/structure'
 
 const deskStructure = (S: StructureBuilder) =>
   S.list()
@@ -46,9 +35,9 @@ const deskStructure = (S: StructureBuilder) =>
       S.divider(),
       S.documentTypeListItem('pageTemplate').title('Page Templates'),
       S.divider(),
-      S.documentTypeListItem('page').child(documentWithPreview(S, 'page')),
-      S.documentTypeListItem('service').child(documentWithPreview(S, 'service')),
-      S.documentTypeListItem('location').child(documentWithPreview(S, 'location')),
+      S.documentTypeListItem('page').title('Pages'),
+      S.documentTypeListItem('service').title('Services'),
+      S.documentTypeListItem('location').title('Locations'),
       S.documentTypeListItem('offer'),
       S.documentTypeListItem('testimonial'),
       S.documentTypeListItem('faq'),

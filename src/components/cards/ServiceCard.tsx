@@ -13,7 +13,7 @@ type ServiceCardProps = {
 export default function ServiceCard({ service, locationSlug }: ServiceCardProps) {
   const imageSrc = service.heroImage?.asset?.url ?? PLACEHOLDER
   const intro = service.intro ? service.intro.slice(0, 1) : undefined
-  const href = locationSlug ? `/${service.slug}-${locationSlug}` : `/services/${service.slug}`
+  const href = locationSlug ? `/services/${service.slug}-${locationSlug}` : `/services/${service.slug}`
 
   return (
     <Link

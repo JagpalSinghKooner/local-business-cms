@@ -9,7 +9,12 @@
     "lint": "eslint",
     "sanitize:types": "sanity-codegen schema-codegen",
     "sanity:export": "node scripts/sanity-export.mjs",
-    "sanity:import": "node scripts/sanity-import.mjs"
+    "sanity:import": "node scripts/sanity-import.mjs",
+    "test:seo": "playwright test tests/seo/",
+    "test:seo:basic": "playwright test --config=playwright.config.simple.ts",
+    "test:seo:ui": "playwright test tests/seo/ --ui",
+    "test:seo:headed": "playwright test tests/seo/ --headed",
+    "test:seo:debug": "playwright test tests/seo/ --debug"
   },
   "dependencies": {
     "@portabletext/react": "^4.0.3",
@@ -23,12 +28,12 @@
     "date-fns": "^4.1.0",
     "groq": "^4.10.3",
     "next": "15.5.5",
-    "next-sanity": "11",
+    "next-sanity": "^11.5.6",
     "next-sitemap": "^4.2.3",
     "react": "19.1.0",
     "react-dom": "19.1.0",
     "sanitize-html": "^2.13.0",
-    "sanity": "4",
+    "sanity": "^4.11.0",
     "styled-components": "6",
     "type-check": "0.4.0",
     "use-device-pixel-ratio": "^1.1.2",
@@ -36,6 +41,7 @@
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
+    "@playwright/test": "^1.56.1",
     "@sanity-codegen/cli": "1.0.0-alpha.13",
     "@sanity/export": "^3.36.4",
     "@sanity/import": "^3.36.4",
@@ -45,9 +51,11 @@
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "autoprefixer": "^10.4.21",
+    "babel-plugin-module-resolver": "^5.0.2",
     "eslint": "^9",
     "eslint-config-next": "15.5.5",
     "postcss": "^8.5.6",
+    "structured-data-testing-tool": "^4.5.0",
     "tailwindcss": "3.4.13",
     "typescript": "^5"
   }

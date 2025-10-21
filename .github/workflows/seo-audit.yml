@@ -1,0 +1,108 @@
+name: SEO Audit
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+  schedule:
+    # Run daily at 2 AM UTC
+    - cron: '0 2 * * *'
+
+jobs:
+  seo-audit:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        
+    - name: Setup pnpm
+      uses: pnpm/action-setup@v4
+      with:
+        version: 8
+        
+    - name: Install dependencies
+      run: pnpm install
+      
+    - name: Install Playwright browsers
+      run: pnpm exec playwright install --with-deps
+      
+    - name: Build application
+      run: pnpm build
+      env:
+        NEXT_PUBLIC_SITE_URL: ${{ secrets.NEXT_PUBLIC_SITE_URL || 'https://example.com' }}
+        SANITY_PROJECT_ID: ${{ secrets.SANITY_PROJECT_ID }}
+        SANITY_DATASET: ${{ secrets.SANITY_DATASET || 'production' }}
+        SANITY_API_TOKEN: ${{ secrets.SANITY_API_TOKEN }}
+        
+    - name: Start application
+      run: pnpm start &
+      env:
+        NEXT_PUBLIC_SITE_URL: ${{ secrets.NEXT_PUBLIC_SITE_URL || 'https://example.com' }}
+        SANITY_PROJECT_ID: ${{ secrets.SANITY_PROJECT_ID }}
+        SANITY_DATASET: ${{ secrets.SANITY_DATASET || 'production' }}
+        SANITY_API_TOKEN: ${{ secrets.SANITY_API_TOKEN }}
+        
+    - name: Wait for application to start
+      run: npx wait-on http://localhost:3000 --timeout 60000
+      
+    - name: Run SEO tests
+      run: pnpm test:seo
+      env:
+        PLAYWRIGHT_BASE_URL: http://localhost:3000
+        
+    - name: Upload test results
+      uses: actions/upload-artifact@v4
+      if: always()
+      with:
+        name: seo-test-results
+        path: test-results/
+        
+    - name: Comment PR with SEO results
+      if: github.event_name == 'pull_request'
+      uses: actions/github-script@v7
+      with:
+        script: |
+          const fs = require('fs');
+          const path = require('path');
+          
+          // Read test results if available
+          let testResults = '';
+          try {
+            const resultsPath = path.join(process.cwd(), 'test-results', 'index.html');
+            if (fs.existsSync(resultsPath)) {
+              testResults = fs.readFileSync(resultsPath, 'utf8');
+            }
+          } catch (error) {
+            console.log('No test results found');
+          }
+          
+          const comment = `## 🔍 SEO Audit Results
+          
+          Automated SEO testing has completed. Check the test results for any issues.
+          
+          ${testResults ? '📊 [View detailed test results](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }})' : ''}
+          
+          ### Key SEO Checks:
+          - ✅ Meta tags validation
+          - ✅ Structured data (JSON-LD) validation  
+          - ✅ Canonical URL verification
+          - ✅ Open Graph and Twitter Card tags
+          - ✅ Technical SEO (robots.txt, sitemap)
+          - ✅ Accessibility and heading structure
+          - ✅ Mobile SEO optimization
+          
+          Please review any failing tests and fix SEO issues before merging.`;
+          
+          github.rest.issues.createComment({
+            issue_number: context.issue.number,
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            body: comment
+          });

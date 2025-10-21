@@ -1,6 +1,7 @@
 import { type SchemaTypeDefinition } from 'sanity'
 
 import siteSettings from './singletons/siteSettings'
+import robotsTxt from './singletons/robotsTxt'
 import navigation from './navigation'
 import tokens from './tokens'
 
@@ -11,6 +12,7 @@ import caseStudy from './documents/caseStudy'
 import coupon from './documents/coupon'
 import lead from './documents/lead'
 import pageTemplate from './documents/pageTemplate'
+import redirect from './documents/redirect'
 
 import testimonial from './testimonial'
 import faq from './faq'
@@ -36,6 +38,7 @@ import { breadcrumbObjects } from './objects/breadcrumbs'
 
 const documentTypes: SchemaTypeDefinition[] = [
   siteSettings,
+  robotsTxt,
   navigation,
   tokens,
   serviceCategory,
@@ -46,6 +49,7 @@ const documentTypes: SchemaTypeDefinition[] = [
   coupon,
   lead,
   pageTemplate,
+  redirect,
   testimonial,
   faq,
   page,
