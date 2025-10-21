@@ -1,0 +1,42 @@
+2025-10-20T14:09:46.577Z Error: {
+2025-10-20T14:09:46.577Z   "message": "types.map is not a function",
+2025-10-20T14:09:46.577Z }
+2025-10-20T14:09:46.577Z     at schemaExtractor (~/node_modules/.pnpm/@sanity-codegen+schema-codegen@1.0.0-alpha.13/node_modules/@sanity-codegen/schema-codegen/dist/schema-extractor.js:40:11)
+2025-10-20T14:09:46.577Z     at SchemaCodegen.run (~/node_modules/.pnpm/@sanity-codegen+cli@1.0.0-alpha.13/node_modules/@sanity-codegen/cli/lib/commands/schema-codegen.js:54:122)
+2025-10-20T14:09:46.577Z     at SchemaCodegen._run (~/node_modules/.pnpm/@oclif+command@1.8.36_@oclif+config@1.18.17/node_modules/@oclif/command/lib/command.js:43:20)
+2025-10-20T14:09:46.577Z     at Config.runCommand (~/node_modules/.pnpm/@oclif+config@1.18.17/node_modules/@oclif/config/lib/config.js:173:24)
+2025-10-20T14:09:46.577Z     at Main.run (~/node_modules/.pnpm/@oclif+command@1.8.36_@oclif+config@1.18.17/node_modules/@oclif/command/lib/main.js:28:9)
+2025-10-20T14:09:46.577Z     at Main._run (~/node_modules/.pnpm/@oclif+command@1.8.36_@oclif+config@1.18.17/node_modules/@oclif/command/lib/command.js:43:20)
+2025-10-20T14:10:22.011Z SyntaxError: '=' expected. (1188:23)
+2025-10-20T14:10:22.011Z   1186 |
+2025-10-20T14:10:22.011Z   1187 |
+2025-10-20T14:10:22.011Z > 1188 |           type Section.hero = {
+2025-10-20T14:10:22.011Z        |                       ^
+2025-10-20T14:10:22.011Z   1189 |           _type: 'section.hero';
+2025-10-20T14:10:22.011Z   1190 |
+2025-10-20T14:10:22.011Z   1191 |
+2025-10-20T14:10:22.011Z     at v (~/node_modules/.pnpm/prettier@2.8.8/node_modules/prettier/parser-typescript.js:1:14679)
+2025-10-20T14:10:22.011Z     at _H (~/node_modules/.pnpm/prettier@2.8.8/node_modules/prettier/parser-typescript.js:49:10722)
+2025-10-20T14:10:22.011Z     at Object.cH [as parse] (~/node_modules/.pnpm/prettier@2.8.8/node_modules/prettier/parser-typescript.js:49:11028)
+2025-10-20T14:10:22.011Z     at Object.parse (~/node_modules/.pnpm/prettier@2.8.8/node_modules/prettier/index.js:7515:23)
+2025-10-20T14:10:22.011Z     at coreFormat (~/node_modules/.pnpm/prettier@2.8.8/node_modules/prettier/index.js:8829:18)
+2025-10-20T14:10:22.011Z     at formatWithCursor2 (~/node_modules/.pnpm/prettier@2.8.8/node_modules/prettier/index.js:9021:18)
+2025-10-20T14:10:22.011Z     at ~/node_modules/.pnpm/prettier@2.8.8/node_modules/prettier/index.js:38183:12
+2025-10-20T14:10:22.011Z     at format (~/node_modules/.pnpm/prettier@2.8.8/node_modules/prettier/index.js:38197:12)
+2025-10-20T14:10:22.011Z     at generateSchemaTypes (~/node_modules/.pnpm/@sanity-codegen+schema-codegen@1.0.0-alpha.13/node_modules/@sanity-codegen/schema-codegen/dist/generate-schema-types.js:217:31)
+2025-10-20T14:10:22.011Z     at SchemaCodegen.run (~/node_modules/.pnpm/@sanity-codegen+cli@1.0.0-alpha.13/node_modules/@sanity-codegen/cli/lib/commands/schema-codegen.js:65:65)
+2025-10-20T14:10:22.011Z     at SchemaCodegen._run (~/node_modules/.pnpm/@oclif+command@1.8.36_@oclif+config@1.18.17/node_modules/@oclif/command/lib/command.js:43:20)
+2025-10-20T14:10:22.011Z     at Config.runCommand (~/node_modules/.pnpm/@oclif+config@1.18.17/node_modules/@oclif/config/lib/config.js:173:24)
+2025-10-20T14:10:22.011Z     at Main.run (~/node_modules/.pnpm/@oclif+command@1.8.36_@oclif+config@1.18.17/node_modules/@oclif/command/lib/main.js:28:9)
+2025-10-20T14:10:22.011Z     at Main._run (~/node_modules/.pnpm/@oclif+command@1.8.36_@oclif+config@1.18.17/node_modules/@oclif/command/lib/command.js:43:20)
+2025-10-20T14:11:08.723Z Error: Package subpath './dist/default-generate-type-name' is not defined by "exports" in /Users/jagpalkooner/Desktop/budds/node_modules/.pnpm/@sanity-codegen+cli@1.0.0-alpha.13/node_modules/@sanity-codegen/schema-codegen/package.json
+2025-10-20T14:11:08.723Z     at TracingChannel.traceSync (node:diagnostics_channel:322:14)
+2025-10-20T14:11:08.723Z     at Object.<anonymous> (~/sanity-codegen.config.ts:2:1)
+2025-10-20T14:11:08.723Z     at TracingChannel.traceSync (node:diagnostics_channel:322:14)
+2025-10-20T14:11:08.723Z     at requireDefaultExport (~/node_modules/.pnpm/@sanity-codegen+cli@1.0.0-alpha.13/node_modules/@sanity-codegen/cli/lib/get-config.js:31:18)
+2025-10-20T14:11:08.723Z     at getConfig (~/node_modules/.pnpm/@sanity-codegen+cli@1.0.0-alpha.13/node_modules/@sanity-codegen/cli/lib/get-config.js:52:45)
+2025-10-20T14:11:08.723Z     at SchemaCodegen.run (~/node_modules/.pnpm/@sanity-codegen+cli@1.0.0-alpha.13/node_modules/@sanity-codegen/cli/lib/commands/schema-codegen.js:50:9)
+2025-10-20T14:11:08.723Z     at SchemaCodegen._run (~/node_modules/.pnpm/@oclif+command@1.8.36_@oclif+config@1.18.17/node_modules/@oclif/command/lib/command.js:43:20)
+2025-10-20T14:11:08.723Z     at Config.runCommand (~/node_modules/.pnpm/@oclif+config@1.18.17/node_modules/@oclif/config/lib/config.js:173:24)
+2025-10-20T14:11:08.723Z     at Main.run (~/node_modules/.pnpm/@oclif+command@1.8.36_@oclif+config@1.18.17/node_modules/@oclif/command/lib/main.js:28:9)
+2025-10-20T14:11:08.723Z     at Main._run (~/node_modules/.pnpm/@oclif+command@1.8.36_@oclif+config@1.18.17/node_modules/@oclif/command/lib/command.js:43:20)

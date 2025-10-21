@@ -1,4 +1,5 @@
 import { defineArrayMember, defineField, defineType } from 'sanity'
+import { sectionBaseFields } from './shared'
 
 export default defineType({
   name: 'section.steps',
@@ -22,6 +23,7 @@ export default defineType({
       ],
       validation: (rule) => rule.required().min(2),
     }),
+    ...sectionBaseFields,
   ],
   preview: {
     select: { title: 'title', count: 'items.length' },

@@ -1,10 +1,16 @@
 import { defineField, defineType } from 'sanity'
+import { sectionBaseFields } from './shared'
 
 export default defineType({
   name: 'section.contact',
   title: 'Contact / Lead Capture',
   type: 'object',
   fields: [
+    defineField({
+      name: 'eyebrow',
+      title: 'Eyebrow',
+      type: 'string',
+    }),
     defineField({
       name: 'title',
       title: 'Title',
@@ -40,9 +46,10 @@ export default defineType({
     defineField({
       name: 'externalLink',
       title: 'External form link',
-      type: 'string',
+      type: 'link',
       hidden: ({ parent }) => parent?.formType !== 'external',
     }),
+    ...sectionBaseFields,
   ],
   preview: {
     select: { title: 'title', subtitle: 'formType' },

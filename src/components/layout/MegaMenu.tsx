@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState, type FocusEvent } from 'react'
 import Link from 'next/link'
-import type { LocationSummary, ServiceSummary } from '@/types/sanity'
+import type { LocationSummary, ServiceSummary } from '@/types'
 
 type MegaMenuProps = {
   services?: ServiceSummary[]
@@ -26,12 +26,8 @@ export default function MegaMenu({ services = [], locations = [] }: MegaMenuProp
     return sanitized.replace(/\/+/g, '/')
   }
 
-  const servicesItems = services
-    .map((service) => ({ label: service.title, href: normalizeHref(`/services/${service.slug}`) }))
-    .slice(0, 8)
-  const locationsItems = locations
-    .map((location) => ({ label: location.city, href: normalizeHref(`/locations/${location.slug}`) }))
-    .slice(0, 8)
+  const servicesItems = services.map((service) => ({ label: service.title, href: normalizeHref(`/services/${service.slug}`) }))
+  const locationsItems = locations.map((location) => ({ label: location.city, href: normalizeHref(`/locations/${location.slug}`) }))
 
   const itemsByKey: Record<MenuKey, Array<{ label: string; href: string }>> = {
     services: servicesItems,
@@ -89,7 +85,7 @@ export default function MegaMenu({ services = [], locations = [] }: MegaMenuProp
           >
             <button
               type="button"
-              className="inline-flex items-center gap-1 text-sm font-medium text-zinc-600 transition hover:text-zinc-900 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-zinc-900"
+              className="inline-flex items-center gap-1 text-sm font-medium text-muted transition hover:text-strong focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--color-brand-primary)]"
               aria-expanded={isOpen}
               aria-haspopup="true"
             >
@@ -99,7 +95,7 @@ export default function MegaMenu({ services = [], locations = [] }: MegaMenuProp
 
             {isOpen ? (
               <div
-                className="absolute left-1/2 top-full z-30 w-[320px] -translate-x-1/2 translate-y-3 rounded-2xl border border-zinc-200 bg-white p-4 shadow-xl shadow-zinc-900/10"
+                className="absolute left-1/2 top-full z-30 w-[320px] -translate-x-1/2 translate-y-3 rounded-2xl border border-divider bg-surface p-4 shadow-elevated"
                 onPointerEnter={() => openMenu(key)}
                 onPointerLeave={scheduleClose}
               >
@@ -108,7 +104,7 @@ export default function MegaMenu({ services = [], locations = [] }: MegaMenuProp
                     <li key={item.href}>
                       <Link
                         href={item.href}
-                        className="block rounded-md px-3 py-2 text-left text-zinc-700 transition hover:bg-zinc-50 hover:text-zinc-900 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-zinc-900"
+                        className="block rounded-md px-3 py-2 text-left text-muted transition hover:bg-surface-muted hover:text-strong focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--color-brand-primary)]"
                         onClick={() => setOpen(null)}
                       >
                         {item.label}

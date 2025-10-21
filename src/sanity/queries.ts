@@ -37,16 +37,81 @@ export const globalSettingsQ = groq`{
     geo
   },
   "navigation": *[_type == "navigation"][0]{
-    header[]{label, href},
-    utility[]{label, href},
-    footer[]{label, href}
+    header[]{
+      label,
+      link{
+        linkType,
+        internalPath,
+        href,
+        openInNewTab
+      }
+    },
+    utility[]{
+      label,
+      link{
+        linkType,
+        internalPath,
+        href,
+        openInNewTab
+      }
+    },
+    footer[]{
+      label,
+      link{
+        linkType,
+        internalPath,
+        href,
+        openInNewTab
+      }
+    }
+  },
+  "pages": *[_type == "page" && defined(slug.current)]{
+    title,
+    "slug": slug.current
   },
   "tokens": *[_type == "tokens"][0]{
     primary,
+    onPrimary,
     secondary,
-    fontFamily,
-    radius,
-    containerWidth
+    onSecondary,
+    surface,
+    surfaceMuted,
+    surfaceStrong,
+    textStrong,
+    textMuted,
+    textInverted,
+    borderColor,
+    fontBody,
+    fontHeading,
+    typographyScale[]{
+      token,
+      fontSize,
+      lineHeight,
+      fontWeight
+    },
+    spacingScale[]{
+      token,
+      value
+    },
+    containerWidth,
+    radiusScale[]{
+      token,
+      value
+    },
+    shadowScale[]{
+      token,
+      value
+    },
+    buttonStyles[]{
+      token,
+      label,
+      background,
+      text,
+      border,
+      hoverBackground,
+      hoverText,
+      shadow
+    }
   },
   "services": *[_type == "service" && defined(slug.current)] | order(title asc){
     title,
@@ -126,10 +191,39 @@ export const serviceBySlugQ = groq`*[_type=="service" && slug.current==$slug][0]
     }
   },
   body,
+  breadcrumbs{
+    mode,
+    currentLabel,
+    manualItems[]{
+      _key,
+      label,
+      link{
+        linkType,
+        internalPath,
+        href,
+        openInNewTab
+      }
+    },
+    additionalItems[]{
+      _key,
+      label,
+      link{
+        linkType,
+        internalPath,
+        href,
+        openInNewTab
+      }
+    }
+  },
+  displayOptions,
   seo,
   locations[]->{
     city,
     "slug":slug.current
+  },
+  scriptOverrides[]{
+    scriptKey,
+    enabled
   },
   sections[]{
     ...,
@@ -195,14 +289,86 @@ export const serviceBySlugQ = groq`*[_type=="service" && slug.current==$slug][0]
       ...
     },
     "items": select(
-      _type == 'section.features' => items[]{ icon, title, body, linkLabel, linkHref },
+      _type == 'section.features' => items[]{
+        icon,
+        title,
+        body,
+        linkLabel,
+        "link": link
+      },
       _type == 'section.steps' => items[]{ title, body },
       _type == 'section.stats' => items[]{ value, label },
       _type == 'section.logos' => items[]{
         name,
         url,
         logo{ asset->{ url } }
+      },
+      _type == 'section.timeline' => items[]{
+        title,
+        subheading,
+        summary,
+        date,
+        "link": link,
+        media{
+          ...,
+          image{
+            alt,
+            asset->{
+              url,
+              metadata{ lqip, dimensions{ width, height } }
+            }
+          }
+        }
       }
+    ),
+    "plans": select(_type == 'section.pricingTable' => plans[]{
+      title,
+      tagline,
+      price,
+      frequency,
+      description,
+      features,
+      isFeatured,
+      cta
+    }),
+    "images": select(_type == 'section.gallery' => images[]{
+      _key,
+      caption,
+      image{
+        alt,
+        asset->{
+          url,
+          metadata{ lqip, dimensions{ width, height } }
+        }
+      }
+    }),
+    "postsResolved": select(
+      _type == 'section.blogList' => select(
+        sourceMode == 'selected' => posts[]->{
+          title,
+          "slug": slug.current,
+          "excerpt": coalesce(pt::text(body[0]), ''),
+          "coverImage": hero.asset->url,
+          "author": author,
+          "publishedAt": date
+        },
+        sourceMode == 'category' => *[_type == "post" && references(^.category._ref)] | order(date desc){
+          title,
+          "slug": slug.current,
+          "excerpt": coalesce(pt::text(body[0]), ''),
+          "coverImage": hero.asset->url,
+          "author": author,
+          "publishedAt": date
+        },
+        true => *[_type == "post"] | order(date desc){
+          title,
+          "slug": slug.current,
+          "excerpt": coalesce(pt::text(body[0]), ''),
+          "coverImage": hero.asset->url,
+          "author": author,
+          "publishedAt": date
+        }
+      )
     )
   }
 }`
@@ -222,6 +388,30 @@ export const locationBySlugQ = groq`*[_type=="location" && slug.current==$slug][
     alt
   },
   map,
+  breadcrumbs{
+    mode,
+    currentLabel,
+    manualItems[]{
+      _key,
+      label,
+      link{
+        linkType,
+        internalPath,
+        href,
+        openInNewTab
+      }
+    },
+    additionalItems[]{
+      _key,
+      label,
+      link{
+        linkType,
+        internalPath,
+        href,
+        openInNewTab
+      }
+    }
+  },
   services[]->{
     title,
     "slug":slug.current,
@@ -238,6 +428,7 @@ export const locationBySlugQ = groq`*[_type=="location" && slug.current==$slug][
       "slug": slug.current
     }
   },
+  displayOptions,
   seo
 }`
 
@@ -251,22 +442,7 @@ export const pageBySlugQ = groq`*[_type == "page" && slug.current == $slug][0]{
   title,
   "slug": slug.current,
   sections[]{
-    _key,
-    _type,
-    variant,
-    eyebrow,
-    heading,
-    subheading,
-    background,
-    alignment,
-    title,
-    description,
-    display,
-    columns,
-    style,
-    formType,
-    embedCode,
-    externalLink,
+    ...,
     "media": media{
       ...,
       "image": select(
@@ -329,7 +505,13 @@ export const pageBySlugQ = groq`*[_type == "page" && slug.current == $slug][0]{
       ...
     },
     "items": select(
-      _type == 'section.features' => items[]{ icon, title, body, linkLabel, linkHref },
+      _type == 'section.features' => items[]{
+        icon,
+        title,
+        body,
+        linkLabel,
+        "link": link
+      },
       _type == 'section.steps' => items[]{ title, body },
       _type == 'section.stats' => items[]{ value, label },
       _type == 'section.logos' => items[]{
@@ -338,9 +520,103 @@ export const pageBySlugQ = groq`*[_type == "page" && slug.current == $slug][0]{
         logo{
           asset->{ url }
         }
+      },
+      _type == 'section.timeline' => items[]{
+        title,
+        subheading,
+        summary,
+        date,
+        "link": link,
+        media{
+          ...,
+          image{
+            alt,
+            asset->{
+              url,
+              metadata{ lqip, dimensions{ width, height } }
+            }
+          }
+        }
       }
+    ),
+    "plans": select(_type == 'section.pricingTable' => plans[]{
+      title,
+      tagline,
+      price,
+      frequency,
+      description,
+      features,
+      isFeatured,
+      cta
+    }),
+    "images": select(_type == 'section.gallery' => images[]{
+      _key,
+      caption,
+      image{
+        alt,
+        asset->{
+          url,
+          metadata{ lqip, dimensions{ width, height } }
+        }
+      }
+    }),
+    "postsResolved": select(
+      _type == 'section.blogList' => select(
+        sourceMode == 'selected' => posts[]->{
+          title,
+          "slug": slug.current,
+          "excerpt": coalesce(pt::text(body[0]), ''),
+          "coverImage": hero.asset->url,
+          "author": author,
+          "publishedAt": date
+        },
+        sourceMode == 'category' => *[_type == "post" && references(^.category._ref)] | order(date desc){
+          title,
+          "slug": slug.current,
+          "excerpt": coalesce(pt::text(body[0]), ''),
+          "coverImage": hero.asset->url,
+          "author": author,
+          "publishedAt": date
+        },
+        true => *[_type == "post"] | order(date desc){
+          title,
+          "slug": slug.current,
+          "excerpt": coalesce(pt::text(body[0]), ''),
+          "coverImage": hero.asset->url,
+          "author": author,
+          "publishedAt": date
+        }
+      )
     )
   },
+  scriptOverrides[]{
+    scriptKey,
+    enabled
+  },
   body,
+  breadcrumbs{
+    mode,
+    currentLabel,
+    manualItems[]{
+      _key,
+      label,
+      link{
+        linkType,
+        internalPath,
+        href,
+        openInNewTab
+      }
+    },
+    additionalItems[]{
+      _key,
+      label,
+      link{
+        linkType,
+        internalPath,
+        href,
+        openInNewTab
+      }
+    }
+  },
   seo
 }`

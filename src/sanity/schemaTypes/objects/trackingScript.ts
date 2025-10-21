@@ -6,6 +6,17 @@ export default defineType({
   type: 'object',
   fields: [
     defineField({
+      name: 'key',
+      title: 'Key',
+      type: 'string',
+      description: 'Unique identifier used for per-page overrides (letters, numbers, dashes).',
+      validation: (rule) =>
+        rule
+          .required()
+          .regex(/^[a-z0-9-]+$/i, { name: 'key' })
+          .error('Use letters, numbers, or dashes for the key.'),
+    }),
+    defineField({
       name: 'label',
       title: 'Label',
       type: 'string',

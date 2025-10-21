@@ -1,4 +1,5 @@
-import { defineArrayMember, defineField, defineType } from 'sanity'
+import { defineField, defineType } from 'sanity'
+import { sectionBaseFields } from './shared'
 
 export default defineType({
   name: 'section.text',
@@ -14,11 +15,7 @@ export default defineType({
     defineField({
       name: 'body',
       title: 'Body',
-      type: 'array',
-      of: [
-        defineArrayMember({ type: 'block' }),
-        defineArrayMember({ type: 'image', options: { hotspot: true } }),
-      ],
+      type: 'richText',
     }),
     defineField({
       name: 'alignment',
@@ -33,6 +30,7 @@ export default defineType({
       },
       initialValue: 'left',
     }),
+    ...sectionBaseFields,
   ],
   preview: {
     select: { title: 'heading', subtitle: 'eyebrow' },

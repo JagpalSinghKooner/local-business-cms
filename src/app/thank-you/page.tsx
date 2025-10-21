@@ -5,7 +5,7 @@ export default function ThankYou() {
     <main className="py-16">
       <Container>
         <h1 className="text-3xl font-semibold">Thanks! We’ll be in touch shortly.</h1>
-        <p className="mt-2 text-zinc-600">Your request has been received.</p>
+        <p className="mt-2 text-muted">Your request has been received.</p>
       </Container>
     </main>
   );

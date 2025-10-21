@@ -1,12 +1,17 @@
 import Image from 'next/image'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
-import Container from '@/components/layout/Container'
+import { draftMode } from 'next/headers'
+import { PreviewSuspense } from '@/components/preview/PreviewSuspense'
 import Portable from '@/components/Portable'
 import ServiceCard from '@/components/cards/ServiceCard'
-import type { ServiceSummary } from '@/types/sanity'
+import type { ServiceSummary } from '@/types'
 import { buildSeo } from '@/lib/seo'
+import { buildBreadcrumbs } from '@/lib/breadcrumbs'
 import { getGlobalDataset, getLocationBySlug } from '@/sanity/loaders'
+import Breadcrumbs from '@/components/navigation/Breadcrumbs'
+import Container from '@/components/layout/Container'
+import LocationPreview from '@/components/preview/LocationPreview'
 
 type Params = { city: string }
 
@@ -37,6 +42,14 @@ export async function generateMetadata({ params }: { params: Promise<Params> }) 
 
 export default async function LocationPage({ params }: { params: Promise<Params> }) {
   const { city: slug } = await params
+  const draft = await draftMode()
+  if (draft.isEnabled) {
+    return (
+      <PreviewSuspense fallback={<div className="p-8 text-muted">Loading preview…</div>}>
+        <LocationPreview slug={slug} />
+      </PreviewSuspense>
+    )
+  }
   const [location, global] = await Promise.all([getLocationBySlug(slug), getGlobalDataset()])
 
   if (!location) return notFound()
@@ -55,14 +68,27 @@ export default async function LocationPage({ params }: { params: Promise<Params>
     location.map && typeof location.map === 'object'
       ? (location.map as { lat?: number; lng?: number })
       : undefined
+  const breadcrumbs = buildBreadcrumbs({
+    path: `/locations/${slug}`,
+    currentLabel: location.city,
+    settings: location.breadcrumbs ?? null,
+    navigation: global.navigation,
+    pages: global.pages,
+    homeLabel: global.site?.name ?? 'Home',
+  })
+  const displayOptions = location.displayOptions ?? {}
+  const showGallery = displayOptions.showGallery !== false
+  const showPopularServices = displayOptions.showPopularServices !== false
+  const showOtherLocations = displayOptions.showOtherLocations !== false
 
   return (
     <main className="pb-16">
-      <section className="bg-zinc-50 py-16">
+      <Breadcrumbs trail={breadcrumbs} />
+      <section className="bg-surface-muted py-16">
         <Container className="space-y-4">
-          <p className="text-sm uppercase tracking-[0.2em] text-zinc-500">Service Area</p>
-          <h1 className="text-4xl font-semibold text-zinc-900">{location.city}</h1>
-          <div className="prose prose-zinc max-w-none">
+          <p className="text-sm uppercase tracking-[0.2em] text-muted">Service Area</p>
+          <h1 className="text-4xl font-semibold text-strong">{location.city}</h1>
+          <div className="prose prose-theme max-w-none">
             <Portable value={location.intro} />
           </div>
           <div className="mt-6 flex flex-wrap gap-3">
@@ -74,17 +100,17 @@ export default async function LocationPage({ params }: { params: Promise<Params>
             </Link>
           </div>
           {coordinates?.lat && coordinates?.lng ? (
-            <p className="text-xs text-zinc-500">
+            <p className="text-xs text-muted">
               Coordinates: {coordinates.lat}, {coordinates.lng}
             </p>
           ) : null}
         </Container>
       </section>
 
-      {galleryItems.length ? (
+      {showGallery && galleryItems.length ? (
         <section className="py-16">
           <Container>
-            <h2 className="text-2xl font-semibold text-zinc-900">Recent work</h2>
+            <h2 className="text-2xl font-semibold text-strong">Recent work</h2>
             <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
               {galleryItems.map((item, index) =>
                 item?.image?.asset?.url ? (
@@ -104,10 +130,10 @@ export default async function LocationPage({ params }: { params: Promise<Params>
         </section>
       ) : null}
 
-      {popularServices.length ? (
-        <section className="border-y border-zinc-200 bg-white py-16">
+      {showPopularServices && popularServices.length ? (
+        <section className="border-y border-divider bg-surface py-16">
           <Container className="space-y-6">
-            <h2 className="text-2xl font-semibold text-zinc-900">Popular services in {location.city}</h2>
+            <h2 className="text-2xl font-semibold text-strong">Popular services in {location.city}</h2>
             <ul className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
               {popularServices.map((service) => (
                 <li key={service.slug}>
@@ -119,14 +145,14 @@ export default async function LocationPage({ params }: { params: Promise<Params>
         </section>
       ) : null}
 
-      {otherLocations.length ? (
+      {showOtherLocations && otherLocations.length ? (
         <section className="py-16">
           <Container className="space-y-6">
-            <h2 className="text-2xl font-semibold text-zinc-900">Other nearby areas</h2>
-            <ul className="flex flex-wrap gap-3 text-sm text-zinc-600">
+            <h2 className="text-2xl font-semibold text-strong">Other nearby areas</h2>
+            <ul className="flex flex-wrap gap-3 text-sm text-muted">
               {otherLocations.map((item) => (
                 <li key={item.slug}>
-                  <Link href={`/locations/${item.slug}`} className="rounded-full border border-zinc-200 px-4 py-2 hover:border-zinc-400">
+                  <Link href={`/locations/${item.slug}`} className="rounded-full border border-divider px-4 py-2 hover:border-brand">
                     {item.city}
                   </Link>
                 </li>

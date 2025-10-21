@@ -1,9 +1,15 @@
 import Link from 'next/link'
 import Container from '@/components/layout/Container'
-import type { OfferSummary, PageSection } from '@/types/sanity'
+import type { OfferSummary, PageSection } from '@/types'
+import { getSectionLayout } from './layout'
+import { cn } from '@/lib/cn'
+
+export type OffersSectionData = Extract<PageSection, { _type: 'section.offers' }> & {
+  offersSelected?: OfferSummary[]
+}
 
 type OffersSectionProps = {
-  section: Extract<PageSection, { _type: 'section.offers' }>
+  section: OffersSectionData
   allOffers: OfferSummary[]
 }
 
@@ -19,30 +25,38 @@ function buildValidityRange(from?: string, to?: string) {
 }
 
 export default function OffersSection({ section, allOffers }: OffersSectionProps) {
-  let offers = section.offersSelected && section.offersSelected.length ? section.offersSelected : allOffers
+  const sectionData = section as any
+  let offers = sectionData.offersSelected && sectionData.offersSelected.length ? sectionData.offersSelected : allOffers
   if (!offers.length) return null
-  if (section.limit) {
-    offers = offers.slice(0, section.limit)
+  if (sectionData.limit) {
+    offers = offers.slice(0, sectionData.limit)
   }
 
+  const layout = getSectionLayout(section, { baseClassName: 'bg-amber-50' })
+
   return (
-    <section className="bg-amber-50 py-16">
-      <Container className="space-y-8">
+    <section
+      className={layout.wrapperClassName}
+      style={layout.style}
+      data-animate={layout.dataAnimate}
+      data-alignment={layout.dataAlignment}
+    >
+      <Container width={layout.containerWidth} className={cn(layout.containerClassName, 'space-y-8')}>
         <header className="space-y-3 md:max-w-3xl">
           <p className="text-sm uppercase tracking-[0.2em] text-amber-600">Offers</p>
-          {section.title ? <h2 className="text-3xl font-semibold text-zinc-900">{section.title}</h2> : null}
-          {section.description ? <p className="text-base text-zinc-700">{section.description}</p> : null}
+          {section.title ? <h2 className="text-3xl font-semibold text-strong">{section.title}</h2> : null}
+          {section.description ? <p className="text-base text-muted">{section.description}</p> : null}
         </header>
 
         <ul className="grid grid-cols-1 gap-4 md:grid-cols-2">
           {offers.map((offer) => {
             const validity = buildValidityRange(offer.validFrom, offer.validTo)
             return (
-              <li key={offer.slug} className="rounded-3xl border border-amber-200 bg-white p-6 shadow-sm shadow-amber-900/10">
+              <li key={offer.slug} className="rounded-3xl border border-amber-200 bg-surface p-6 shadow-sm shadow-amber-900/10">
                 <article className="flex h-full flex-col gap-4">
                   <div>
-                    <h3 className="text-xl font-semibold text-zinc-900">{offer.title}</h3>
-                    {offer.summary ? <p className="mt-2 text-sm text-zinc-600">{offer.summary}</p> : null}
+                    <h3 className="text-xl font-semibold text-strong">{offer.title}</h3>
+                    {offer.summary ? <p className="mt-2 text-sm text-muted">{offer.summary}</p> : null}
                   </div>
                   {validity ? <p className="text-xs font-semibold uppercase tracking-[0.2em] text-amber-600">{validity}</p> : null}
                   <Link href={`/offers/${offer.slug}`} className="mt-auto text-sm font-semibold text-amber-600 hover:text-amber-500">

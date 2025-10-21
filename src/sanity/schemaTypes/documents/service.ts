@@ -32,6 +32,12 @@ export default defineType({
       description: '16:9 recommended',
     }),
     defineField({
+      name: 'breadcrumbs',
+      title: 'Breadcrumbs',
+      type: 'breadcrumbSettings',
+      options: { collapsible: true, collapsed: true },
+    }),
+    defineField({
       name: 'sections',
       title: 'Page Sections',
       type: 'array',
@@ -49,6 +55,33 @@ export default defineType({
         defineArrayMember({ type: 'section.offers' }),
         defineArrayMember({ type: 'section.cta' }),
         defineArrayMember({ type: 'section.contact' }),
+        defineArrayMember({ type: 'section.mediaText' }),
+        defineArrayMember({ type: 'section.timeline' }),
+        defineArrayMember({ type: 'section.pricingTable' }),
+        defineArrayMember({ type: 'section.gallery' }),
+        defineArrayMember({ type: 'section.quote' }),
+        defineArrayMember({ type: 'section.blogList' }),
+        defineArrayMember({ type: 'section.layout' }),
+      ],
+    }),
+    defineField({
+      name: 'displayOptions',
+      title: 'Display Options',
+      type: 'object',
+      options: { collapsible: true, collapsed: true },
+      fields: [
+        defineField({
+          name: 'showRelatedLocations',
+          title: 'Show related locations',
+          type: 'boolean',
+          initialValue: true,
+        }),
+        defineField({
+          name: 'showOtherServices',
+          title: 'Show other services',
+          type: 'boolean',
+          initialValue: true,
+        }),
       ],
     }),
     defineField({
@@ -62,6 +95,20 @@ export default defineType({
       title: 'Served Locations',
       type: 'array',
       of: [{ type: 'reference', to: [{ type: 'location' }] }],
+    }),
+    defineField({
+      name: 'scriptOverrides',
+      title: 'Global Script Overrides',
+      type: 'array',
+      of: [
+        defineArrayMember({
+          type: 'object',
+          fields: [
+            defineField({ name: 'scriptKey', title: 'Script key', type: 'string', validation: (rule) => rule.required() }),
+            defineField({ name: 'enabled', title: 'Enabled', type: 'boolean', initialValue: true }),
+          ],
+        }),
+      ],
     }),
     defineField({ name: 'seo', type: 'seo' }),
   ],

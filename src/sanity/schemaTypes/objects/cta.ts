@@ -12,10 +12,9 @@ export default defineType({
       validation: (rule) => rule.required(),
     }),
     defineField({
-      name: 'href',
+      name: 'link',
       title: 'Link',
-      type: 'string',
-      description: 'Internal path (e.g. /contact) or full URL (https://…)',
+      type: 'link',
       validation: (rule) => rule.required(),
     }),
     defineField({
@@ -35,6 +34,10 @@ export default defineType({
     }),
   ],
   preview: {
-    select: { title: 'label', subtitle: 'href' },
+    select: { title: 'label', linkType: 'link.linkType', internalPath: 'link.internalPath', href: 'link.href' },
+    prepare({ title, linkType, internalPath, href }) {
+      const subtitle = linkType === 'external' ? href : internalPath
+      return { title, subtitle }
+    },
   },
 })

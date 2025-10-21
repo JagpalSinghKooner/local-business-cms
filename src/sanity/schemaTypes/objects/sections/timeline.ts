@@ -1,0 +1,109 @@
+import { defineArrayMember, defineField, defineType } from 'sanity'
+import { sectionBaseFields } from './shared'
+
+export default defineType({
+  name: 'section.timeline',
+  title: 'Timeline',
+  type: 'object',
+  fields: [
+    defineField({ name: 'eyebrow', title: 'Eyebrow', type: 'string' }),
+    defineField({
+      name: 'heading',
+      title: 'Heading',
+      type: 'string',
+      validation: (rule) => rule.required(),
+    }),
+    defineField({
+      name: 'body',
+      title: 'Supporting Copy',
+      type: 'text',
+      rows: 3,
+    }),
+    defineField({
+      name: 'layoutMode',
+      title: 'Layout',
+      type: 'string',
+      initialValue: 'vertical',
+      options: {
+        list: [
+          { title: 'Vertical', value: 'vertical' },
+          { title: 'Horizontal', value: 'horizontal' },
+        ],
+        layout: 'radio',
+      },
+    }),
+    defineField({
+      name: 'items',
+      title: 'Timeline Items',
+      type: 'array',
+      validation: (rule) => rule.min(2),
+      of: [
+        defineArrayMember({
+          type: 'object',
+          fields: [
+            defineField({
+              name: 'title',
+              title: 'Title',
+              type: 'string',
+              validation: (rule) => rule.required(),
+            }),
+            defineField({
+              name: 'subheading',
+              title: 'Subheading',
+              type: 'string',
+            }),
+            defineField({
+              name: 'summary',
+              title: 'Summary',
+              type: 'text',
+              rows: 3,
+            }),
+            defineField({
+              name: 'date',
+              title: 'Date / Label',
+              type: 'string',
+              description: 'Shown above the milestone (e.g. Q1 2025, Step 1)',
+            }),
+            defineField({
+              name: 'media',
+              title: 'Image',
+              type: 'image',
+              options: { hotspot: true },
+            }),
+            defineField({
+              name: 'link',
+              title: 'CTA Link',
+              type: 'cta',
+            }),
+          ],
+          preview: {
+            select: { title: 'title', subtitle: 'date' },
+            prepare({ title, subtitle }) {
+              return {
+                title: title || 'Timeline item',
+                subtitle: subtitle || 'Milestone',
+              }
+            },
+          },
+        }),
+      ],
+    }),
+    defineField({
+      name: 'ctas',
+      title: 'Calls to Action',
+      type: 'array',
+      of: [defineArrayMember({ type: 'cta' })],
+      validation: (rule) => rule.max(2),
+    }),
+    ...sectionBaseFields,
+  ],
+  preview: {
+    select: { title: 'heading', subtitle: 'layoutMode' },
+    prepare({ title, subtitle }) {
+      return {
+        title: title || 'Timeline',
+        subtitle: subtitle === 'horizontal' ? 'Timeline • Horizontal' : 'Timeline • Vertical',
+      }
+    },
+  },
+})

@@ -1,9 +1,9 @@
 import Image from 'next/image'
 import Link from 'next/link'
 import Portable from '@/components/Portable'
-import type { ServiceSummary } from '@/types/sanity'
+import type { ServiceSummary } from '@/types'
 
-const PLACEHOLDER = 'https://placehold.co/600x400?text=Service'
+const PLACEHOLDER = 'https://placehold.co/600x400/png?text=Service'
 
 type ServiceCardProps = {
   service: ServiceSummary
@@ -18,7 +18,7 @@ export default function ServiceCard({ service, locationSlug }: ServiceCardProps)
   return (
     <Link
       href={href}
-      className="group flex h-full flex-col overflow-hidden rounded-2xl border border-zinc-200 bg-white shadow-sm shadow-zinc-900/5 transition hover:-translate-y-1 hover:shadow-lg hover:shadow-zinc-900/10"
+      className="group flex h-full flex-col overflow-hidden rounded-2xl border border-divider bg-surface shadow-elevated transition-transform duration-300 hover:-translate-y-1 hover:shadow-elevated"
     >
       <div className="relative aspect-[4/3] w-full overflow-hidden">
         <Image
@@ -31,15 +31,15 @@ export default function ServiceCard({ service, locationSlug }: ServiceCardProps)
       </div>
       <div className="flex flex-1 flex-col gap-3 p-6">
         <div className="space-y-1">
-          <p className="text-xs uppercase tracking-[0.2em] text-zinc-400">
+          <p className="text-xs uppercase tracking-[0.2em] text-muted">
             {service.category?.title ?? 'Service'}
           </p>
-          <h3 className="text-lg font-semibold text-zinc-900">{service.title}</h3>
+          <h3 className="text-lg font-semibold text-strong">{service.title}</h3>
         </div>
         {intro ? (
-          <Portable value={intro} className="text-sm text-zinc-600" />
+          <Portable value={intro} className="text-sm text-muted" />
         ) : null}
-        <span className="mt-auto text-sm font-semibold text-zinc-900">View service →</span>
+        <span className="mt-auto text-sm font-semibold text-strong">View service →</span>
       </div>
     </Link>
   )

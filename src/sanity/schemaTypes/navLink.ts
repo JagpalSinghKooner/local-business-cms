@@ -12,14 +12,17 @@ export default defineType({
       validation: (r) => r.required(),
     }),
     defineField({
-      name: "href",
-      title: "Href",
-      type: "string",
-      description: "Internal path (e.g. /services) or full URL (https://…)",
+      name: "link",
+      title: "Destination",
+      type: "link",
       validation: (r) => r.required(),
     }),
   ],
   preview: {
-    select: { title: "label", subtitle: "href" },
+    select: { title: "label", linkType: "link.linkType", internalPath: "link.internalPath", href: "link.href" },
+    prepare({ title, linkType, internalPath, href }) {
+      const subtitle = linkType === 'external' ? href : internalPath
+      return { title, subtitle }
+    },
   },
 });

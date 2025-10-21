@@ -1,10 +1,12 @@
 import { defineArrayMember, defineField, defineType } from 'sanity'
+import { sectionBaseFields } from './shared'
 
 export default defineType({
   name: 'section.features',
   title: 'Feature Grid',
   type: 'object',
   fields: [
+    defineField({ name: 'eyebrow', type: 'string' }),
     defineField({ name: 'title', type: 'string', validation: (rule) => rule.required() }),
     defineField({ name: 'description', type: 'text', rows: 3 }),
     defineField({
@@ -26,12 +28,13 @@ export default defineType({
             defineField({ name: 'title', type: 'string', validation: (rule) => rule.required() }),
             defineField({ name: 'body', type: 'richText' }),
             defineField({ name: 'linkLabel', type: 'string' }),
-            defineField({ name: 'linkHref', type: 'string' }),
+            defineField({ name: 'link', type: 'link' }),
           ],
         }),
       ],
       validation: (rule) => rule.required().min(2),
     }),
+    ...sectionBaseFields,
   ],
   preview: {
     select: { title: 'title', count: 'items.length' },

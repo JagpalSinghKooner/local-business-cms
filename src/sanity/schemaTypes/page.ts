@@ -38,6 +38,56 @@ export default defineType({
         defineArrayMember({ type: 'section.offers' }),
         defineArrayMember({ type: 'section.cta' }),
         defineArrayMember({ type: 'section.contact' }),
+        defineArrayMember({ type: 'section.features' }),
+        defineArrayMember({ type: 'section.mediaText' }),
+        defineArrayMember({ type: 'section.steps' }),
+        defineArrayMember({ type: 'section.stats' }),
+        defineArrayMember({ type: 'section.logos' }),
+        defineArrayMember({ type: 'section.timeline' }),
+        defineArrayMember({ type: 'section.pricingTable' }),
+        defineArrayMember({ type: 'section.gallery' }),
+        defineArrayMember({ type: 'section.quote' }),
+        defineArrayMember({ type: 'section.blogList' }),
+        defineArrayMember({ type: 'section.layout' }),
+      ],
+    }),
+    defineField({
+      name: 'breadcrumbs',
+      title: 'Breadcrumbs',
+      description: 'Override automatic breadcrumbs or inject additional items.',
+      type: 'breadcrumbSettings',
+      group: 'content',
+    }),
+    defineField({
+      name: 'scriptOverrides',
+      title: 'Global Script Overrides',
+      type: 'array',
+      description: 'Enable or disable global scripts (use the keys defined in Site Settings).',
+      group: 'content',
+      of: [
+        defineArrayMember({
+          type: 'object',
+          fields: [
+            defineField({
+              name: 'scriptKey',
+              title: 'Script key',
+              type: 'string',
+              validation: (rule) => rule.required(),
+            }),
+            defineField({
+              name: 'enabled',
+              title: 'Enabled',
+              type: 'boolean',
+              initialValue: true,
+            }),
+          ],
+          preview: {
+            select: { title: 'scriptKey', enabled: 'enabled' },
+            prepare({ title, enabled }) {
+              return { title: title || 'Script', subtitle: enabled ? 'Enabled' : 'Disabled' }
+            },
+          },
+        }),
       ],
     }),
     defineField({

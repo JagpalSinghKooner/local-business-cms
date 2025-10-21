@@ -1,4 +1,4 @@
-import type { PortableContent } from '@/types/sanity'
+import type { PortableContent } from '@/types'
 
 type PortableBlock = {
   children?: Array<{ text?: string }>

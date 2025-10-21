@@ -1,72 +1,93 @@
 import Link from 'next/link'
+import Portable from '@/components/Portable'
+import { SectionRenderer } from '@/components/sections'
+import Breadcrumbs from '@/components/navigation/Breadcrumbs'
 import Container from '@/components/layout/Container'
 import { buildSeo } from '@/lib/seo'
-import { getGlobalDataset, listOffers } from '@/sanity/loaders'
+import { formatOfferValidity } from '@/lib/dates'
+import { buildBreadcrumbs } from '@/lib/breadcrumbs'
+import { getGlobalDataset, getPageBySlug, listOffers } from '@/sanity/loaders'
+import { ApplyScriptOverrides } from '@/components/scripts/ScriptOverridesProvider'
 
 export const revalidate = 3600
 
 export async function generateMetadata() {
-  const [global] = await Promise.all([getGlobalDataset()])
+  const [global, page] = await Promise.all([getGlobalDataset(), getPageBySlug('offers')])
   const baseUrl = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://www.localbusiness.com'
 
   return buildSeo({
     baseUrl,
     path: '/offers',
-    title: 'Current Promotions',
-    description: global.site?.metaDescription ?? 'Browse current coupons and promotions.',
+    title: page?.metaTitle || page?.title || global.site?.metaTitle || 'Offers',
+    description: page?.metaDescription || global.site?.metaDescription || '',
+    image: page?.ogImage?.asset?.url ?? global.site?.ogImage?.asset?.url ?? null,
   })
 }
 
 export default async function OffersPage() {
-  const offers = await listOffers()
+  const [global, page, offers] = await Promise.all([
+    getGlobalDataset(),
+    getPageBySlug('offers'),
+    listOffers(),
+  ])
+
+  const breadcrumbs = buildBreadcrumbs({
+    path: '/offers',
+    currentLabel: page?.title ?? 'Offers',
+    settings: page?.breadcrumbs ?? null,
+    navigation: global.navigation,
+    pages: global.pages,
+    homeLabel: global.site?.name ?? 'Home',
+  })
 
   return (
-    <main className="py-16">
-      <Container className="space-y-10">
-        <header className="max-w-2xl space-y-3">
-          <p className="text-sm uppercase tracking-wide text-zinc-500">Offers</p>
-          <h1 className="text-4xl font-semibold text-zinc-900">Current Promotions</h1>
-          <p className="text-base text-zinc-600">Browse limited-time coupons and promotions. Each offer can be redeemed online or mentioned when booking.</p>
-        </header>
+    <main className="pb-16">
+      <ApplyScriptOverrides overrides={page?.scriptOverrides as any} />
+      <Breadcrumbs trail={breadcrumbs} />
+      {page?.sections?.length ? (
+        <SectionRenderer
+          sections={page.sections}
+          services={global.services}
+          locations={global.locations}
+          offers={offers}
+          site={global.site}
+          pagePath="/offers"
+        />
+      ) : null}
 
-        {offers.length > 0 ? (
-          <ul className="grid grid-cols-1 gap-4 md:grid-cols-2">
-            {offers.map((offer) => {
-              const validRange = buildValidityRange(offer.validFrom, offer.validTo)
+      <section className="py-16">
+        <Container className="space-y-6">
+          {page?.title ? <h1 className="text-3xl font-semibold text-strong">{page.title}</h1> : null}
+          {page?.body?.length ? (
+            <div className="prose prose-theme max-w-none">
+              <Portable value={page.body} />
+            </div>
+          ) : null}
 
-              return (
-                <li key={offer.slug} className="rounded-2xl border border-amber-200 bg-white shadow-sm shadow-amber-900/10">
-                  <article className="flex h-full flex-col gap-4 p-6">
-                    <div>
-                      <h2 className="text-xl font-semibold text-zinc-900">{offer.title}</h2>
-                      {offer.summary ? <p className="mt-2 text-sm text-zinc-600">{offer.summary}</p> : null}
-                    </div>
-                    {validRange ? <p className="text-xs font-medium uppercase tracking-wide text-amber-600">{validRange}</p> : null}
-                    <Link href={`/offers/${offer.slug}`} className="mt-auto text-sm font-semibold text-amber-600 transition hover:text-amber-500">
-                      View details →
-                    </Link>
-                  </article>
-                </li>
-              )
-            })}
-          </ul>
-        ) : (
-          <p className="text-sm text-zinc-500">No live offers right now. Publish an offer in Sanity to display it here.</p>
-        )}
-      </Container>
+          {offers.length ? (
+            <ul className="grid grid-cols-1 gap-4 md:grid-cols-2">
+              {offers.map((offer) => {
+                const validRange = formatOfferValidity(offer.validFrom, offer.validTo)
+
+                return (
+                  <li key={offer.slug} className="rounded-2xl border border-amber-200 bg-surface shadow-sm shadow-amber-900/10">
+                    <article className="flex h-full flex-col gap-4 p-6">
+                      <div>
+                        <h2 className="text-xl font-semibold text-strong">{offer.title}</h2>
+                        {offer.summary ? <p className="mt-2 text-sm text-muted">{offer.summary}</p> : null}
+                      </div>
+                      {validRange ? <p className="text-xs font-medium uppercase tracking-wide text-amber-600">{validRange}</p> : null}
+                      <Link href={`/offers/${offer.slug}`} className="mt-auto text-sm font-semibold text-amber-600 transition hover:text-amber-500">
+                        View details →
+                      </Link>
+                    </article>
+                  </li>
+                )
+              })}
+            </ul>
+          ) : null}
+        </Container>
+      </section>
     </main>
   )
-}
-
-function buildValidityRange(from?: string, to?: string) {
-  if (!from && !to) return null
-  const formatter = new Intl.DateTimeFormat('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
-
-  const start = from ? formatter.format(new Date(from)) : null
-  const end = to ? formatter.format(new Date(to)) : null
-
-  if (start && end) return `Valid ${start} – ${end}`
-  if (start) return `Valid from ${start}`
-  if (end) return `Valid until ${end}`
-  return null
 }

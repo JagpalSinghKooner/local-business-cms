@@ -1,4 +1,5 @@
 import { defineArrayMember, defineField, defineType } from 'sanity'
+import { sectionBaseFields } from './shared'
 
 export default defineType({
   name: 'section.services',
@@ -51,6 +52,7 @@ export default defineType({
       initialValue: 3,
       validation: (rule) => rule.min(1).max(4),
     }),
+    ...sectionBaseFields,
   ],
   preview: {
     select: { title: 'title', subtitle: 'display' },

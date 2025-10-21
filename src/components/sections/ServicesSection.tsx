@@ -1,9 +1,16 @@
 import Container from '@/components/layout/Container'
 import ServiceCard from '@/components/cards/ServiceCard'
-import type { PageSection, ServiceSummary } from '@/types/sanity'
+import type { PageSection, ServiceSummary } from '@/types'
+import { getSectionLayout } from './layout'
+import { cn } from '@/lib/cn'
+
+export type ServicesSectionData = Extract<PageSection, { _type: 'section.services' }> & {
+  servicesSelected?: ServiceSummary[]
+  servicesCategory?: { slug?: string | null } | null
+}
 
 type ServicesSectionProps = {
-  section: Extract<PageSection, { _type: 'section.services' }>
+  section: ServicesSectionData
   allServices: ServiceSummary[]
 }
 
@@ -30,14 +37,20 @@ export default function ServicesSection({ section, allServices }: ServicesSectio
 
   const columns = Math.min(Math.max(section.columns ?? 3, 1), 4)
   const gridClass = columnClasses[columns] ?? columnClasses[3]
+  const layout = getSectionLayout(section, { baseClassName: 'border-y border-divider' })
 
   return (
-    <section className="border-y border-zinc-200 bg-white py-16">
-      <Container className="space-y-8">
+    <section
+      className={layout.wrapperClassName}
+      style={layout.style}
+      data-animate={layout.dataAnimate}
+      data-alignment={layout.dataAlignment}
+    >
+      <Container width={layout.containerWidth} className={cn(layout.containerClassName, 'space-y-8')}>
         <header className="space-y-3">
-          <p className="text-sm uppercase tracking-[0.2em] text-zinc-500">Services</p>
-          <h2 className="text-3xl font-semibold text-zinc-900">{section.title}</h2>
-          {section.description ? <p className="text-base text-zinc-600">{section.description}</p> : null}
+          <p className="text-sm uppercase tracking-[0.2em] text-muted">Services</p>
+          <h2 className="text-3xl font-semibold text-strong">{section.title}</h2>
+          {section.description ? <p className="text-base text-muted">{section.description}</p> : null}
         </header>
 
         <ul className={`grid gap-6 ${gridClass}`}>

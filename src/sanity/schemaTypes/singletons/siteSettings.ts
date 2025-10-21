@@ -158,6 +158,12 @@ export default defineType({
       initialValue: 'LocalBusiness',
     }),
     defineField({
+      name: 'legalName',
+      title: 'Legal business name',
+      type: 'string',
+      group: 'business',
+    }),
+    defineField({
       name: 'serviceAreas',
       title: 'Primary Service Areas',
       type: 'array',
@@ -177,6 +183,14 @@ export default defineType({
       type: 'string',
       group: 'business',
       description: 'Use $, $$, $$$ etc for Google rich results',
+    }),
+    defineField({
+      name: 'sameAs',
+      title: 'SameAs (social URLs)',
+      type: 'array',
+      group: 'business',
+      of: [defineArrayMember({ type: 'url' })],
+      description: 'Add authoritative profile URLs for structured data.',
     }),
 
     // SEO defaults

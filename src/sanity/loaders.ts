@@ -17,7 +17,8 @@ import type {
   LocationSummary,
   ServiceSummary,
   ServiceDetail,
-} from '@/types/sanity'
+  PageSummary,
+} from '@/types'
 
 type GlobalDataset = {
   site: SiteSettings | null
@@ -25,6 +26,7 @@ type GlobalDataset = {
   tokens: Tokens | null
   services: ServiceSummary[]
   locations: LocationSummary[]
+  pages: PageSummary[]
 }
 
 const fetchOptions = { perspective: 'published' as const, next: { revalidate: 120 } }
@@ -38,6 +40,7 @@ export async function getGlobalDataset(): Promise<GlobalDataset> {
     tokens: data.tokens ?? null,
     services: data.services ?? [],
     locations: data.locations ?? [],
+    pages: data.pages ?? [],
   }
 }
 

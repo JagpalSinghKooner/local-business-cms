@@ -1,8 +1,11 @@
+"use client"
+
 import type { ReactElement } from 'react'
 import Script from 'next/script'
-import type { SiteSettings } from '@/types/sanity'
+import type { SiteSettings } from '@/types'
+import { useScriptOverrides } from './scripts/ScriptOverridesProvider'
 
-type AnalyticsScriptsProps = {
+export type AnalyticsScriptsProps = {
   site: SiteSettings | null
 }
 
@@ -10,6 +13,8 @@ export default function AnalyticsScripts({ site }: AnalyticsScriptsProps) {
   if (!site) return null
 
   const scripts: ReactElement[] = []
+  const overrides = useScriptOverrides()
+  const overrideMap = new Map(overrides.map((item) => [item.scriptKey, item.enabled]))
 
   if (site.googleTagManagerId) {
     const id = site.googleTagManagerId
@@ -69,7 +74,11 @@ fbq('track', 'PageView');
 
   if (Array.isArray(site.trackingScripts)) {
     site.trackingScripts.forEach((script) => {
-      const id = `tracking-${script.label.replace(/[^a-z0-9]/gi, '-').toLowerCase()}`
+      const key = script.key || script.label?.replace(/[^a-z0-9]/gi, '-').toLowerCase() || 'script'
+      const enabled = overrideMap.has(key) ? Boolean(overrideMap.get(key)) : true
+      if (!enabled) return
+
+      const id = `tracking-${key}`
       const strategy: 'beforeInteractive' | 'afterInteractive' =
         script.location === 'head' ? 'beforeInteractive' : 'afterInteractive'
       scripts.push(

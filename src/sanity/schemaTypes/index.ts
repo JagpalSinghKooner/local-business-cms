@@ -10,6 +10,7 @@ import offer from './documents/offer'
 import caseStudy from './documents/caseStudy'
 import coupon from './documents/coupon'
 import lead from './documents/lead'
+import pageTemplate from './documents/pageTemplate'
 
 import testimonial from './testimonial'
 import faq from './faq'
@@ -29,7 +30,9 @@ import openingHours from './objects/openingHours'
 import socialLink from './objects/socialLink'
 import trackingScript from './objects/trackingScript'
 import cta from './objects/cta'
+import link from './objects/link'
 import { sectionTypes } from './objects/sections'
+import { breadcrumbObjects } from './objects/breadcrumbs'
 
 const documentTypes: SchemaTypeDefinition[] = [
   siteSettings,
@@ -42,6 +45,7 @@ const documentTypes: SchemaTypeDefinition[] = [
   caseStudy,
   coupon,
   lead,
+  pageTemplate,
   testimonial,
   faq,
   page,
@@ -61,6 +65,8 @@ const objectTypes: SchemaTypeDefinition[] = [
   socialLink,
   trackingScript,
   cta,
+  link,
+  ...breadcrumbObjects,
   ...sectionTypes,
 ]
 
@@ -69,3 +75,5 @@ export const schemaTypes: SchemaTypeDefinition[] = [...documentTypes, ...objectT
 export const schema: { types: SchemaTypeDefinition[] } = {
   types: schemaTypes,
 }
+
+export default schemaTypes

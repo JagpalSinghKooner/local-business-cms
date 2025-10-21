@@ -9,10 +9,13 @@ function truncate(s?: string, n = 155) {
 
 export type BuildSeoArgs = {
   baseUrl: string;
-  path?: string;       // page path starting with / (we'll normalize)
+  path?: string; // page path starting with /
   title?: string;
   description?: string;
   image?: string | null;
+  canonical?: string | null;
+  siteName?: string;
+  defaultTitle?: string;
 };
 
 /**
@@ -20,28 +23,39 @@ export type BuildSeoArgs = {
  */
 export function buildSeo({
   baseUrl,
-  path = "/",
+  path = '/',
   title,
   description,
   image,
+  canonical,
+  siteName,
+  defaultTitle,
 }: BuildSeoArgs): Metadata {
-  const normalizedBase = baseUrl.replace(/\/+$/, "");
-  const normalizedPath = path.startsWith("/") ? path : `/${path}`;
-  const url = `${normalizedBase}${normalizedPath}`;
-  const desc = truncate(description) || "";
+  const normalizedBase = baseUrl.replace(/\/+$/, '')
+  const normalizedPath = path.startsWith('/') ? path : `/${path}`
+  const desc = truncate(description) || ''
+
+  const canonicalUrl = canonical
+    ? canonical.startsWith('http')
+      ? canonical
+      : `${normalizedBase}${canonical.startsWith('/') ? canonical : `/${canonical}`}`
+    : `${normalizedBase}${normalizedPath}`
+
+  const resolvedTitle = title || defaultTitle || siteName || 'Local Business'
+  const resolvedSiteName = siteName || resolvedTitle
 
   return {
-    title: title || "Budds Plumbing",
+    title: resolvedTitle,
     description: desc,
     openGraph: {
-      title: title || "Budds Plumbing",
+      title: resolvedTitle,
       description: desc,
-      url,
-      siteName: "Budds Plumbing",
+      url: canonicalUrl,
+      siteName: resolvedSiteName,
       images: image ? [{ url: image, width: 1200, height: 630 }] : [],
-      type: "website",
+      type: 'website',
     },
-    alternates: { canonical: url },
+    alternates: { canonical: canonicalUrl },
     metadataBase: new URL(normalizedBase),
-  };
+  }
 }

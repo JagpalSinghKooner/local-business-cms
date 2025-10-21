@@ -1,16 +1,13 @@
 import Link from 'next/link'
 import Container from './Container'
 import MegaMenu from './MegaMenu'
-import type { LocationSummary, NavLink, ServiceSummary } from '@/types/sanity'
+import type { LocationSummary, NavLink, ServiceSummary } from '@/types'
+import { resolveLink, ResolvedLink } from '@/lib/links'
 
-const normalizeHref = (href: string) => {
-  if (!href) return '#'
-  const trimmed = href.trim()
-  if (trimmed === '') return '#'
-  if (/^(https?:|mailto:|tel:|#)/i.test(trimmed)) return trimmed
-  const sanitized = trimmed.replace(/^\/+/, '')
-  if (sanitized === '' || sanitized === 'home') return '/'
-  return `/${sanitized}`
+const normalizePath = (href: string) => {
+  if (!href.startsWith('/')) return href
+  const sanitized = href === '/' ? '/' : `/${href.replace(/^\/+/, '')}`
+  return sanitized
 }
 
 type HeaderProps = {
@@ -34,24 +31,47 @@ export default function Header({
   megaMenu,
 }: HeaderProps) {
   const normalizedUtilityLinks = Array.isArray(utilityLinks) ? utilityLinks : []
-  const primaryCta = normalizedUtilityLinks[0] ?? (phone ? { label: phone, href: `tel:${phone}` } : undefined)
-  const filteredLinks = headerLinks.filter((item) => {
+
+  const resolvedHeaderLinks = headerLinks
+    .map((item) => {
+      const resolved = resolveLink(item.link)
+      if (!resolved) return null
+      return { label: item.label, resolved }
+    })
+    .filter(Boolean) as Array<{ label: string; resolved: ResolvedLink }>
+
+  const filteredLinks = resolvedHeaderLinks.filter((item) => {
     if (!megaMenu) return true
     const suppressed = ['/services', '/locations']
-    return !suppressed.includes(item.href)
+    const path = normalizePath(item.resolved.href)
+    return !suppressed.includes(path)
   })
 
+  const primaryUtility = normalizedUtilityLinks[0]
+  const resolvedPrimaryUtility = primaryUtility ? resolveLink(primaryUtility.link) : null
+  const primaryCta = resolvedPrimaryUtility
+    ? { label: primaryUtility.label, resolved: resolvedPrimaryUtility }
+    : phone
+      ? { label: phone, resolved: { href: `tel:${phone}` } }
+      : null
+
   return (
-    <header className="border-b border-zinc-200 bg-white/80 backdrop-blur">
+    <header className="sticky top-0 z-40 surface-glass border-b border-divider">
       <Container className="flex h-16 items-center justify-between gap-6">
-        <Link href="/" className="text-base font-semibold tracking-tight text-zinc-900">
+        <Link href="/" className="text-base font-semibold tracking-tight text-strong">
           {businessName}
         </Link>
 
-        <nav aria-label="Primary" className="hidden items-center gap-6 text-sm text-zinc-600 md:flex">
+        <nav aria-label="Primary" className="hidden items-center gap-6 text-sm text-muted md:flex">
           <MegaMenu services={megaMenu?.services} locations={megaMenu?.locations} />
           {filteredLinks.map((item) => (
-            <Link key={item.href} href={normalizeHref(item.href)} className="transition-colors hover:text-zinc-900">
+            <Link
+              key={`${item.label}-${item.resolved.href}`}
+              href={item.resolved.href}
+              target={item.resolved.target}
+              rel={item.resolved.rel}
+              className="transition-colors hover:text-strong"
+            >
               {item.label}
             </Link>
           ))}
@@ -59,7 +79,9 @@ export default function Header({
 
         {primaryCta ? (
           <Link
-            href={normalizeHref(primaryCta.href)}
+            href={primaryCta.resolved.href}
+            target={primaryCta.resolved.target}
+            rel={primaryCta.resolved.rel}
             className="bg-brand rounded-full px-4 py-2 text-sm font-medium transition"
           >
             {ctaLabel || primaryCta.label}

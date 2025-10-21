@@ -1,7 +1,7 @@
 'use client'
 
 import { useFormStatus } from 'react-dom'
-import { useActionState } from 'react'
+import { useActionState, useEffect, useState } from 'react'
 import { submitLead, initialLeadState, type LeadFormState } from '@/app/actions/createLead'
 
 type LeadCaptureFormProps = {
@@ -25,14 +25,25 @@ function SubmitButton() {
 
 export default function LeadCaptureForm({ defaultService, pagePath, businessName }: LeadCaptureFormProps) {
   const [state, formAction] = useActionState<LeadFormState, FormData>(submitLead, initialLeadState)
+  const [formReady, setFormReady] = useState(false)
+
+  useEffect(() => {
+    const timer = setTimeout(() => setFormReady(true), 1500)
+    return () => clearTimeout(timer)
+  }, [])
 
   return (
     <form action={formAction} className="grid gap-4">
       <input type="hidden" name="page" value={pagePath ?? ''} />
       {defaultService ? <input type="hidden" name="service" value={defaultService} /> : null}
+      <input type="hidden" name="formReady" value={formReady ? 'yes' : ''} />
+      <div className="sr-only" aria-hidden>
+        <label htmlFor="lead-company">Company</label>
+        <input id="lead-company" name="company" tabIndex={-1} autoComplete="off" />
+      </div>
 
       <div className="grid gap-2">
-        <label htmlFor="lead-name" className="text-sm font-medium text-zinc-700">
+        <label htmlFor="lead-name" className="text-sm font-medium text-muted">
           Name
         </label>
         <input
@@ -40,13 +51,13 @@ export default function LeadCaptureForm({ defaultService, pagePath, businessName
           name="name"
           required
           placeholder="Jane Doe"
-          className="rounded-xl border border-zinc-300 bg-white px-3 py-2 text-sm outline-none ring-offset-2 focus-visible:ring-2 focus-visible:ring-zinc-900"
+          className="rounded-xl border border-divider bg-surface px-3 py-2 text-sm outline-none ring-offset-2 focus-visible:ring-2 focus-visible:ring-[var(--color-brand-primary)]"
         />
         {state.fieldErrors?.name ? <p className="text-xs text-red-600">{state.fieldErrors.name}</p> : null}
       </div>
 
       <div className="grid gap-2">
-        <label htmlFor="lead-email" className="text-sm font-medium text-zinc-700">
+        <label htmlFor="lead-email" className="text-sm font-medium text-muted">
           Email
         </label>
         <input
@@ -55,25 +66,25 @@ export default function LeadCaptureForm({ defaultService, pagePath, businessName
           type="email"
           required
           placeholder="you@email.com"
-          className="rounded-xl border border-zinc-300 bg-white px-3 py-2 text-sm outline-none ring-offset-2 focus-visible:ring-2 focus-visible:ring-zinc-900"
+          className="rounded-xl border border-divider bg-surface px-3 py-2 text-sm outline-none ring-offset-2 focus-visible:ring-2 focus-visible:ring-[var(--color-brand-primary)]"
         />
         {state.fieldErrors?.email ? <p className="text-xs text-red-600">{state.fieldErrors.email}</p> : null}
       </div>
 
       <div className="grid gap-2">
-        <label htmlFor="lead-phone" className="text-sm font-medium text-zinc-700">
+        <label htmlFor="lead-phone" className="text-sm font-medium text-muted">
           Phone
         </label>
         <input
           id="lead-phone"
           name="phone"
           placeholder="(555) 123-4567"
-          className="rounded-xl border border-zinc-300 bg-white px-3 py-2 text-sm outline-none ring-offset-2 focus-visible:ring-2 focus-visible:ring-zinc-900"
+          className="rounded-xl border border-divider bg-surface px-3 py-2 text-sm outline-none ring-offset-2 focus-visible:ring-2 focus-visible:ring-[var(--color-brand-primary)]"
         />
       </div>
 
       <div className="grid gap-2">
-        <label htmlFor="lead-message" className="text-sm font-medium text-zinc-700">
+        <label htmlFor="lead-message" className="text-sm font-medium text-muted">
           How can we help?
         </label>
         <textarea
@@ -81,7 +92,7 @@ export default function LeadCaptureForm({ defaultService, pagePath, businessName
           name="message"
           rows={4}
           placeholder={`Tell ${businessName ?? 'our team'} about your project`}
-          className="rounded-xl border border-zinc-300 bg-white px-3 py-2 text-sm outline-none ring-offset-2 focus-visible:ring-2 focus-visible:ring-zinc-900"
+          className="rounded-xl border border-divider bg-surface px-3 py-2 text-sm outline-none ring-offset-2 focus-visible:ring-2 focus-visible:ring-[var(--color-brand-primary)]"
         />
       </div>
 

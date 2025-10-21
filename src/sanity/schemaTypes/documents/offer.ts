@@ -13,6 +13,12 @@ export default defineType({
     defineField({ name: 'body', type: 'richText', validation: (r) => r.required() }),
     defineField({ name: 'validFrom', type: 'datetime', validation: (r) => r.required() }),
     defineField({ name: 'validTo', type: 'datetime', validation: (r) => r.required() }),
+    defineField({
+      name: 'breadcrumbs',
+      title: 'Breadcrumbs',
+      type: 'breadcrumbSettings',
+      options: { collapsible: true, collapsed: true },
+    }),
     defineField({ name: 'seo', type: 'seo' }),
   ],
   preview: { select: { title: 'title', subtitle: 'excerpt' } },
