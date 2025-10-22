@@ -41,7 +41,7 @@ test.describe('Technical SEO', () => {
     // Check that the current URL doesn't have a trailing slash (except for root)
     const currentUrl = page.url();
     // Allow trailing slash for root URL in development
-    if (currentUrl !== 'http://localhost:3000/' && currentUrl !== 'http://localhost:3000') {
+    if (currentUrl !== 'http://localhost:3001/' && currentUrl !== 'http://localhost:3001') {
       expect(currentUrl).not.toMatch(/\/$/);
     }
   });

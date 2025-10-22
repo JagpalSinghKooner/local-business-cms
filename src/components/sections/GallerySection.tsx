@@ -1,9 +1,9 @@
-import Image from 'next/image'
 import type { PageSection } from '@/types'
 import Container from '@/components/layout/Container'
 import { getSectionLayout } from './layout'
 import { cn } from '@/lib/cn'
-import { getImageUrl, getImageAlt } from '@/types/sanity-helpers'
+import OptimizedImage from '@/components/ui/OptimizedImage'
+import { getImageUrl } from '@/types/sanity-helpers'
 
 type GallerySectionProps = {
   section: Extract<PageSection, { _type: 'section.gallery' }>
@@ -16,22 +16,34 @@ export default function GallerySection({ section }: GallerySectionProps) {
   const layout = getSectionLayout(section)
   const mode = section.layoutMode ?? 'grid'
 
-  const renderImage = (image: (typeof images)[number], index: number) => (
-    <figure key={image?._key || index} className="relative overflow-hidden rounded-2xl bg-surface-muted">
-      <Image
-        src={getImageUrl(image?.image) ?? `https://placehold.co/800x600/png?text=Media+${index + 1}`}
-        alt={getImageAlt(image?.image)}
-        width={800}
-        height={600}
-        className="h-full w-full object-cover"
-      />
-      {(image as { caption?: string })?.caption ? (
-        <figcaption className="absolute inset-x-0 bottom-0 bg-surface bg-opacity-90 p-3 text-sm text-muted">
-          {(image as { caption?: string }).caption}
-        </figcaption>
-      ) : null}
-    </figure>
-  )
+  const renderImage = (image: (typeof images)[number], index: number) => {
+    const imageUrl = getImageUrl(image?.image)
+    if (!imageUrl) return null
+
+    return (
+      <figure key={image?._key || index} className="relative overflow-hidden rounded-2xl bg-surface-muted">
+        <OptimizedImage
+          image={image}
+          width={800}
+          height={600}
+          className="h-full w-full object-cover"
+          sizes={
+            mode === 'carousel'
+              ? '(min-width: 1024px) 384px, (min-width: 768px) 320px, 280px'
+              : mode === 'masonry'
+                ? '(min-width: 1024px) 33vw, (min-width: 768px) 50vw, 100vw'
+                : '(min-width: 1024px) 33vw, (min-width: 768px) 50vw, 100vw'
+          }
+          priority="lazy"
+        />
+        {(image as { caption?: string })?.caption ? (
+          <figcaption className="absolute inset-x-0 bottom-0 bg-surface bg-opacity-90 p-3 text-sm text-muted">
+            {(image as { caption?: string }).caption}
+          </figcaption>
+        ) : null}
+      </figure>
+    )
+  }
 
   return (
     <section

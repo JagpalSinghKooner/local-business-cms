@@ -1,6 +1,7 @@
 import type { NextRequest } from 'next/server'
 import { NextResponse } from 'next/server'
 import { client } from '@/sanity/client'
+import { findMatchingRedirect, applyRedirectCaptureGroups, type RedirectRule } from '@/lib/redirect-validation'
 
 const FALLBACK_HOST = 'www.buddsplumbing.com'
 
@@ -23,11 +24,11 @@ function resolveCanonicalHost(): string {
 const canonicalHost = resolveCanonicalHost()
 
 // Cache for redirects to avoid hitting Sanity on every request
-let redirectsCache: Array<{ from: string; to: string; statusCode: number }> = []
+let redirectsCache: RedirectRule[] = []
 let cacheTimestamp = 0
 const CACHE_DURATION = 5 * 60 * 1000 // 5 minutes
 
-async function getRedirects(): Promise<Array<{ from: string; to: string; statusCode: number }>> {
+async function getRedirects(): Promise<RedirectRule[]> {
   const now = Date.now()
 
   // Return cached data if still valid
@@ -36,11 +37,15 @@ async function getRedirects(): Promise<Array<{ from: string; to: string; statusC
   }
 
   try {
-    const redirects = await client.fetch(`
-      *[_type == "redirect" && isActive == true] {
+    const redirects = await client.fetch<RedirectRule[]>(`
+      *[_type == "redirect" && isActive == true] | order(priority asc) {
+        _id,
         from,
         to,
-        statusCode
+        matchType,
+        statusCode,
+        isActive,
+        priority
       }
     `)
 
@@ -77,20 +82,22 @@ export async function middleware(req: NextRequest) {
     return NextResponse.redirect(url, 308)
   }
 
-  // Handle custom redirects from CMS
+  // Handle custom redirects from CMS (with wildcard/regex support)
   const redirects = await getRedirects()
   const currentPath = url.pathname
-  
-  for (const redirect of redirects) {
-    if (redirect.from === currentPath) {
-      // Handle relative URLs
-      if (redirect.to.startsWith('/')) {
-        url.pathname = redirect.to
-        return NextResponse.redirect(url, redirect.statusCode)
-      } else {
-        // Handle absolute URLs
-        return NextResponse.redirect(redirect.to, redirect.statusCode)
-      }
+
+  const matchedRedirect = findMatchingRedirect(currentPath, redirects)
+
+  if (matchedRedirect) {
+    const destination = applyRedirectCaptureGroups(currentPath, matchedRedirect)
+
+    // Handle relative URLs
+    if (destination.startsWith('/')) {
+      url.pathname = destination
+      return NextResponse.redirect(url, matchedRedirect.statusCode)
+    } else {
+      // Handle absolute URLs
+      return NextResponse.redirect(destination, matchedRedirect.statusCode)
     }
   }
 

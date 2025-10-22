@@ -1,11 +1,10 @@
-import Image from 'next/image'
 import Container from '@/components/layout/Container'
 import Portable from '@/components/Portable'
 import { CtaButton } from '@/components/ui/CtaButton'
 import type { PageSection } from '@/types'
 import { getSectionLayout } from './layout'
 import { cn } from '@/lib/cn'
-import { getImageUrl, getImageAlt } from '@/types/sanity-helpers'
+import OptimizedImage from '@/components/ui/OptimizedImage'
 
 type MediaTextSectionProps = {
   section: Extract<PageSection, { _type: 'section.mediaText' }>
@@ -19,7 +18,6 @@ const backgroundClasses: Record<string, string> = {
 
 export default function MediaTextSection({ section }: MediaTextSectionProps) {
   const backgroundClass = backgroundClasses[section.background ?? 'default'] ?? backgroundClasses.default
-  const image = section.media?.image
   const imagePosition = section.mediaPosition ?? 'image-right'
   const imageFirst = imagePosition === 'image-left'
   const ctas = Array.isArray(section.ctas) ? section.ctas : []
@@ -57,17 +55,16 @@ export default function MediaTextSection({ section }: MediaTextSectionProps) {
           ) : null}
         </div>
 
-        {getImageUrl(image) ? (
-          <div className={`${imageFirst ? 'order-1 md:order-2' : 'order-1'} relative aspect-video overflow-hidden rounded-3xl shadow-elevated`}>
-            <Image
-              src={getImageUrl(image)!}
-              alt={getImageAlt(image, section.heading ?? '')}
-              fill
-              className="object-cover"
-              sizes="(min-width: 1024px) 50vw, 100vw"
-            />
-          </div>
-        ) : null}
+        <div className={`${imageFirst ? 'order-1 md:order-2' : 'order-1'} relative aspect-video overflow-hidden rounded-3xl shadow-elevated`}>
+          <OptimizedImage
+            image={section.media}
+            alt={section.heading ?? ''}
+            fill
+            className="object-cover"
+            sizes="(min-width: 1024px) 50vw, 100vw"
+            priority={((section.media as { loadingPriority?: string })?.loadingPriority as 'eager' | 'lazy' | 'auto') || 'auto'}
+          />
+        </div>
       </Container>
     </section>
   )

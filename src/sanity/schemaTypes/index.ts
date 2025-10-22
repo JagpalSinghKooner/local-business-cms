@@ -33,6 +33,7 @@ import socialLink from './objects/socialLink'
 import trackingScript from './objects/trackingScript'
 import cta from './objects/cta'
 import link from './objects/link'
+import imageWithPriority from './fields/imageWithPriority'
 import { sectionTypes } from './objects/sections'
 import { breadcrumbObjects } from './objects/breadcrumbs'
 
@@ -64,6 +65,7 @@ const objectTypes: SchemaTypeDefinition[] = [
   richText,
   address,
   galleryImage,
+  imageWithPriority,
   geo,
   openingHours,
   socialLink,

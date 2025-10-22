@@ -3221,6 +3221,218 @@
           }
         },
         {
+          "name": "localSEO",
+          "title": "Local SEO Data",
+          "description": "Additional data for local SEO and Schema.org structured data",
+          "hidden": false,
+          "readOnly": false,
+          "codegen": {
+            "required": false
+          },
+          "hasValidation": false,
+          "definition": {
+            "codegen": {
+              "required": false
+            },
+            "description": "Additional data for local SEO and Schema.org structured data",
+            "hidden": false,
+            "name": "localSEO",
+            "readOnly": false,
+            "title": "Local SEO Data",
+            "hasValidation": false,
+            "type": "Object",
+            "fields": [
+              {
+                "name": "county",
+                "title": "County",
+                "description": "County or region name",
+                "hidden": false,
+                "readOnly": false,
+                "codegen": {
+                  "required": false
+                },
+                "hasValidation": false,
+                "definition": {
+                  "codegen": {
+                    "required": false
+                  },
+                  "description": "County or region name",
+                  "hidden": false,
+                  "name": "county",
+                  "readOnly": false,
+                  "title": "County",
+                  "hasValidation": false,
+                  "type": "String",
+                  "list": null
+                }
+              },
+              {
+                "name": "state",
+                "title": "State",
+                "description": "State or province (e.g., \"ON\", \"CA\")",
+                "hidden": false,
+                "readOnly": false,
+                "codegen": {
+                  "required": false
+                },
+                "hasValidation": false,
+                "definition": {
+                  "codegen": {
+                    "required": false
+                  },
+                  "description": "State or province (e.g., \"ON\", \"CA\")",
+                  "hidden": false,
+                  "name": "state",
+                  "readOnly": false,
+                  "title": "State",
+                  "hasValidation": false,
+                  "type": "String",
+                  "list": null
+                }
+              },
+              {
+                "name": "zipCodes",
+                "title": "ZIP/Postal Codes",
+                "description": "List of ZIP or postal codes served",
+                "hidden": false,
+                "readOnly": false,
+                "codegen": {
+                  "required": false
+                },
+                "hasValidation": false,
+                "definition": {
+                  "codegen": {
+                    "required": false
+                  },
+                  "description": "List of ZIP or postal codes served",
+                  "hidden": false,
+                  "name": "zipCodes",
+                  "readOnly": false,
+                  "title": "ZIP/Postal Codes",
+                  "hasValidation": false,
+                  "type": "Array",
+                  "of": [
+                    {
+                      "codegen": {
+                        "required": false
+                      },
+                      "description": null,
+                      "hidden": false,
+                      "name": null,
+                      "readOnly": false,
+                      "title": null,
+                      "hasValidation": false,
+                      "type": "String",
+                      "list": null
+                    }
+                  ],
+                  "list": null
+                }
+              },
+              {
+                "name": "neighborhoods",
+                "title": "Neighborhoods",
+                "description": "Neighborhoods or districts within this location",
+                "hidden": false,
+                "readOnly": false,
+                "codegen": {
+                  "required": false
+                },
+                "hasValidation": false,
+                "definition": {
+                  "codegen": {
+                    "required": false
+                  },
+                  "description": "Neighborhoods or districts within this location",
+                  "hidden": false,
+                  "name": "neighborhoods",
+                  "readOnly": false,
+                  "title": "Neighborhoods",
+                  "hasValidation": false,
+                  "type": "Array",
+                  "of": [
+                    {
+                      "codegen": {
+                        "required": false
+                      },
+                      "description": null,
+                      "hidden": false,
+                      "name": null,
+                      "readOnly": false,
+                      "title": null,
+                      "hasValidation": false,
+                      "type": "String",
+                      "list": null
+                    }
+                  ],
+                  "list": null
+                }
+              },
+              {
+                "name": "radius",
+                "title": "Radius",
+                "description": "Service radius in miles from this location",
+                "hidden": false,
+                "readOnly": false,
+                "codegen": {
+                  "required": false
+                },
+                "hasValidation": false,
+                "definition": {
+                  "codegen": {
+                    "required": false
+                  },
+                  "description": "Service radius in miles from this location",
+                  "hidden": false,
+                  "name": "radius",
+                  "readOnly": false,
+                  "title": "Radius",
+                  "hasValidation": false,
+                  "type": "Number",
+                  "list": null
+                }
+              },
+              {
+                "name": "populationSize",
+                "title": "Population Size",
+                "description": "Used to prioritize locations in listings",
+                "hidden": false,
+                "readOnly": false,
+                "codegen": {
+                  "required": false
+                },
+                "hasValidation": false,
+                "definition": {
+                  "codegen": {
+                    "required": false
+                  },
+                  "description": "Used to prioritize locations in listings",
+                  "hidden": false,
+                  "name": "populationSize",
+                  "readOnly": false,
+                  "title": "Population Size",
+                  "hasValidation": false,
+                  "type": "String",
+                  "list": [
+                    {
+                      "title": "Small (< 50k)",
+                      "value": "small"
+                    },
+                    {
+                      "title": "Medium (50k - 250k)",
+                      "value": "medium"
+                    },
+                    {
+                      "title": "Large (> 250k)",
+                      "value": "large"
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        },
+        {
           "name": "services",
           "title": "Popular Services",
           "description": "",
@@ -4760,7 +4972,7 @@
         {
           "name": "from",
           "title": "From Path",
-          "description": "The path to redirect from (e.g., /old-page)",
+          "description": "The path to redirect from. Supports wildcards (*) and regex patterns.",
           "hidden": false,
           "readOnly": false,
           "codegen": {
@@ -4771,7 +4983,7 @@
             "codegen": {
               "required": false
             },
-            "description": "The path to redirect from (e.g., /old-page)",
+            "description": "The path to redirect from. Supports wildcards (*) and regex patterns.",
             "hidden": false,
             "name": "from",
             "readOnly": false,
@@ -4784,7 +4996,7 @@
         {
           "name": "to",
           "title": "To URL",
-          "description": "The URL to redirect to (can be internal or external)",
+          "description": "The URL to redirect to. Use $1, $2 for wildcard/regex capture groups.",
           "hidden": false,
           "readOnly": false,
           "codegen": {
@@ -4795,7 +5007,7 @@
             "codegen": {
               "required": false
             },
-            "description": "The URL to redirect to (can be internal or external)",
+            "description": "The URL to redirect to. Use $1, $2 for wildcard/regex capture groups.",
             "hidden": false,
             "name": "to",
             "readOnly": false,
@@ -4803,6 +5015,43 @@
             "hasValidation": true,
             "type": "String",
             "list": null
+          }
+        },
+        {
+          "name": "matchType",
+          "title": "Match Type",
+          "description": "How to match the from path",
+          "hidden": false,
+          "readOnly": false,
+          "codegen": {
+            "required": false
+          },
+          "hasValidation": true,
+          "definition": {
+            "codegen": {
+              "required": false
+            },
+            "description": "How to match the from path",
+            "hidden": false,
+            "name": "matchType",
+            "readOnly": false,
+            "title": "Match Type",
+            "hasValidation": true,
+            "type": "String",
+            "list": [
+              {
+                "title": "Exact",
+                "value": "exact"
+              },
+              {
+                "title": "Wildcard (*)",
+                "value": "wildcard"
+              },
+              {
+                "title": "Regex",
+                "value": "regex"
+              }
+            ]
           }
         },
         {
@@ -4890,6 +5139,69 @@
             "title": "Notes",
             "hasValidation": false,
             "type": "Text"
+          }
+        },
+        {
+          "name": "priority",
+          "title": "Priority",
+          "description": "Lower numbers are checked first (default: 100). Use for ordering redirect rules.",
+          "hidden": false,
+          "readOnly": false,
+          "codegen": {
+            "required": false
+          },
+          "hasValidation": true,
+          "definition": {
+            "codegen": {
+              "required": false
+            },
+            "description": "Lower numbers are checked first (default: 100). Use for ordering redirect rules.",
+            "hidden": false,
+            "name": "priority",
+            "readOnly": false,
+            "title": "Priority",
+            "hasValidation": true,
+            "type": "Number",
+            "list": null
+          }
+        },
+        {
+          "name": "validationWarnings",
+          "title": "Validation Warnings",
+          "description": "",
+          "hidden": true,
+          "readOnly": true,
+          "codegen": {
+            "required": false
+          },
+          "hasValidation": false,
+          "definition": {
+            "codegen": {
+              "required": false
+            },
+            "description": null,
+            "hidden": true,
+            "name": "validationWarnings",
+            "readOnly": true,
+            "title": "Validation Warnings",
+            "hasValidation": false,
+            "type": "Array",
+            "of": [
+              {
+                "codegen": {
+                  "required": false
+                },
+                "description": null,
+                "hidden": false,
+                "name": null,
+                "readOnly": false,
+                "title": null,
+                "hasValidation": false,
+                "type": "String",
+                "list": null
+              }
+            ],
+            "list": null
           }
         }
       ]
@@ -8549,6 +8861,105 @@
       },
       "description": null,
       "hidden": false,
+      "name": "imageWithPriority",
+      "readOnly": false,
+      "title": "Optimized Image",
+      "hasValidation": false,
+      "type": "Object",
+      "fields": [
+        {
+          "name": "image",
+          "title": "Image",
+          "description": "",
+          "hidden": false,
+          "readOnly": false,
+          "codegen": {
+            "required": false
+          },
+          "hasValidation": false,
+          "definition": {
+            "codegen": {
+              "required": false
+            },
+            "description": null,
+            "hidden": false,
+            "name": "image",
+            "readOnly": false,
+            "title": "Image",
+            "hasValidation": false,
+            "type": "Image",
+            "fields": null
+          }
+        },
+        {
+          "name": "alt",
+          "title": "Alt Text",
+          "description": "Descriptive text for accessibility and SEO",
+          "hidden": true,
+          "readOnly": false,
+          "codegen": {
+            "required": false
+          },
+          "hasValidation": false,
+          "definition": {
+            "codegen": {
+              "required": false
+            },
+            "description": "Descriptive text for accessibility and SEO",
+            "hidden": true,
+            "name": "alt",
+            "readOnly": false,
+            "title": "Alt Text",
+            "hasValidation": false,
+            "type": "String",
+            "list": null
+          }
+        },
+        {
+          "name": "loadingPriority",
+          "title": "Loading Priority",
+          "description": "Control when this image loads. \"Eager\" for above-fold/hero images (improves LCP). \"Lazy\" for below-fold images. \"Auto\" uses default behavior.",
+          "hidden": true,
+          "readOnly": false,
+          "codegen": {
+            "required": false
+          },
+          "hasValidation": false,
+          "definition": {
+            "codegen": {
+              "required": false
+            },
+            "description": "Control when this image loads. \"Eager\" for above-fold/hero images (improves LCP). \"Lazy\" for below-fold images. \"Auto\" uses default behavior.",
+            "hidden": true,
+            "name": "loadingPriority",
+            "readOnly": false,
+            "title": "Loading Priority",
+            "hasValidation": false,
+            "type": "String",
+            "list": [
+              {
+                "title": "Auto (Default)",
+                "value": "auto"
+              },
+              {
+                "title": "Eager (Above Fold)",
+                "value": "eager"
+              },
+              {
+                "title": "Lazy (Below Fold)",
+                "value": "lazy"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "codegen": {
+        "required": false
+      },
+      "description": null,
+      "hidden": false,
       "name": "geo",
       "readOnly": false,
       "title": "Map Coordinates",
@@ -9468,7 +9879,7 @@
         {
           "name": "media",
           "title": "Hero Media",
-          "description": "",
+          "description": "Hero images should use \"Eager\" loading priority for optimal LCP performance.",
           "hidden": false,
           "readOnly": false,
           "codegen": {
@@ -9479,86 +9890,14 @@
             "codegen": {
               "required": false
             },
-            "description": null,
+            "description": "Hero images should use \"Eager\" loading priority for optimal LCP performance.",
             "hidden": false,
             "name": "media",
             "readOnly": false,
             "title": "Hero Media",
             "hasValidation": false,
-            "type": "Object",
-            "fields": [
-              {
-                "name": "image",
-                "title": "Image",
-                "description": "",
-                "hidden": false,
-                "readOnly": false,
-                "codegen": {
-                  "required": false
-                },
-                "hasValidation": false,
-                "definition": {
-                  "codegen": {
-                    "required": false
-                  },
-                  "description": null,
-                  "hidden": false,
-                  "name": "image",
-                  "readOnly": false,
-                  "title": "Image",
-                  "hasValidation": false,
-                  "type": "Image",
-                  "fields": null
-                }
-              },
-              {
-                "name": "alt",
-                "title": "Alt Text",
-                "description": "",
-                "hidden": true,
-                "readOnly": false,
-                "codegen": {
-                  "required": false
-                },
-                "hasValidation": false,
-                "definition": {
-                  "codegen": {
-                    "required": false
-                  },
-                  "description": null,
-                  "hidden": true,
-                  "name": "alt",
-                  "readOnly": false,
-                  "title": "Alt Text",
-                  "hasValidation": false,
-                  "type": "String",
-                  "list": null
-                }
-              },
-              {
-                "name": "videoUrl",
-                "title": "Embed URL",
-                "description": "Optional background video or hero embed.",
-                "hidden": false,
-                "readOnly": false,
-                "codegen": {
-                  "required": false
-                },
-                "hasValidation": false,
-                "definition": {
-                  "codegen": {
-                    "required": false
-                  },
-                  "description": "Optional background video or hero embed.",
-                  "hidden": false,
-                  "name": "videoUrl",
-                  "readOnly": false,
-                  "title": "Embed URL",
-                  "hasValidation": false,
-                  "type": "Url"
-                }
-              }
-            ]
+            "type": "RegistryReference",
+            "to": "imageWithPriority"
           }
         },
         {
@@ -15399,58 +15738,8 @@
             "readOnly": false,
             "title": "Media",
             "hasValidation": false,
-            "type": "Object",
-            "fields": [
-              {
-                "name": "image",
-                "title": "Image",
-                "description": "",
-                "hidden": false,
-                "readOnly": false,
-                "codegen": {
-                  "required": false
-                },
-                "hasValidation": false,
-                "definition": {
-                  "codegen": {
-                    "required": false
-                  },
-                  "description": null,
-                  "hidden": false,
-                  "name": "image",
-                  "readOnly": false,
-                  "title": "Image",
-                  "hasValidation": false,
-                  "type": "Image",
-                  "fields": [
-                    {
-                      "name": "alt",
-                      "title": "Alt text",
-                      "description": "",
-                      "hidden": false,
-                      "readOnly": false,
-                      "codegen": {
-                        "required": false
-                      },
-                      "hasValidation": false,
-                      "definition": {
-                        "codegen": {
-                          "required": false
-                        },
-                        "description": null,
-                        "hidden": false,
-                        "name": "alt",
-                        "readOnly": false,
-                        "title": "Alt text",
-                        "hasValidation": false,
-                        "type": "String",
-                        "list": null
-                      }
-                    }
-                  ]
-                }
-              }
-            ]
+            "type": "RegistryReference",
+            "to": "imageWithPriority"
           }
         },
         {

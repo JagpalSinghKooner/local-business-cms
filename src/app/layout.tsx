@@ -7,6 +7,7 @@ import Header from '@/components/layout/Header'
 import Footer from '@/components/layout/Footer'
 import AnalyticsScripts from '@/components/AnalyticsScripts'
 import JsonLd from '@/components/seo/JsonLd'
+import WebVitalsReporter from '@/components/WebVitalsReporter'
 import { buildLocalBusinessJsonLd } from '@/lib/jsonld'
 import { resolveDesignTokens } from '@/lib/tokens'
 import { getGlobalDataset } from '@/sanity/loaders'
@@ -108,6 +109,7 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
       >
         <ErrorBoundary>
           <ScriptOverridesProvider>
+            <WebVitalsReporter />
             <AnalyticsScripts site={site} />
             <JsonLd data={localBusinessJsonLd} />
             {site?.googleTagManagerId ? (

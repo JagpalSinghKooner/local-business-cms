@@ -36,28 +36,8 @@ export default defineType({
     defineField({
       name: 'media',
       title: 'Hero Media',
-      type: 'object',
-      options: { collapsible: true, collapsed: true },
-      fields: [
-        defineField({
-          name: 'image',
-          title: 'Image',
-          type: 'image',
-          options: { hotspot: true },
-        }),
-        defineField({
-          name: 'alt',
-          title: 'Alt Text',
-          type: 'string',
-          hidden: ({ parent }) => !parent?.image,
-        }),
-        defineField({
-          name: 'videoUrl',
-          title: 'Embed URL',
-          type: 'url',
-          description: 'Optional background video or hero embed.',
-        }),
-      ],
+      type: 'imageWithPriority',
+      description: 'Hero images should use "Eager" loading priority for optimal LCP performance.',
     }),
     defineField({
       name: 'background',

@@ -683,6 +683,48 @@ Used for JSON-LD and map embeds
       map?: Geo;
 
       /**
+       * Local SEO Data - `Object`
+Additional data for local SEO and Schema.org structured data
+       */
+      localSEO?: {
+        /**
+       * County - `String`
+County or region name
+       */
+        county?: string;
+
+        /**
+       * State - `String`
+State or province (e.g., "ON", "CA")
+       */
+        state?: string;
+
+        /**
+       * ZIP/Postal Codes - `Array`
+List of ZIP or postal codes served
+       */
+        zipCodes?: Array<Sanity.Keyed<string>>;
+
+        /**
+       * Neighborhoods - `Array`
+Neighborhoods or districts within this location
+       */
+        neighborhoods?: Array<Sanity.Keyed<string>>;
+
+        /**
+       * Radius - `Number`
+Service radius in miles from this location
+       */
+        radius?: number;
+
+        /**
+       * Population Size - `String`
+Used to prioritize locations in listings
+       */
+        populationSize?: "small" | "medium" | "large";
+      };
+
+      /**
        * Popular Services - `Array`
        */
       services?: Array<Sanity.KeyedReference<Service>>;
@@ -990,15 +1032,21 @@ Default title applied when creating a page from this template.
 
       /**
        * From Path - `String`
-The path to redirect from (e.g., /old-page)
+The path to redirect from. Supports wildcards (*) and regex patterns.
        */
       from?: string;
 
       /**
        * To URL - `String`
-The URL to redirect to (can be internal or external)
+The URL to redirect to. Use $1, $2 for wildcard/regex capture groups.
        */
       to?: string;
+
+      /**
+       * Match Type - `String`
+How to match the from path
+       */
+      matchType?: "exact" | "wildcard" | "regex";
 
       /**
        * Status Code - `Number`
@@ -1016,6 +1064,17 @@ Whether this redirect is currently active
 Internal notes about this redirect
        */
       notes?: string;
+
+      /**
+       * Priority - `Number`
+Lower numbers are checked first (default: 100). Use for ordering redirect rules.
+       */
+      priority?: number;
+
+      /**
+       * Validation Warnings - `Array`
+       */
+      validationWarnings?: Array<Sanity.Keyed<string>>;
     }
 
     /**
@@ -1815,6 +1874,31 @@ New path (e.g. /new-page) or full URL (https://example.com/new-page).
       alt?: string;
     };
 
+    type ImageWithPriority = {
+      _type: "imageWithPriority";
+
+      /**
+       * Image - `Image`
+       */
+      image?: {
+        asset: Sanity.Asset;
+        crop?: Sanity.ImageCrop;
+        hotspot?: Sanity.ImageHotspot;
+      };
+
+      /**
+       * Alt Text - `String`
+Descriptive text for accessibility and SEO
+       */
+      alt?: string;
+
+      /**
+       * Loading Priority - `String`
+Control when this image loads. "Eager" for above-fold/hero images (improves LCP). "Lazy" for below-fold images. "Auto" uses default behavior.
+       */
+      loadingPriority?: "auto" | "eager" | "lazy";
+    };
+
     type Geo = {
       _type: "geo";
 
@@ -1998,29 +2082,10 @@ Optional items inserted before the current page when automatic mode is used.
       subheading?: string;
 
       /**
-       * Hero Media - `Object`
+       * Hero Media - `RegistryReference`
+Hero images should use "Eager" loading priority for optimal LCP performance.
        */
-      media?: {
-        /**
-         * Image - `Image`
-         */
-        image?: {
-          asset: Sanity.Asset;
-          crop?: Sanity.ImageCrop;
-          hotspot?: Sanity.ImageHotspot;
-        };
-
-        /**
-         * Alt Text - `String`
-         */
-        alt?: string;
-
-        /**
-       * Embed URL - `Url`
-Optional background video or hero embed.
-       */
-        videoUrl?: string;
-      };
+      media?: ImageWithPriority;
 
       /**
        * Background - `String`
@@ -3108,23 +3173,9 @@ Emoji or short text tag (optional)
       body?: RichText;
 
       /**
-       * Media - `Object`
+       * Media - `RegistryReference`
        */
-      media?: {
-        /**
-         * Image - `Image`
-         */
-        image?: {
-          asset: Sanity.Asset;
-          crop?: Sanity.ImageCrop;
-          hotspot?: Sanity.ImageHotspot;
-
-          /**
-           * Alt text - `String`
-           */
-          alt?: string;
-        };
-      };
+      media?: ImageWithPriority;
 
       /**
        * Image position - `String`

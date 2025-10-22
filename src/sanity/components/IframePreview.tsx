@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
 
 const PREVIEW_ORIGIN =
-  process.env.SANITY_STUDIO_PREVIEW_URL || process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'
+  process.env.SANITY_STUDIO_PREVIEW_URL || process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3001'
 const PREVIEW_SECRET = process.env.SANITY_PREVIEW_SECRET
 
 interface IframePreviewProps {

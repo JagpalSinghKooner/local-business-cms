@@ -9,11 +9,21 @@ export default defineType({
       name: "from",
       title: "From Path",
       type: "string",
-      description: "The path to redirect from (e.g., /old-page)",
+      description: "The path to redirect from. Supports wildcards (*) and regex patterns.",
       validation: (Rule) => Rule.required().custom((value) => {
         if (!value) return "From path is required";
-        if (!value.startsWith("/")) return "Path must start with /";
+        if (!value.startsWith("/") && !value.startsWith("^")) return "Path must start with / or ^ (for regex)";
         if (value.includes(" ")) return "Path cannot contain spaces";
+
+        // Validate regex if starts with ^
+        if (value.startsWith("^")) {
+          try {
+            new RegExp(value);
+          } catch {
+            return "Invalid regex pattern";
+          }
+        }
+
         return true;
       }),
     }),
@@ -21,7 +31,23 @@ export default defineType({
       name: "to",
       title: "To URL",
       type: "string",
-      description: "The URL to redirect to (can be internal or external)",
+      description: "The URL to redirect to. Use $1, $2 for wildcard/regex capture groups.",
+      validation: (Rule) => Rule.required(),
+    }),
+    defineField({
+      name: "matchType",
+      title: "Match Type",
+      type: "string",
+      options: {
+        list: [
+          { title: "Exact", value: "exact" },
+          { title: "Wildcard (*)", value: "wildcard" },
+          { title: "Regex", value: "regex" },
+        ],
+        layout: "radio",
+      },
+      initialValue: "exact",
+      description: "How to match the from path",
       validation: (Rule) => Rule.required(),
     }),
     defineField({
@@ -53,18 +79,37 @@ export default defineType({
       rows: 2,
       description: "Internal notes about this redirect",
     }),
+    defineField({
+      name: "priority",
+      title: "Priority",
+      type: "number",
+      description: "Lower numbers are checked first (default: 100). Use for ordering redirect rules.",
+      initialValue: 100,
+      validation: (Rule) => Rule.min(0).max(999),
+    }),
+    defineField({
+      name: "validationWarnings",
+      title: "Validation Warnings",
+      type: "array",
+      of: [{ type: "string" }],
+      hidden: true,
+      readOnly: true,
+    }),
   ],
   preview: {
     select: {
       from: "from",
       to: "to",
+      matchType: "matchType",
       statusCode: "statusCode",
       isActive: "isActive",
+      warnings: "validationWarnings",
     },
-    prepare({ from, to, statusCode, isActive }) {
+    prepare({ from, to, matchType, statusCode, isActive, warnings }) {
+      const warningIcon = warnings && warnings.length > 0 ? " ⚠️" : "";
       return {
-        title: `${from} → ${to}`,
-        subtitle: `${statusCode} ${isActive ? "Active" : "Inactive"}`,
+        title: `${from} → ${to}${warningIcon}`,
+        subtitle: `${matchType} | ${statusCode} | ${isActive ? "Active" : "Inactive"}`,
       };
     },
   },

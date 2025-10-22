@@ -13,16 +13,7 @@ export default defineType({
     defineField({
       name: 'media',
       title: 'Media',
-      type: 'object',
-      fields: [
-        defineField({
-          name: 'image',
-          title: 'Image',
-          type: 'image',
-          options: { hotspot: true },
-          fields: [defineField({ name: 'alt', title: 'Alt text', type: 'string' })],
-        }),
-      ],
+      type: 'imageWithPriority',
     }),
     defineField({
       name: 'mediaPosition',

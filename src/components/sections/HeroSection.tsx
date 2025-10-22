@@ -1,10 +1,9 @@
-import Image from 'next/image'
 import type { PageSection } from '@/types'
 import { CtaButton } from '@/components/ui/CtaButton'
 import Container from '@/components/layout/Container'
 import { getSectionLayout } from './layout'
 import { cn } from '@/lib/cn'
-import { getImageUrl, getImageAlt } from '@/types/sanity-helpers'
+import OptimizedImage from '@/components/ui/OptimizedImage'
 
 type HeroSectionProps = {
   section: Extract<PageSection, { _type: 'section.hero' }>
@@ -25,7 +24,6 @@ export default function HeroSection({ section }: HeroSectionProps) {
   })
 
   if (variant === 'background') {
-    const imageUrl = getImageUrl(section.media?.image)
     return (
       <section
         className={layoutMeta.wrapperClassName}
@@ -33,15 +31,14 @@ export default function HeroSection({ section }: HeroSectionProps) {
         data-animate={layoutMeta.dataAnimate}
         data-alignment={layoutMeta.dataAlignment}
       >
-        {imageUrl ? (
-          <Image
-            src={imageUrl}
-            alt={getImageAlt(section.media?.image, section.heading)}
-            fill
-            className="object-cover"
-            priority
-          />
-        ) : null}
+        <OptimizedImage
+          image={section.media}
+          alt={section.heading}
+          fill
+          className="object-cover"
+          sizes="100vw"
+          priority={((section.media as { loadingPriority?: string })?.loadingPriority as 'eager' | 'lazy' | 'auto') || 'eager'}
+        />
         <div className="absolute inset-0 bg-black/40" aria-hidden />
         <Container
           width={layoutMeta.containerWidth}
@@ -61,8 +58,6 @@ export default function HeroSection({ section }: HeroSectionProps) {
       </section>
     )
   }
-
-  const imageUrl = getImageUrl(section.media?.image)
 
   return (
     <section
@@ -93,15 +88,15 @@ export default function HeroSection({ section }: HeroSectionProps) {
             </div>
           ) : null}
         </div>
-        {variant === 'split' && imageUrl ? (
+        {variant === 'split' ? (
           <div className="relative aspect-video w-full overflow-hidden rounded-3xl bg-surface-muted shadow-elevated">
-            <Image
-              src={imageUrl}
-              alt={getImageAlt(section.media?.image, section.heading)}
+            <OptimizedImage
+              image={section.media}
+              alt={section.heading}
               fill
               className="object-cover"
               sizes="(min-width: 1024px) 50vw, 100vw"
-              priority
+              priority={((section.media as { loadingPriority?: string })?.loadingPriority as 'eager' | 'lazy' | 'auto') || 'eager'}
             />
           </div>
         ) : variant === 'centered' ? (
