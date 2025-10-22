@@ -7,13 +7,13 @@ module.exports = {
     const commands = []
 
     if (nonTestFiles.length > 0) {
-      commands.push(`eslint --fix --max-warnings 0 ${nonTestFiles.join(' ')}`)
-      commands.push(`prettier --write ${nonTestFiles.join(' ')}`)
+      commands.push(`eslint --fix --max-warnings 0 ${nonTestFiles.map((f) => `"${f}"`).join(' ')}`)
+      commands.push(`prettier --write ${nonTestFiles.map((f) => `"${f}"`).join(' ')}`)
     }
 
     if (testFiles.length > 0) {
-      commands.push(`eslint --fix ${testFiles.join(' ')}`)
-      commands.push(`prettier --write ${testFiles.join(' ')}`)
+      commands.push(`eslint --fix ${testFiles.map((f) => `"${f}"`).join(' ')}`)
+      commands.push(`prettier --write ${testFiles.map((f) => `"${f}"`).join(' ')}`)
     }
 
     return commands

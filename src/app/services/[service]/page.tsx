@@ -23,8 +23,34 @@ type LocationRef = { city: string; slug: string }
 
 export const revalidate = 3600
 
+/**
+ * Generate static paths for all service and service+location combinations
+ * This enables static generation at build time for optimal performance
+ */
+export async function generateStaticParams(): Promise<Params[]> {
+  const global = await getGlobalDataset()
+  const params: Params[] = []
+
+  // Generate paths for individual services
+  for (const service of global.services) {
+    params.push({ service: service.slug })
+  }
+
+  // Generate paths for service+location combinations
+  for (const service of global.services) {
+    for (const location of global.locations) {
+      params.push({ service: `${service.slug}-${location.slug}` })
+    }
+  }
+
+  return params
+}
+
 // Helper function to split service-location slug
-function splitServiceAndLocation(slug: string, locations: LocationRef[]): { serviceSlug: string; locationSlug: string } | null {
+function splitServiceAndLocation(
+  slug: string,
+  locations: LocationRef[]
+): { serviceSlug: string; locationSlug: string } | null {
   const sorted = [...locations].sort((a, b) => b.slug.length - a.slug.length)
   for (const location of sorted) {
     const suffix = `-${location.slug}`
@@ -123,7 +149,9 @@ export default async function ServicePage({ params }: { params: Promise<Params> 
 
     if (!service || !location) return notFound()
 
-    const otherLocations = global.locations.filter((item) => item.slug !== location.slug).slice(0, 6)
+    const otherLocations = global.locations
+      .filter((item) => item.slug !== location.slug)
+      .slice(0, 6)
     const otherServices = global.services.filter((item) => item.slug !== service.slug)
     const sections = Array.isArray(service.sections) ? service.sections : []
     const coordinates =
@@ -167,7 +195,11 @@ export default async function ServicePage({ params }: { params: Promise<Params> 
     } else {
       pushUnique({ label: location.city, href: `/locations/${location.slug}`, isCurrent: false })
     }
-    pushUnique({ label: `${service.title} in ${location.city}`, href: normalizedPath, isCurrent: true })
+    pushUnique({
+      label: `${service.title} in ${location.city}`,
+      href: normalizedPath,
+      isCurrent: true,
+    })
 
     const breadcrumbs = combinedTrail.map((crumb, index) => ({
       ...crumb,
@@ -241,7 +273,8 @@ export default async function ServicePage({ params }: { params: Promise<Params> 
                 <div className="space-y-2 text-sm text-muted">
                   {coordinates?.lat && coordinates?.lng ? (
                     <p>
-                      <span className="font-semibold text-muted">Coordinates:</span> {coordinates.lat}, {coordinates.lng}
+                      <span className="font-semibold text-muted">Coordinates:</span>{' '}
+                      {coordinates.lat}, {coordinates.lng}
                     </p>
                   ) : null}
                 </div>
@@ -257,7 +290,10 @@ export default async function ServicePage({ params }: { params: Promise<Params> 
               <ul className="flex flex-wrap gap-3 text-sm text-muted">
                 {otherLocations.map((item) => (
                   <li key={item.slug}>
-                    <Link href={`/locations/${item.slug}`} className="rounded-full border border-divider px-4 py-2 hover:border-brand">
+                    <Link
+                      href={`/locations/${item.slug}`}
+                      className="rounded-full border border-divider px-4 py-2 hover:border-brand"
+                    >
                       {item.city}
                     </Link>
                   </li>
@@ -322,7 +358,9 @@ export default async function ServicePage({ params }: { params: Promise<Params> 
         <Container className="grid items-center gap-10 md:grid-cols-[1.25fr_1fr]">
           <div className="space-y-4">
             {service.category?.title ? (
-              <p className="text-sm uppercase tracking-[0.2em] text-muted">{service.category.title}</p>
+              <p className="text-sm uppercase tracking-[0.2em] text-muted">
+                {service.category.title}
+              </p>
             ) : null}
             <h1 className="text-4xl font-semibold text-strong">{service.title}</h1>
             {service.intro ? (
@@ -388,7 +426,10 @@ export default async function ServicePage({ params }: { params: Promise<Params> 
             <h2 className="text-2xl font-semibold text-strong">Popular locations</h2>
             <ul className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
               {relatedLocations.map((location) => (
-                <li key={location.slug} className="rounded-2xl border border-divider bg-surface p-5 shadow-sm">
+                <li
+                  key={location.slug}
+                  className="rounded-2xl border border-divider bg-surface p-5 shadow-sm"
+                >
                   <Link href={`/locations/${location.slug}`} className="flex flex-col gap-2">
                     <span className="text-lg font-semibold text-strong">{location.city}</span>
                     <span className="text-sm font-semibold text-strong">View location →</span>
