@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { client } from "@/sanity/client";
 
-export async function GET(request: NextRequest) {
+export async function GET(_request: NextRequest) {
   try {
     // Get environment from request or default to production
     const environment = process.env.NODE_ENV === "production" ? "production" : "staging";
@@ -17,7 +17,7 @@ export async function GET(request: NextRequest) {
 Disallow: /admin
 Disallow: /studio
 Disallow: /api/
-Sitemap: ${process.env.NEXT_PUBLIC_SITE_URL || 'https://example.com'}/sitemap.xml`, {
+Sitemap: ${process.env.NEXT_PUBLIC_SITE_URL || ''}/sitemap.xml`, {
         headers: {
           "Content-Type": "text/plain",
         },

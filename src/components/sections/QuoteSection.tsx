@@ -4,6 +4,7 @@ import Container from '@/components/layout/Container'
 import { getSectionLayout } from './layout'
 import { cn } from '@/lib/cn'
 import { CtaButton } from '@/components/ui/CtaButton'
+import { getImageUrl } from '@/types/sanity-helpers'
 
 type QuoteSectionProps = {
   section: Extract<PageSection, { _type: 'section.quote' }>
@@ -26,9 +27,9 @@ export default function QuoteSection({ section }: QuoteSectionProps) {
         <blockquote className="space-y-4">
           <p className="text-2xl font-semibold text-strong">“{section.quote}”</p>
           <footer className="flex items-center gap-4 text-sm text-muted">
-            {section.avatar?.asset?.url ? (
+            {getImageUrl(section.avatar) ? (
               <Image
-                src={section.avatar.asset.url}
+                src={getImageUrl(section.avatar)!}
                 alt={section.author ?? ''}
                 width={48}
                 height={48}
@@ -41,9 +42,9 @@ export default function QuoteSection({ section }: QuoteSectionProps) {
                 {[section.role, section.company].filter(Boolean).join(' · ')}
               </p>
             </div>
-            {section.logo?.asset?.url ? (
+            {getImageUrl(section.logo) ? (
               <Image
-                src={section.logo.asset.url}
+                src={getImageUrl(section.logo)!}
                 alt={section.company ?? ''}
                 width={80}
                 height={40}

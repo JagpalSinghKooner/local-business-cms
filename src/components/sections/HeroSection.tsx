@@ -4,6 +4,7 @@ import { CtaButton } from '@/components/ui/CtaButton'
 import Container from '@/components/layout/Container'
 import { getSectionLayout } from './layout'
 import { cn } from '@/lib/cn'
+import { getImageUrl, getImageAlt } from '@/types/sanity-helpers'
 
 type HeroSectionProps = {
   section: Extract<PageSection, { _type: 'section.hero' }>
@@ -24,7 +25,7 @@ export default function HeroSection({ section }: HeroSectionProps) {
   })
 
   if (variant === 'background') {
-    const imageUrl = section.media?.image?.asset?.url
+    const imageUrl = getImageUrl(section.media?.image)
     return (
       <section
         className={layoutMeta.wrapperClassName}
@@ -35,7 +36,7 @@ export default function HeroSection({ section }: HeroSectionProps) {
         {imageUrl ? (
           <Image
             src={imageUrl}
-            alt={section.media?.image?.alt ?? section.heading}
+            alt={getImageAlt(section.media?.image, section.heading)}
             fill
             className="object-cover"
             priority
@@ -61,7 +62,7 @@ export default function HeroSection({ section }: HeroSectionProps) {
     )
   }
 
-  const imageUrl = section.media?.image?.asset?.url
+  const imageUrl = getImageUrl(section.media?.image)
 
   return (
     <section
@@ -96,7 +97,7 @@ export default function HeroSection({ section }: HeroSectionProps) {
           <div className="relative aspect-video w-full overflow-hidden rounded-3xl bg-surface-muted shadow-elevated">
             <Image
               src={imageUrl}
-              alt={section.media?.image?.alt ?? section.heading}
+              alt={getImageAlt(section.media?.image, section.heading)}
               fill
               className="object-cover"
               sizes="(min-width: 1024px) 50vw, 100vw"

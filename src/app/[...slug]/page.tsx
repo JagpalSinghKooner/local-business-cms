@@ -10,6 +10,8 @@ import { getGlobalDataset, getPageBySlug, listOffers } from '@/sanity/loaders'
 import { ApplyScriptOverrides } from '@/components/scripts/ScriptOverridesProvider'
 import Container from '@/components/layout/Container'
 import PagePreview from '@/components/preview/PagePreview'
+import { env } from '@/lib/env'
+import { getOgImageUrl, type ScriptOverride } from '@/types/sanity-helpers'
 
 function normalizeSlug(raw: string[]): string {
   return raw.join('/')
@@ -20,7 +22,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug?: st
   const slugPath = normalizeSlug(slug)
   const [page, global] = await Promise.all([getPageBySlug(slugPath), getGlobalDataset()])
 
-  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://www.localbusiness.com'
+  const baseUrl = env.NEXT_PUBLIC_SITE_URL
 
   if (!page) {
     return buildSeo({
@@ -36,7 +38,10 @@ export async function generateMetadata({ params }: { params: Promise<{ slug?: st
     path: `/${slugPath}`,
     title: page.metaTitle || page.title || global.site?.name,
     description: page.metaDescription || global.site?.metaDescription,
-    image: page.ogImage?.asset?.url ?? global.site?.ogImage?.asset?.url ?? null,
+    image:
+      getOgImageUrl(page.socialMedia) ??
+      getOgImageUrl(global.site?.ogImage) ??
+      null,
   })
 }
 
@@ -75,7 +80,7 @@ export default async function Page({ params }: { params: Promise<{ slug?: string
 
   return (
     <main className="pb-16">
-      <ApplyScriptOverrides overrides={page.scriptOverrides as any} />
+      <ApplyScriptOverrides overrides={page.scriptOverrides as ScriptOverride[] | undefined} />
       <Breadcrumbs trail={breadcrumbs} />
       {hasSections ? (
         <SectionRenderer

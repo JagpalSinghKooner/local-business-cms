@@ -1,4 +1,4 @@
-import { defineField, defineType } from "sanity";
+import { defineField } from "sanity";
 
 export const seoFields = [
   defineField({

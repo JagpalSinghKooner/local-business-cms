@@ -198,6 +198,75 @@ Defaults to "index,follow" if left blank
     }
 
     /**
+     * Robots.txt
+     */
+    interface RobotsTxt extends Sanity.Document {
+      _type: "robotsTxt";
+
+      /**
+       * Environment - `String`
+       */
+      environment?: "production" | "staging" | "development";
+
+      /**
+       * User Agents - `Array`
+       */
+      userAgents?: Array<
+        Sanity.Keyed<{
+          /**
+       * User Agent - `String`
+e.g., *, Googlebot, Bingbot
+       */
+          name?: string;
+
+          /**
+       * Allow - `Array`
+Paths to allow (e.g., /, /sitemap.xml)
+       */
+          allow?: Array<Sanity.Keyed<string>>;
+
+          /**
+       * Disallow - `Array`
+Paths to disallow (e.g., /admin, /private)
+       */
+          disallow?: Array<Sanity.Keyed<string>>;
+
+          /**
+       * Crawl Delay - `Number`
+Delay in seconds between requests
+       */
+          crawlDelay?: number;
+        }>
+      >;
+
+      /**
+       * Sitemap URL - `Url`
+URL to your sitemap (e.g., https://example.com/sitemap.xml)
+       */
+      sitemap?: string;
+
+      /**
+       * Additional Directives - `Array`
+Custom directives to add to robots.txt
+       */
+      additionalDirectives?: Array<
+        Sanity.Keyed<{
+          /**
+       * Directive - `String`
+e.g., Host: example.com
+       */
+          directive?: string;
+        }>
+      >;
+
+      /**
+       * Active - `Boolean`
+Whether this robots.txt configuration is active
+       */
+      isActive?: boolean;
+    }
+
+    /**
      * Navigation
      */
     interface Navigation extends Sanity.Document {
@@ -914,6 +983,42 @@ Default title applied when creating a page from this template.
     }
 
     /**
+     * Redirect
+     */
+    interface Redirect extends Sanity.Document {
+      _type: "redirect";
+
+      /**
+       * From Path - `String`
+The path to redirect from (e.g., /old-page)
+       */
+      from?: string;
+
+      /**
+       * To URL - `String`
+The URL to redirect to (can be internal or external)
+       */
+      to?: string;
+
+      /**
+       * Status Code - `Number`
+       */
+      statusCode?: 301 | 302 | 307 | 308;
+
+      /**
+       * Active - `Boolean`
+Whether this redirect is currently active
+       */
+      isActive?: boolean;
+
+      /**
+       * Notes - `Text`
+Internal notes about this redirect
+       */
+      notes?: string;
+    }
+
+    /**
      * Testimonial
      */
     interface Testimonial extends Sanity.Document {
@@ -1062,13 +1167,217 @@ Description for search results (~155 chars).
       metaDescription?: string;
 
       /**
-       * Open Graph Image - `Image`
-1200×630 recommended.
+       * Canonical URL - `Url`
+Override the canonical URL for this page. Leave empty to use the page URL.
        */
-      ogImage?: {
-        asset: Sanity.Asset;
-        crop?: Sanity.ImageCrop;
-        hotspot?: Sanity.ImageHotspot;
+      canonicalUrl?: string;
+
+      /**
+       * Meta Robots - `Object`
+       */
+      metaRobots?: {
+        /**
+         * Index - `Boolean`
+         */
+        index?: boolean;
+
+        /**
+         * Follow - `Boolean`
+         */
+        follow?: boolean;
+
+        /**
+         * No Archive - `Boolean`
+         */
+        noarchive?: boolean;
+
+        /**
+         * No Snippet - `Boolean`
+         */
+        nosnippet?: boolean;
+      };
+
+      /**
+       * Social Media - `Object`
+       */
+      socialMedia?: {
+        /**
+       * Open Graph Title - `String`
+Override title for social media sharing
+       */
+        ogTitle?: string;
+
+        /**
+       * Open Graph Description - `Text`
+Override description for social media sharing
+       */
+        ogDescription?: string;
+
+        /**
+       * Open Graph Image - `Image`
+1200×630 recommended for social media sharing
+       */
+        ogImage?: {
+          asset: Sanity.Asset;
+          crop?: Sanity.ImageCrop;
+          hotspot?: Sanity.ImageHotspot;
+        };
+
+        /**
+       * Twitter Title - `String`
+Override title for Twitter sharing
+       */
+        twitterTitle?: string;
+
+        /**
+       * Twitter Description - `Text`
+Override description for Twitter sharing
+       */
+        twitterDescription?: string;
+
+        /**
+       * Twitter Image - `Image`
+1200×630 recommended for Twitter sharing
+       */
+        twitterImage?: {
+          asset: Sanity.Asset;
+          crop?: Sanity.ImageCrop;
+          hotspot?: Sanity.ImageHotspot;
+        };
+
+        /**
+         * Twitter Card Type - `String`
+         */
+        twitterCard?: "summary" | "summary_large_image" | "app" | "player";
+      };
+
+      /**
+       * Structured Data - `Object`
+       */
+      structuredData?: {
+        /**
+         * Enable Local Business Schema - `Boolean`
+         */
+        enableLocalBusiness?: boolean;
+
+        /**
+         * Enable FAQ Schema - `Boolean`
+         */
+        enableFAQ?: boolean;
+
+        /**
+         * Enable Offer Schema - `Boolean`
+         */
+        enableOffer?: boolean;
+
+        /**
+         * Enable Service Schema - `Boolean`
+         */
+        enableService?: boolean;
+
+        /**
+         * Enable Product Schema - `Boolean`
+         */
+        enableProduct?: boolean;
+
+        /**
+       * Custom JSON-LD - `Text`
+Custom JSON-LD structured data (JSON format)
+       */
+        customJsonLd?: string;
+      };
+
+      /**
+       * Hreflang - `Array`
+Language and URL pairs for international SEO
+       */
+      hreflang?: Array<
+        Sanity.Keyed<{
+          /**
+           * Language - `String`
+           */
+          language?: string;
+
+          /**
+           * URL - `Url`
+           */
+          url?: string;
+        }>
+      >;
+
+      /**
+       * Custom Head Scripts - `Array`
+Custom scripts to inject into the page head or body
+       */
+      customHeadScripts?: Array<
+        Sanity.Keyed<{
+          /**
+           * Script Name - `String`
+           */
+          name?: string;
+
+          /**
+           * Script Content - `Text`
+           */
+          script?: string;
+
+          /**
+           * Position - `String`
+           */
+          position?: "head" | "body-start" | "body-end";
+        }>
+      >;
+
+      /**
+       * Fallback Description Source - `String`
+Fallback source for description when meta description is empty
+       */
+      fallbackDescription?: "meta" | "content" | "site";
+
+      /**
+       * Image Optimization - `Object`
+       */
+      imageOptimization?: {
+        /**
+       * Image Width - `Number`
+Default width for images on this page
+       */
+        width?: number;
+
+        /**
+       * Image Height - `Number`
+Default height for images on this page
+       */
+        height?: number;
+
+        /**
+       * Priority Loading - `Boolean`
+Load images with high priority
+       */
+        priority?: boolean;
+
+        /**
+         * Loading Strategy - `String`
+         */
+        loading?: "lazy" | "eager";
+      };
+
+      /**
+       * Pagination - `Object`
+Pagination links for series of pages
+       */
+      pagination?: {
+        /**
+       * Previous Page URL - `Url`
+URL for the previous page in a series
+       */
+        prevUrl?: string;
+
+        /**
+       * Next Page URL - `Url`
+URL for the next page in a series
+       */
+        nextUrl?: string;
       };
     }
 
@@ -1145,13 +1454,217 @@ Description for search results (~155 chars).
       metaDescription?: string;
 
       /**
-       * Open Graph Image - `Image`
-1200×630 recommended.
+       * Canonical URL - `Url`
+Override the canonical URL for this page. Leave empty to use the page URL.
        */
-      ogImage?: {
-        asset: Sanity.Asset;
-        crop?: Sanity.ImageCrop;
-        hotspot?: Sanity.ImageHotspot;
+      canonicalUrl?: string;
+
+      /**
+       * Meta Robots - `Object`
+       */
+      metaRobots?: {
+        /**
+         * Index - `Boolean`
+         */
+        index?: boolean;
+
+        /**
+         * Follow - `Boolean`
+         */
+        follow?: boolean;
+
+        /**
+         * No Archive - `Boolean`
+         */
+        noarchive?: boolean;
+
+        /**
+         * No Snippet - `Boolean`
+         */
+        nosnippet?: boolean;
+      };
+
+      /**
+       * Social Media - `Object`
+       */
+      socialMedia?: {
+        /**
+       * Open Graph Title - `String`
+Override title for social media sharing
+       */
+        ogTitle?: string;
+
+        /**
+       * Open Graph Description - `Text`
+Override description for social media sharing
+       */
+        ogDescription?: string;
+
+        /**
+       * Open Graph Image - `Image`
+1200×630 recommended for social media sharing
+       */
+        ogImage?: {
+          asset: Sanity.Asset;
+          crop?: Sanity.ImageCrop;
+          hotspot?: Sanity.ImageHotspot;
+        };
+
+        /**
+       * Twitter Title - `String`
+Override title for Twitter sharing
+       */
+        twitterTitle?: string;
+
+        /**
+       * Twitter Description - `Text`
+Override description for Twitter sharing
+       */
+        twitterDescription?: string;
+
+        /**
+       * Twitter Image - `Image`
+1200×630 recommended for Twitter sharing
+       */
+        twitterImage?: {
+          asset: Sanity.Asset;
+          crop?: Sanity.ImageCrop;
+          hotspot?: Sanity.ImageHotspot;
+        };
+
+        /**
+         * Twitter Card Type - `String`
+         */
+        twitterCard?: "summary" | "summary_large_image" | "app" | "player";
+      };
+
+      /**
+       * Structured Data - `Object`
+       */
+      structuredData?: {
+        /**
+         * Enable Local Business Schema - `Boolean`
+         */
+        enableLocalBusiness?: boolean;
+
+        /**
+         * Enable FAQ Schema - `Boolean`
+         */
+        enableFAQ?: boolean;
+
+        /**
+         * Enable Offer Schema - `Boolean`
+         */
+        enableOffer?: boolean;
+
+        /**
+         * Enable Service Schema - `Boolean`
+         */
+        enableService?: boolean;
+
+        /**
+         * Enable Product Schema - `Boolean`
+         */
+        enableProduct?: boolean;
+
+        /**
+       * Custom JSON-LD - `Text`
+Custom JSON-LD structured data (JSON format)
+       */
+        customJsonLd?: string;
+      };
+
+      /**
+       * Hreflang - `Array`
+Language and URL pairs for international SEO
+       */
+      hreflang?: Array<
+        Sanity.Keyed<{
+          /**
+           * Language - `String`
+           */
+          language?: string;
+
+          /**
+           * URL - `Url`
+           */
+          url?: string;
+        }>
+      >;
+
+      /**
+       * Custom Head Scripts - `Array`
+Custom scripts to inject into the page head or body
+       */
+      customHeadScripts?: Array<
+        Sanity.Keyed<{
+          /**
+           * Script Name - `String`
+           */
+          name?: string;
+
+          /**
+           * Script Content - `Text`
+           */
+          script?: string;
+
+          /**
+           * Position - `String`
+           */
+          position?: "head" | "body-start" | "body-end";
+        }>
+      >;
+
+      /**
+       * Fallback Description Source - `String`
+Fallback source for description when meta description is empty
+       */
+      fallbackDescription?: "meta" | "content" | "site";
+
+      /**
+       * Image Optimization - `Object`
+       */
+      imageOptimization?: {
+        /**
+       * Image Width - `Number`
+Default width for images on this page
+       */
+        width?: number;
+
+        /**
+       * Image Height - `Number`
+Default height for images on this page
+       */
+        height?: number;
+
+        /**
+       * Priority Loading - `Boolean`
+Load images with high priority
+       */
+        priority?: boolean;
+
+        /**
+         * Loading Strategy - `String`
+         */
+        loading?: "lazy" | "eager";
+      };
+
+      /**
+       * Pagination - `Object`
+Pagination links for series of pages
+       */
+      pagination?: {
+        /**
+       * Previous Page URL - `Url`
+URL for the previous page in a series
+       */
+        prevUrl?: string;
+
+        /**
+       * Next Page URL - `Url`
+URL for the next page in a series
+       */
+        nextUrl?: string;
       };
     }
 
@@ -3843,6 +4356,7 @@ Only used in Studio to identify this layout block.
 
     type Document =
       | SiteSettings
+      | RobotsTxt
       | Navigation
       | Tokens
       | ServiceCategory
@@ -3853,6 +4367,7 @@ Only used in Studio to identify this layout block.
       | Coupon
       | Lead
       | PageTemplate
+      | Redirect
       | Testimonial
       | Faq
       | Page

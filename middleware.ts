@@ -29,7 +29,7 @@ const CACHE_DURATION = 5 * 60 * 1000 // 5 minutes
 
 async function getRedirects(): Promise<Array<{ from: string; to: string; statusCode: number }>> {
   const now = Date.now()
-  
+
   // Return cached data if still valid
   if (redirectsCache.length > 0 && now - cacheTimestamp < CACHE_DURATION) {
     return redirectsCache
@@ -43,13 +43,21 @@ async function getRedirects(): Promise<Array<{ from: string; to: string; statusC
         statusCode
       }
     `)
-    
+
     redirectsCache = redirects || []
     cacheTimestamp = now
-    
+
     return redirectsCache
   } catch (error) {
-    console.error('Error fetching redirects:', error)
+    console.error('Error fetching redirects from Sanity:', error)
+
+    // Return stale cache if available (better than nothing)
+    if (redirectsCache.length > 0) {
+      console.warn('Using stale redirect cache due to fetch error')
+      return redirectsCache
+    }
+
+    // No cache available, return empty array
     return []
   }
 }

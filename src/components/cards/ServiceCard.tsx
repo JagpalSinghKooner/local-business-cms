@@ -2,6 +2,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import Portable from '@/components/Portable'
 import type { ServiceSummary } from '@/types'
+import { getImageUrl, getImageAlt } from '@/types/sanity-helpers'
 
 const PLACEHOLDER = 'https://placehold.co/600x400/png?text=Service'
 
@@ -11,7 +12,8 @@ type ServiceCardProps = {
 }
 
 export default function ServiceCard({ service, locationSlug }: ServiceCardProps) {
-  const imageSrc = service.heroImage?.asset?.url ?? PLACEHOLDER
+  const imageSrc = getImageUrl(service.heroImage) ?? PLACEHOLDER
+  const imageAlt = getImageAlt(service.heroImage, service.title)
   const intro = service.intro ? service.intro.slice(0, 1) : undefined
   const href = locationSlug ? `/services/${service.slug}-${locationSlug}` : `/services/${service.slug}`
 
@@ -22,8 +24,8 @@ export default function ServiceCard({ service, locationSlug }: ServiceCardProps)
     >
       <div className="relative aspect-[4/3] w-full overflow-hidden">
         <Image
-          src={`${imageSrc}`}
-          alt={service.heroImage?.alt ?? service.title}
+          src={imageSrc}
+          alt={imageAlt}
           fill
           className="object-cover transition duration-300 group-hover:scale-105"
           sizes="(min-width: 1024px) 25vw, (min-width: 768px) 33vw, 100vw"

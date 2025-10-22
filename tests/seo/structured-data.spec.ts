@@ -100,7 +100,7 @@ test.describe('Structured Data (JSON-LD)', () => {
             }
           }
         }
-      } catch (error) {
+      } catch {
         console.log(`Page ${pagePath} not found, skipping FAQ test`);
       }
     }
@@ -125,7 +125,7 @@ test.describe('Structured Data (JSON-LD)', () => {
           }
         }
       }
-    } catch (error) {
+    } catch {
       console.log('Offers page not found, skipping Offer schema test');
     }
   });
@@ -150,7 +150,7 @@ test.describe('Structured Data (JSON-LD)', () => {
           }
         }
       }
-    } catch (error) {
+    } catch {
       console.log('Services page not found, skipping Service schema test');
     }
   });
@@ -179,7 +179,7 @@ test.describe('Structured Data (JSON-LD)', () => {
             }
           }
         }
-      } catch (error) {
+      } catch {
         console.log(`Page ${pagePath} not found, skipping Product schema test`);
       }
     }

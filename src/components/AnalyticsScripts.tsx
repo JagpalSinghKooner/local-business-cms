@@ -5,16 +5,26 @@ import Script from 'next/script'
 import type { SiteSettings } from '@/types'
 import { useScriptOverrides } from './scripts/ScriptOverridesProvider'
 
+type TrackingScript = {
+  _key: string
+  key?: string
+  label?: string
+  code: string
+  location?: 'head' | 'body'
+}
+
 export type AnalyticsScriptsProps = {
   site: SiteSettings | null
 }
 
 export default function AnalyticsScripts({ site }: AnalyticsScriptsProps) {
+  // Always call hooks at the top level, before any conditional returns
+  const overrides = useScriptOverrides()
+  const overrideMap = new Map(overrides.map((item) => [item.scriptKey, item.enabled]))
+
   if (!site) return null
 
   const scripts: ReactElement[] = []
-  const overrides = useScriptOverrides()
-  const overrideMap = new Map(overrides.map((item) => [item.scriptKey, item.enabled]))
 
   if (site.googleTagManagerId) {
     const id = site.googleTagManagerId
@@ -72,8 +82,9 @@ fbq('track', 'PageView');
     )
   }
 
-  if (Array.isArray(site.trackingScripts)) {
-    site.trackingScripts.forEach((script) => {
+  const trackingScripts = site.trackingScripts as TrackingScript[] | undefined
+  if (Array.isArray(trackingScripts)) {
+    trackingScripts.forEach((script) => {
       const key = script.key || script.label?.replace(/[^a-z0-9]/gi, '-').toLowerCase() || 'script'
       const enabled = overrideMap.has(key) ? Boolean(overrideMap.get(key)) : true
       if (!enabled) return

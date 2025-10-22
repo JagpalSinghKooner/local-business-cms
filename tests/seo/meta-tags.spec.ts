@@ -80,7 +80,7 @@ test.describe('SEO Meta Tags', () => {
       // Titles should be different
       expect(servicesTitle).not.toBe(homeTitle);
       expect(servicesDescription).not.toBe(homeDescription);
-    } catch (error) {
+    } catch {
       console.log('Services page not found, skipping uniqueness test');
     }
   });

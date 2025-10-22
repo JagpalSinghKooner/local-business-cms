@@ -8,6 +8,7 @@ import Container from '@/components/layout/Container'
 import { buildBreadcrumbs } from '@/lib/breadcrumbs'
 import { getGlobalDataset, getPageBySlug, listOffers, listServices } from '@/sanity/loaders'
 import { ApplyScriptOverrides } from '@/components/scripts/ScriptOverridesProvider'
+import { type ScriptOverride } from '@/types/sanity-helpers'
 import PagePreview from '@/components/preview/PagePreview'
 
 export const revalidate = 3600
@@ -39,7 +40,7 @@ export default async function ServicesPage() {
 
   return (
     <main className="pb-16">
-      <ApplyScriptOverrides overrides={page?.scriptOverrides as any} />
+      <ApplyScriptOverrides overrides={(page?.scriptOverrides as ScriptOverride[] | undefined) ?? []} />
       <Breadcrumbs trail={breadcrumbs} />
       {page?.sections?.length ? (
         <SectionRenderer

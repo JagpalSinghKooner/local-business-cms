@@ -12,6 +12,8 @@ import { getGlobalDataset, getLocationBySlug } from '@/sanity/loaders'
 import Breadcrumbs from '@/components/navigation/Breadcrumbs'
 import Container from '@/components/layout/Container'
 import LocationPreview from '@/components/preview/LocationPreview'
+import { env } from '@/lib/env'
+import { getImageUrl, getImageAlt } from '@/types/sanity-helpers'
 
 type Params = { city: string }
 
@@ -20,7 +22,7 @@ export const revalidate = 3600
 export async function generateMetadata({ params }: { params: Promise<Params> }) {
   const { city: slug } = await params
   const [location, global] = await Promise.all([getLocationBySlug(slug), getGlobalDataset()])
-  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://www.localbusiness.com'
+  const baseUrl = env.NEXT_PUBLIC_SITE_URL
 
   if (!location) {
     return buildSeo({
@@ -36,7 +38,7 @@ export async function generateMetadata({ params }: { params: Promise<Params> }) 
     path: `/locations/${slug}`,
     title: location.seo?.title || `${location.city} Service Area`,
     description: location.seo?.description,
-    image: location.seo?.ogImage?.asset?.url ?? null,
+    image: getImageUrl(location.seo?.ogImage) ?? null,
   })
 }
 
@@ -56,6 +58,7 @@ export default async function LocationPage({ params }: { params: Promise<Params>
 
   const galleryItems = Array.isArray(location.gallery)
     ? (location.gallery as Array<{
+        _key: string
         image?: { alt?: string; asset?: { url?: string } }
         alt?: string
       }>)
@@ -112,19 +115,21 @@ export default async function LocationPage({ params }: { params: Promise<Params>
           <Container>
             <h2 className="text-2xl font-semibold text-strong">Recent work</h2>
             <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-              {galleryItems.map((item, index) =>
-                item?.image?.asset?.url ? (
-                  <figure key={index} className="relative aspect-[4/3] overflow-hidden rounded-3xl">
+              {galleryItems.map((item) => {
+                const imageUrl = getImageUrl(item?.image)
+                const imageAlt = getImageAlt(item, item?.alt ?? '')
+                return imageUrl ? (
+                  <figure key={item._key} className="relative aspect-[4/3] overflow-hidden rounded-3xl">
                     <Image
-                      src={item.image.asset.url}
-                      alt={item.alt ?? ''}
+                      src={imageUrl}
+                      alt={imageAlt}
                       fill
                       className="object-cover"
                       sizes="(min-width: 1024px) 33vw, 100vw"
                     />
                   </figure>
                 ) : null
-              )}
+              })}
             </div>
           </Container>
         </section>

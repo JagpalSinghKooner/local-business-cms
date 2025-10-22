@@ -35,6 +35,15 @@ const regenerateKeys = (value: unknown): unknown => {
   return value
 }
 
+interface ActionContext {
+  getClient?: (options: { apiVersion: string }) => {
+    create: (payload: Record<string, unknown>) => Promise<unknown>
+  }
+  context?: {
+    navigateIntent?: (action: string, params: { id: string; type: string }) => void
+  }
+}
+
 const createPageFromTemplateAction: DocumentActionComponent = (props) => {
   if (props.type !== 'pageTemplate') {
     return null
@@ -45,20 +54,20 @@ const createPageFromTemplateAction: DocumentActionComponent = (props) => {
     tone: 'positive',
     onHandle: async () => {
       try {
-        const template = (props.draft || props.published) as Record<string, any> | null
+        const template = (props.draft || props.published) as Record<string, unknown> | null
         if (!template) {
           props.onComplete()
           return
         }
 
-        const defaultTitle: string = template.pageTitle || template.title || 'New page'
+        const defaultTitle = (template.pageTitle as string) || (template.title as string) || 'New page'
         const title = window.prompt('Page title', defaultTitle)
         if (!title) {
           props.onComplete()
           return
         }
 
-        const defaultSlug = template.slugSuggestion || slugifyPath(defaultTitle)
+        const defaultSlug = (template.slugSuggestion as string) || slugifyPath(defaultTitle)
         const slugInput = window.prompt('Slug (no leading /)', defaultSlug)
         if (!slugInput) {
           props.onComplete()
@@ -72,8 +81,11 @@ const createPageFromTemplateAction: DocumentActionComponent = (props) => {
           return
         }
 
-        const actionContext = props as any
-        const client = actionContext.getClient({ apiVersion: '2024-05-01' })
+        const actionContext = props as unknown as ActionContext
+        const client = actionContext.getClient?.({ apiVersion: '2024-05-01' })
+        if (!client) {
+          throw new Error('Failed to get Sanity client')
+        }
         const baseId = crypto.randomUUID ? crypto.randomUUID() : key()
         const documentId = `drafts.${baseId}`
 

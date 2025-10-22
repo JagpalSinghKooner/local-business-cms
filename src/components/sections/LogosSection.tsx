@@ -4,6 +4,7 @@ import Container from '@/components/layout/Container'
 import type { PageSection } from '@/types'
 import { getSectionLayout } from './layout'
 import { cn } from '@/lib/cn'
+import { getImageUrl } from '@/types/sanity-helpers'
 
 const PLACEHOLDER = 'https://placehold.co/200x100/png?text=Logo'
 
@@ -30,8 +31,8 @@ export default function LogosSection({ section }: { section: Extract<PageSection
             const content = (
               <div className="flex h-24 items-center justify-center rounded-2xl border border-divider bg-surface-muted p-4">
                 <Image
-                  src={item.logo?.asset?.url ?? PLACEHOLDER}
-                  alt={item.name}
+                  src={getImageUrl(item.logo) ?? PLACEHOLDER}
+                  alt={item.name ?? `Logo ${index + 1}`}
                   width={180}
                   height={90}
                   className="object-contain"

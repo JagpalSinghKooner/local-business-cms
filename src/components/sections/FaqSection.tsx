@@ -17,13 +17,12 @@ type FaqSectionProps = {
 }
 
 export default function FaqSection({ section }: FaqSectionProps) {
-  const sectionData = section as any
-  const faqs = sectionData.faqsSelected ?? []
+  const faqs = section.faqsSelected ?? []
   if (!faqs.length) return null
 
-  const isColumns = sectionData.display === 'columns'
+  const isColumns = (section as { display?: string }).display === 'columns'
 
-  const layout = getSectionLayout(sectionData)
+  const layout = getSectionLayout(section)
 
   return (
     <section

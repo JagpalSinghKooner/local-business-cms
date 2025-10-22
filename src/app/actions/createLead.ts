@@ -39,8 +39,8 @@ export async function submitLead(_: LeadFormState, formData: FormData): Promise<
   }
 
   const cookieStore = await cookies()
-  const store = cookieStore as any
-  const lastAttemptValue = store.get?.(RATE_LIMIT_COOKIE)?.value
+  const lastAttemptCookie = cookieStore.get(RATE_LIMIT_COOKIE)
+  const lastAttemptValue = lastAttemptCookie?.value
   const lastAttempt = lastAttemptValue ? Number.parseInt(lastAttemptValue, 10) : NaN
   const now = Date.now()
   if (!Number.isNaN(lastAttempt) && now - lastAttempt < RATE_LIMIT_WINDOW_MS) {
@@ -90,7 +90,7 @@ export async function submitLead(_: LeadFormState, formData: FormData): Promise<
       status: 'new',
     })
 
-    store.set?.(RATE_LIMIT_COOKIE, String(now), {
+    cookieStore.set(RATE_LIMIT_COOKIE, String(now), {
       httpOnly: true,
       maxAge: 5 * 60,
       sameSite: 'lax',

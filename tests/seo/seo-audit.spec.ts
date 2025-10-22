@@ -131,13 +131,13 @@ test.describe('Complete SEO Audit', () => {
         expect(h1Count).toBe(1);
         
         console.log(`✓ ${pageInfo.name} SEO audit passed`);
-      } catch (error) {
-        console.log(`⚠ ${pageInfo.name} not found or failed: ${error}`);
+      } catch (_error) {
+        console.warn(`⚠ ${pageInfo.name} not found or failed:`, _error);
         // Don't fail the test for missing pages in development
         if (process.env.NODE_ENV !== 'production') {
           continue;
         }
-        throw error;
+        throw _error;
       }
     }
   });
@@ -158,7 +158,6 @@ test.describe('Complete SEO Audit', () => {
     expect(h1Text).toBeTruthy();
     
     // Check for mobile-friendly navigation
-    const nav = await page.locator('nav').first();
     // Navigation might be hidden on mobile, so check if it exists
     const navCount = await page.locator('nav').count();
     expect(navCount).toBeGreaterThan(0);

@@ -275,9 +275,9 @@ type TemplateDefinition = {
   pageTitle: string
   slug: string
   description?: string
-  sections: () => any[]
-  body?: () => any[]
-  breadcrumbs?: any
+  sections: () => Record<string, unknown>[]
+  body?: () => Record<string, unknown>[]
+  breadcrumbs?: Record<string, unknown>
 }
 
 const templates: Record<PageTemplateType, TemplateDefinition> = {

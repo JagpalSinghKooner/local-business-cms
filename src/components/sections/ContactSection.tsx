@@ -88,7 +88,7 @@ export default function ContactSection({ section, site, pagePath }: ContactSecti
             <div dangerouslySetInnerHTML={{ __html: sanitizedEmbed }} />
           ) : section.formType === 'external' && externalResolved ? (
             <div className="space-y-4 text-sm">
-              <CtaButton cta={{ label: 'Open booking form', link: section.externalLink!, style: 'primary' }} />
+              <CtaButton cta={{ _type: 'cta' as const, label: 'Open booking form', link: section.externalLink!, style: 'primary' }} />
             </div>
           ) : !leadsEnabled ? (
             <p className="text-sm text-muted">

@@ -19,7 +19,7 @@ const TEXT_TONE_CLASS_MAP: Record<string, string> = {
 const spacingValue = (token: string | undefined) => `var(--space-${token ?? 'section'})`
 
 const resolveVisibilityClass = (section: PageSection) => {
-  const visibility = section.visibility
+  const visibility = 'visibility' in section ? section.visibility : undefined
   if (!visibility) return ''
   const { hideOnMobile, hideOnDesktop } = visibility
   if (hideOnMobile && hideOnDesktop) return 'hidden'
@@ -42,7 +42,7 @@ export type SectionLayoutResult = {
   dataAlignment: string
 }
 
-type LayoutOptions = NonNullable<PageSection['layout']>
+export type LayoutOptions = NonNullable<Extract<PageSection, { layout?: unknown }>['layout']>
 
 const mergeLayout = (layout?: LayoutOptions | null): LayoutOptions => ({
   background: layout?.background,
@@ -54,7 +54,8 @@ const mergeLayout = (layout?: LayoutOptions | null): LayoutOptions => ({
 })
 
 export function getSectionLayout(section: PageSection, options?: SectionLayoutOptions): SectionLayoutResult {
-  const layout = mergeLayout(options?.layoutOverride ?? section.layout ?? {})
+  const sectionLayout = 'layout' in section ? section.layout : undefined
+  const layout = mergeLayout(options?.layoutOverride ?? sectionLayout ?? {})
   const baseClassName = options?.baseClassName
   const background = layout.background ?? 'surface'
   const backgroundClass = BACKGROUND_CLASS_MAP[background] || BACKGROUND_CLASS_MAP.surface
@@ -74,7 +75,7 @@ export function getSectionLayout(section: PageSection, options?: SectionLayoutOp
     style,
     containerWidth,
     containerClassName: containerAlignment,
-    dataAnimate: section.animation ?? 'none',
+    dataAnimate: ('animation' in section ? section.animation : undefined) ?? 'none',
     dataAlignment: layout.contentAlignment ?? 'start',
   }
 }

@@ -15,6 +15,8 @@ import { getGlobalDataset, getServiceBySlug, getLocationBySlug, listOffers } fro
 import { ApplyScriptOverrides } from '@/components/scripts/ScriptOverridesProvider'
 import Container from '@/components/layout/Container'
 import ServicePreview from '@/components/preview/ServicePreview'
+import { env } from '@/lib/env'
+import { getOgImageUrl, getImageUrl, getImageAlt } from '@/types/sanity-helpers'
 
 type Params = { service: string }
 type LocationRef = { city: string; slug: string }
@@ -39,7 +41,7 @@ function splitServiceAndLocation(slug: string, locations: LocationRef[]): { serv
 export async function generateMetadata({ params }: { params: Promise<Params> }) {
   const { service: slug } = await params
   const global = await getGlobalDataset()
-  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://www.localbusiness.com'
+  const baseUrl = env.NEXT_PUBLIC_SITE_URL
 
   // Check if this is a service+location combination
   const parts = splitServiceAndLocation(slug, global.locations)
@@ -67,7 +69,7 @@ export async function generateMetadata({ params }: { params: Promise<Params> }) 
       path: `/services/${slug}`,
       title: `${service.title} in ${location.city}`,
       description: service.seo?.description || introText,
-      image: service.seo?.ogImage?.asset?.url ?? service.heroImage?.asset?.url ?? null,
+      image: getOgImageUrl(service.seo?.ogImage) ?? getImageUrl(service.heroImage) ?? null,
     })
   }
 
@@ -90,7 +92,7 @@ export async function generateMetadata({ params }: { params: Promise<Params> }) 
     path: `/services/${slug}`,
     title: service.seo?.title || service.title,
     description: service.seo?.description || introText,
-    image: service.seo?.ogImage?.asset?.url ?? service.heroImage?.asset?.url ?? null,
+    image: getOgImageUrl(service.seo?.ogImage) ?? getImageUrl(service.heroImage) ?? null,
   })
 }
 
@@ -178,7 +180,12 @@ export default async function ServicePage({ params }: { params: Promise<Params> 
 
     return (
       <main className="pb-16">
-        <ApplyScriptOverrides overrides={service.scriptOverrides as any} />
+        <ApplyScriptOverrides
+          overrides={service.scriptOverrides?.map((o) => ({
+            scriptKey: o.scriptKey ?? '',
+            enabled: o.enabled ?? true,
+          }))}
+        />
         <Breadcrumbs trail={breadcrumbs} />
         <section className="bg-surface-muted py-16">
           <Container className="space-y-4">
@@ -304,7 +311,12 @@ export default async function ServicePage({ params }: { params: Promise<Params> 
 
   return (
     <main className="pb-16">
-      <ApplyScriptOverrides overrides={service.scriptOverrides as any} />
+      <ApplyScriptOverrides
+        overrides={service.scriptOverrides?.map((o) => ({
+          scriptKey: o.scriptKey ?? '',
+          enabled: o.enabled ?? true,
+        }))}
+      />
       <Breadcrumbs trail={breadcrumbs} />
       <section className="bg-surface-muted py-16">
         <Container className="grid items-center gap-10 md:grid-cols-[1.25fr_1fr]">
@@ -324,7 +336,7 @@ export default async function ServicePage({ params }: { params: Promise<Params> 
                   rel={resolvedUtilityLink.rel}
                   className="bg-brand inline-flex items-center rounded-full px-5 py-2 text-sm font-semibold transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"
                 >
-                  {global.site?.contactCta ?? utilityLink.label}
+                  {global.site?.contactCta ?? utilityLink?.label ?? 'Contact Us'}
                 </Link>
               ) : null}
               {global.site?.phone ? (
@@ -337,11 +349,11 @@ export default async function ServicePage({ params }: { params: Promise<Params> 
               ) : null}
             </div>
           </div>
-          {service.heroImage?.asset?.url ? (
+          {getImageUrl(service.heroImage) ? (
             <div className="relative aspect-video overflow-hidden rounded-3xl shadow-elevated">
               <Image
-                src={service.heroImage.asset.url}
-                alt={service.heroImage?.alt ?? service.title}
+                src={getImageUrl(service.heroImage) ?? ''}
+                alt={getImageAlt(service.heroImage, service.title)}
                 fill
                 className="object-cover"
                 sizes="(min-width: 1024px) 40vw, 100vw"

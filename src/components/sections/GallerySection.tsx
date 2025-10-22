@@ -3,6 +3,7 @@ import type { PageSection } from '@/types'
 import Container from '@/components/layout/Container'
 import { getSectionLayout } from './layout'
 import { cn } from '@/lib/cn'
+import { getImageUrl, getImageAlt } from '@/types/sanity-helpers'
 
 type GallerySectionProps = {
   section: Extract<PageSection, { _type: 'section.gallery' }>
@@ -18,15 +19,15 @@ export default function GallerySection({ section }: GallerySectionProps) {
   const renderImage = (image: (typeof images)[number], index: number) => (
     <figure key={image?._key || index} className="relative overflow-hidden rounded-2xl bg-surface-muted">
       <Image
-                src={image?.image?.asset?.url ?? `https://placehold.co/800x600/png?text=Media+${index + 1}`}
-        alt={image?.image?.alt ?? ''}
+        src={getImageUrl(image?.image) ?? `https://placehold.co/800x600/png?text=Media+${index + 1}`}
+        alt={getImageAlt(image?.image)}
         width={800}
         height={600}
         className="h-full w-full object-cover"
       />
-      {image?.caption ? (
+      {(image as { caption?: string })?.caption ? (
         <figcaption className="absolute inset-x-0 bottom-0 bg-surface bg-opacity-90 p-3 text-sm text-muted">
-          {image.caption}
+          {(image as { caption?: string }).caption}
         </figcaption>
       ) : null}
     </figure>

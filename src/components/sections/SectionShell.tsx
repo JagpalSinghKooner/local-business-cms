@@ -3,8 +3,8 @@ import Container from '@/components/layout/Container'
 import type { PageSection } from '@/types'
 import { cn } from '@/lib/cn'
 
-type LayoutOptions = NonNullable<PageSection['layout']>
-type VisibilityOptions = NonNullable<PageSection['visibility']>
+type LayoutOptions = NonNullable<Extract<PageSection, { layout?: unknown }>['layout']>
+type VisibilityOptions = NonNullable<Extract<PageSection, { visibility?: unknown }>['visibility']>
 
 const BACKGROUND_CLASS_MAP: Record<string, string> = {
   surface: 'bg-surface',
@@ -63,8 +63,9 @@ type SectionShellProps = {
 }
 
 export function SectionShell({ section, children, disableContainer = false, containerClassName }: SectionShellProps) {
-  const layout = section.layout ?? undefined
-  const visibility = section.visibility ?? undefined
+  const layout = ('layout' in section ? section.layout : undefined) ?? undefined
+  const visibility = ('visibility' in section ? section.visibility : undefined) ?? undefined
+  const animation = ('animation' in section ? section.animation : undefined) ?? 'none'
   const wrapperClass = cn(
     'section-wrapper',
     resolveBackgroundClass(layout),
@@ -86,7 +87,7 @@ export function SectionShell({ section, children, disableContainer = false, cont
     <section
       className={wrapperClass}
       style={resolvePaddingStyle(layout)}
-      data-animate={section.animation ?? 'none'}
+      data-animate={animation}
       data-alignment={layout?.contentAlignment ?? 'start'}
     >
       {content}

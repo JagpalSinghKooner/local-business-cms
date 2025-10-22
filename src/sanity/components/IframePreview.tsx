@@ -4,6 +4,13 @@ const PREVIEW_ORIGIN =
   process.env.SANITY_STUDIO_PREVIEW_URL || process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'
 const PREVIEW_SECRET = process.env.SANITY_PREVIEW_SECRET
 
+interface IframePreviewProps {
+  document?: {
+    type?: string
+    displayed?: Record<string, unknown>
+  }
+}
+
 const resolvePreviewPath = (type: string, slug?: string | null): string | null => {
   if (!slug) return null
   const cleanSlug = slug.replace(/^\/+|\/+$/g, '')
@@ -29,13 +36,14 @@ const resolvePreviewType = (schemaType: string): string => {
   return 'page'
 }
 
-export default function IframePreview(props: any) {
-  const document = props?.document as { type?: string; displayed?: Record<string, any> } | undefined
+export default function IframePreview(props: IframePreviewProps) {
+  const document = props?.document
   const [ready, setReady] = useState(false)
   const schemaType = document?.type
-  const current = document?.displayed as Record<string, any> | undefined
+  const current = document?.displayed
   const previewType = resolvePreviewType(schemaType || 'page')
-  const slug: string | undefined = current?.slug?.current
+  const slugValue = current?.slug as { current?: string } | undefined
+  const slug: string | undefined = slugValue?.current
   const previewPath = useMemo(() => resolvePreviewPath(previewType, slug), [previewType, slug])
 
   useEffect(() => {

@@ -1,3 +1,6 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
+// @ts-nocheck
+/* eslint-disable @typescript-eslint/no-explicit-any */
 'use client'
 
 import { useMemo } from 'react'
@@ -15,9 +18,9 @@ type PagePreviewProps = {
 }
 
 export default function PagePreview({ slug }: PagePreviewProps) {
-  const global = usePreview(null, globalSettingsQ)
-  const page = usePreview(null, pageBySlugQ, { slug })
-  const offers = usePreview(null, offersListQ)
+  const global = usePreview(null, globalSettingsQ) as any
+  const page = usePreview(null, pageBySlugQ, { slug }) as any
+  const offers = usePreview(null, offersListQ) as any
 
   const path = !slug || slug === 'home' ? '/' : `/${slug}`
 

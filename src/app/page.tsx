@@ -7,6 +7,8 @@ import { buildSeo } from '@/lib/seo'
 import { getGlobalDataset, getPageBySlug, listOffers } from '@/sanity/loaders'
 import { ApplyScriptOverrides } from '@/components/scripts/ScriptOverridesProvider'
 import PagePreview from '@/components/preview/PagePreview'
+import { env } from '@/lib/env'
+import { getOgImageUrl, type ScriptOverride } from '@/types/sanity-helpers'
 
 export const revalidate = 3600;
 
@@ -14,7 +16,7 @@ const HOME_SLUG = 'home'
 
 // SEO metadata
 export async function generateMetadata() {
-  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://www.localbusiness.com'
+  const baseUrl = env.NEXT_PUBLIC_SITE_URL
   const [global, page] = await Promise.all([getGlobalDataset(), getPageBySlug(HOME_SLUG)])
 
   return buildSeo({
@@ -26,7 +28,10 @@ export async function generateMetadata() {
       global.site?.metaDescription ||
       global.site?.tagline ||
       'Professional services delivered by trusted local experts.',
-    image: page?.ogImage?.asset?.url ?? global.site?.ogImage?.asset?.url ?? null,
+    image:
+      getOgImageUrl(page?.socialMedia) ??
+      getOgImageUrl(global.site?.ogImage) ??
+      null,
   })
 }
 
@@ -63,7 +68,12 @@ export default async function Home() {
 
   return (
     <main>
-      <ApplyScriptOverrides overrides={page.scriptOverrides as any} />
+      <ApplyScriptOverrides
+        overrides={(page.scriptOverrides as ScriptOverride[] | undefined)?.map((o) => ({
+          scriptKey: o.scriptKey ?? '',
+          enabled: o.enabled ?? true,
+        }))}
+      />
       <SectionRenderer
         sections={page.sections}
         services={global.services}

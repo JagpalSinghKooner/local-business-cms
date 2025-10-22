@@ -1,5 +1,5 @@
 import { defineArrayMember, defineField, defineType } from 'sanity'
-import { sectionBaseFields, layoutField } from './shared'
+import { layoutField } from './shared'
 
 const spacingOptions = [
   { title: 'None', value: 'none' },

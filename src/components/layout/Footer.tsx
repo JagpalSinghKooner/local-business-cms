@@ -85,7 +85,7 @@ export default function Footer({ businessName, footerLinks = [], address, phone,
             <ul className="space-y-1">
               {normalizedSocial.map((item) => (
                 <li key={item.url}>
-                  <Link href={item.url} className="transition hover:text-strong" target="_blank" rel="noreferrer">
+                  <Link href={item.url ?? '#'} className="transition hover:text-strong" target="_blank" rel="noreferrer">
                     {item.platform || item.url}
                   </Link>
                 </li>

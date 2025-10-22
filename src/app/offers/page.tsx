@@ -8,19 +8,24 @@ import { formatOfferValidity } from '@/lib/dates'
 import { buildBreadcrumbs } from '@/lib/breadcrumbs'
 import { getGlobalDataset, getPageBySlug, listOffers } from '@/sanity/loaders'
 import { ApplyScriptOverrides } from '@/components/scripts/ScriptOverridesProvider'
+import { env } from '@/lib/env'
+import { getOgImageUrl, type ScriptOverride } from '@/types/sanity-helpers'
 
 export const revalidate = 3600
 
 export async function generateMetadata() {
   const [global, page] = await Promise.all([getGlobalDataset(), getPageBySlug('offers')])
-  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://www.localbusiness.com'
+  const baseUrl = env.NEXT_PUBLIC_SITE_URL
 
   return buildSeo({
     baseUrl,
     path: '/offers',
     title: page?.metaTitle || page?.title || global.site?.metaTitle || 'Offers',
     description: page?.metaDescription || global.site?.metaDescription || '',
-    image: page?.ogImage?.asset?.url ?? global.site?.ogImage?.asset?.url ?? null,
+    image:
+      getOgImageUrl(page?.socialMedia) ??
+      getOgImageUrl(global.site?.ogImage) ??
+      null,
   })
 }
 
@@ -42,7 +47,7 @@ export default async function OffersPage() {
 
   return (
     <main className="pb-16">
-      <ApplyScriptOverrides overrides={page?.scriptOverrides as any} />
+      <ApplyScriptOverrides overrides={page?.scriptOverrides as ScriptOverride[] | undefined} />
       <Breadcrumbs trail={breadcrumbs} />
       {page?.sections?.length ? (
         <SectionRenderer
@@ -74,7 +79,11 @@ export default async function OffersPage() {
                     <article className="flex h-full flex-col gap-4 p-6">
                       <div>
                         <h2 className="text-xl font-semibold text-strong">{offer.title}</h2>
-                        {offer.summary ? <p className="mt-2 text-sm text-muted">{offer.summary}</p> : null}
+                        {offer.summary ? (
+                          <div className="mt-2 text-sm text-muted">
+                            <Portable value={offer.summary} />
+                          </div>
+                        ) : null}
                       </div>
                       {validRange ? <p className="text-xs font-medium uppercase tracking-wide text-amber-600">{validRange}</p> : null}
                       <Link href={`/offers/${offer.slug}`} className="mt-auto text-sm font-semibold text-amber-600 transition hover:text-amber-500">

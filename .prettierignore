@@ -1,0 +1,36 @@
+# Dependencies
+node_modules
+.pnpm-store
+
+# Build outputs
+.next
+out
+build
+dist
+
+# Generated files
+*.generated.*
+src/types/sanity.generated.d.ts
+
+# Logs
+*.log
+
+# Environment
+.env
+.env.*
+
+# Sanity
+.sanity
+
+# Cache
+.cache
+.turbo
+
+# Lock files
+pnpm-lock.yaml
+package-lock.json
+yarn.lock
+
+# Misc
+coverage
+.DS_Store

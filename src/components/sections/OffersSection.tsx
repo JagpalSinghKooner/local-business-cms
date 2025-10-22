@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import Container from '@/components/layout/Container'
+import Portable from '@/components/Portable'
 import type { OfferSummary, PageSection } from '@/types'
 import { getSectionLayout } from './layout'
 import { cn } from '@/lib/cn'
@@ -25,11 +26,14 @@ function buildValidityRange(from?: string, to?: string) {
 }
 
 export default function OffersSection({ section, allOffers }: OffersSectionProps) {
-  const sectionData = section as any
-  let offers = sectionData.offersSelected && sectionData.offersSelected.length ? sectionData.offersSelected : allOffers
+  const sectionWithLimit = section as typeof section & { limit?: number }
+  let offers =
+    section.offersSelected && section.offersSelected.length
+      ? section.offersSelected
+      : allOffers
   if (!offers.length) return null
-  if (sectionData.limit) {
-    offers = offers.slice(0, sectionData.limit)
+  if (sectionWithLimit.limit) {
+    offers = offers.slice(0, sectionWithLimit.limit)
   }
 
   const layout = getSectionLayout(section, { baseClassName: 'bg-amber-50' })
@@ -56,7 +60,11 @@ export default function OffersSection({ section, allOffers }: OffersSectionProps
                 <article className="flex h-full flex-col gap-4">
                   <div>
                     <h3 className="text-xl font-semibold text-strong">{offer.title}</h3>
-                    {offer.summary ? <p className="mt-2 text-sm text-muted">{offer.summary}</p> : null}
+                    {offer.summary ? (
+                      <div className="prose prose-sm mt-2 text-muted">
+                        <Portable value={offer.summary} />
+                      </div>
+                    ) : null}
                   </div>
                   {validity ? <p className="text-xs font-semibold uppercase tracking-[0.2em] text-amber-600">{validity}</p> : null}
                   <Link href={`/offers/${offer.slug}`} className="mt-auto text-sm font-semibold text-amber-600 hover:text-amber-500">

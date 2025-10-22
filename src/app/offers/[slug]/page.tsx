@@ -9,6 +9,8 @@ import { formatOfferValidity } from '@/lib/dates'
 import { buildBreadcrumbs } from '@/lib/breadcrumbs'
 import { getGlobalDataset } from '@/sanity/loaders'
 import type { PortableContent, BreadcrumbSettings } from '@/types'
+import { env } from '@/lib/env'
+import { getImageUrl } from '@/types/sanity-helpers'
 
 export const revalidate = 3600
 
@@ -68,7 +70,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
     next: { revalidate: 120 },
   })
 
-  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://www.localbusiness.com'
+  const baseUrl = env.NEXT_PUBLIC_SITE_URL
 
   if (!offer) {
     return buildSeo({
@@ -84,7 +86,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
     path: `/offers/${slug}`,
     title: offer.seo?.title || offer.title,
     description: offer.seo?.description || offer.summary,
-    image: offer.seo?.ogImage?.asset?.url ?? null,
+    image: getImageUrl(offer.seo?.ogImage) ?? null,
   })
 }
 

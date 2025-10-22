@@ -17,7 +17,7 @@ import PricingTableSection from './PricingTableSection'
 import GallerySection from './GallerySection'
 import QuoteSection from './QuoteSection'
 import BlogListSection from './BlogListSection'
-import { computeLayoutFromOptions } from './layout'
+import { computeLayoutFromOptions, type LayoutOptions } from './layout'
 import Container from '@/components/layout/Container'
 import { cn } from '@/lib/cn'
 import type { CSSProperties } from 'react'
@@ -94,13 +94,19 @@ export default function SectionRenderer({ sections = [], services, locations, of
           case 'section.blogList':
             return <BlogListSection key={section._key} section={section} />
           case 'section.layout': {
-            const nestedSections = Array.isArray((section as any).sections)
-              ? ((section as any).sections as PageSection[])
-              : []
-            const layoutInfo = computeLayoutFromOptions((section as any).layoutSettings?.layout, {
+            // Type guard for layout section
+            const layoutSection = section as {
+              sections?: PageSection[]
+              layoutSettings?: {
+                layout?: LayoutOptions
+              }
+              gap?: string
+            }
+            const nestedSections = Array.isArray(layoutSection.sections) ? layoutSection.sections : []
+            const layoutInfo = computeLayoutFromOptions(layoutSection.layoutSettings?.layout, {
               baseClassName: undefined,
             })
-            const gapToken = (section as any).gap ?? 'md'
+            const gapToken = layoutSection.gap ?? 'md'
             const gapValue = `var(--space-${gapToken})`
             const containerStyle: CSSProperties = {
               '--layout-stack-gap': gapValue,

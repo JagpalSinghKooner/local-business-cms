@@ -88,18 +88,18 @@ export type BuildSeoArgs = {
  */
 function buildRobotsString(robots?: MetaRobots): string {
   if (!robots) return "index, follow";
-  
+
   const directives: string[] = [];
-  
+
   if (robots.index === false) directives.push("noindex");
-  else if (robots.index !== false) directives.push("index");
-  
+  else directives.push("index");
+
   if (robots.follow === false) directives.push("nofollow");
-  else if (robots.follow !== false) directives.push("follow");
-  
+  else directives.push("follow");
+
   if (robots.noarchive) directives.push("noarchive");
   if (robots.nosnippet) directives.push("nosnippet");
-  
+
   return directives.join(", ");
 }
 
@@ -151,9 +151,9 @@ export function buildSeo({
     seo?.fallbackDescription
   );
   
-  const canonicalUrl = seo?.canonicalUrl || canonical
+  const canonicalUrl: string = seo?.canonicalUrl || canonical
     ? (seo?.canonicalUrl || canonical)?.startsWith('http')
-      ? (seo?.canonicalUrl || canonical)
+      ? (seo?.canonicalUrl || canonical)!
       : `${normalizedBase}${(seo?.canonicalUrl || canonical)?.startsWith('/') ? (seo?.canonicalUrl || canonical) : `/${seo?.canonicalUrl || canonical}`}`
     : `${normalizedBase}${normalizedPath}`
 
@@ -171,7 +171,7 @@ export function buildSeo({
   const twitterCard = seo?.socialMedia?.twitterCard || "summary_large_image";
 
   // Build hreflang alternates
-  const alternates: Record<string, string> = { canonical: canonicalUrl };
+  const alternates: Record<string, string | Record<string, string>> = { canonical: canonicalUrl };
   if (seo?.hreflang?.length) {
     alternates.languages = Object.fromEntries(
       seo.hreflang.map(item => [item.language, item.url])

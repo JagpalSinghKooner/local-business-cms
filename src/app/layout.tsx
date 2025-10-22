@@ -12,6 +12,9 @@ import { resolveDesignTokens } from '@/lib/tokens'
 import { getGlobalDataset } from '@/sanity/loaders'
 import type { Navigation, SiteSettings, Tokens, ServiceSummary, LocationSummary, PageSummary } from '@/types'
 import { ScriptOverridesProvider } from '@/components/scripts/ScriptOverridesProvider'
+import { ErrorBoundary } from '@/components/ErrorBoundary'
+import { env } from '@/lib/env'
+import { getImageUrl } from '@/types/sanity-helpers'
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -31,11 +34,6 @@ export const metadata: Metadata = {
   description: 'A CMS-driven marketing site for local service businesses.',
 }
 
-const FALLBACK_SITE = {
-  name: 'Local Business',
-  tagline: 'Professional services in your area',
-} satisfies Partial<SiteSettings>
-
 const FALLBACK_NAVIGATION = {
   header: [],
   utility: [],
@@ -43,13 +41,15 @@ const FALLBACK_NAVIGATION = {
 } satisfies Partial<Navigation>
 
 const FALLBACK_DATA = {
-  site: FALLBACK_SITE,
+  site: null as SiteSettings | null,
   navigation: FALLBACK_NAVIGATION,
   tokens: null as Tokens | null,
   services: [] as ServiceSummary[],
   locations: [] as LocationSummary[],
   pages: [] as PageSummary[],
 }
+
+const FALLBACK_SITE_NAME = 'Local Business'
 
 export default async function RootLayout({ children }: Readonly<{ children: ReactNode }>) {
   const dataset = await getGlobalDataset().catch((error) => {
@@ -58,31 +58,31 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
   })
 
   const { site, navigation, tokens, services, locations } = {
-    site: dataset.site ?? FALLBACK_DATA.site,
+    site: dataset.site ?? null,
     navigation: dataset.navigation ?? FALLBACK_DATA.navigation,
     tokens: dataset.tokens ?? FALLBACK_DATA.tokens,
     services: dataset.services ?? FALLBACK_DATA.services,
     locations: dataset.locations ?? FALLBACK_DATA.locations,
   }
   const { cssVariables } = resolveDesignTokens(tokens, site)
-  const businessName = site?.name ?? FALLBACK_DATA.site?.name ?? 'Local Business'
-  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://www.localbusiness.com'
-  const siteRecord = (site ?? {}) as Record<string, any>
+  const businessName = site?.name ?? FALLBACK_SITE_NAME
+  const baseUrl = env.NEXT_PUBLIC_SITE_URL
+  const siteRecord = (site ?? {}) as Record<string, unknown>
   const sameAsLinks = Array.isArray(siteRecord.sameAs)
     ? (siteRecord.sameAs as string[])
     : Array.isArray(site?.social)
-      ? site.social.map((link) => link.url).filter(Boolean)
+      ? (site.social.map((link) => link.url).filter(Boolean) as string[])
       : undefined
   const geo = siteRecord.geo as { lat?: number; lng?: number } | undefined
   const localBusinessJsonLd = buildLocalBusinessJsonLd({
     baseUrl,
     urlPath: '/',
-    name: site?.name ?? FALLBACK_DATA.site.name,
-    legalName: siteRecord.legalName,
+    name: site?.name ?? FALLBACK_SITE_NAME,
+    legalName: siteRecord.legalName as string | undefined,
     telephone: site?.phone,
     priceRange: site?.priceRange,
     sameAs: sameAsLinks,
-    image: site?.ogImage?.asset?.url ?? null,
+    image: getImageUrl(site?.ogImage) ?? null,
     address: site?.address
       ? {
           streetAddress: site.address.street1,
@@ -106,37 +106,39 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
         className={`${geistSans.variable} ${geistMono.variable} antialiased bg-surface text-strong`}
         style={cssVariables as CSSProperties}
       >
-        <ScriptOverridesProvider>
-          <AnalyticsScripts site={site} />
-          <JsonLd data={localBusinessJsonLd} />
-          {site?.googleTagManagerId ? (
-            <noscript>
-              <iframe
-                src={`https://www.googletagmanager.com/ns.html?id=${site.googleTagManagerId}`}
-                height="0"
-                width="0"
-                style={{ display: 'none', visibility: 'hidden' }}
-              />
-            </noscript>
-          ) : null}
-          <Header
-            businessName={businessName}
-            headerLinks={navigation?.header}
-            utilityLinks={navigation?.utility}
-            phone={site?.phone}
-            ctaLabel={site?.contactCta}
-            megaMenu={{ services: services ?? [], locations: locations ?? [] }}
-          />
-          {children}
-          <Footer
-            businessName={businessName}
-            footerLinks={navigation?.footer}
-            address={site?.address}
-            phone={site?.phone}
-            email={site?.email}
-            social={site?.social}
-          />
-        </ScriptOverridesProvider>
+        <ErrorBoundary>
+          <ScriptOverridesProvider>
+            <AnalyticsScripts site={site} />
+            <JsonLd data={localBusinessJsonLd} />
+            {site?.googleTagManagerId ? (
+              <noscript>
+                <iframe
+                  src={`https://www.googletagmanager.com/ns.html?id=${site.googleTagManagerId}`}
+                  height="0"
+                  width="0"
+                  style={{ display: 'none', visibility: 'hidden' }}
+                />
+              </noscript>
+            ) : null}
+            <Header
+              businessName={businessName}
+              headerLinks={navigation?.header}
+              utilityLinks={navigation?.utility}
+              phone={site?.phone}
+              ctaLabel={site?.contactCta}
+              megaMenu={{ services: services ?? [], locations: locations ?? [] }}
+            />
+            {children}
+            <Footer
+              businessName={businessName}
+              footerLinks={navigation?.footer}
+              address={site?.address}
+              phone={site?.phone}
+              email={site?.email}
+              social={site?.social}
+            />
+          </ScriptOverridesProvider>
+        </ErrorBoundary>
       </body>
     </html>
   )

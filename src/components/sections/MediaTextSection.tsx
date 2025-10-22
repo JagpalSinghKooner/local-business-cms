@@ -5,6 +5,7 @@ import { CtaButton } from '@/components/ui/CtaButton'
 import type { PageSection } from '@/types'
 import { getSectionLayout } from './layout'
 import { cn } from '@/lib/cn'
+import { getImageUrl, getImageAlt } from '@/types/sanity-helpers'
 
 type MediaTextSectionProps = {
   section: Extract<PageSection, { _type: 'section.mediaText' }>
@@ -56,11 +57,11 @@ export default function MediaTextSection({ section }: MediaTextSectionProps) {
           ) : null}
         </div>
 
-        {image?.asset?.url ? (
+        {getImageUrl(image) ? (
           <div className={`${imageFirst ? 'order-1 md:order-2' : 'order-1'} relative aspect-video overflow-hidden rounded-3xl shadow-elevated`}>
             <Image
-              src={image.asset.url}
-              alt={image.alt ?? section.heading ?? ''}
+              src={getImageUrl(image)!}
+              alt={getImageAlt(image, section.heading ?? '')}
               fill
               className="object-cover"
               sizes="(min-width: 1024px) 50vw, 100vw"

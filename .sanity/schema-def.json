@@ -876,6 +876,333 @@
       "hidden": false,
       "readOnly": false,
       "hasValidation": false,
+      "name": "robotsTxt",
+      "title": "Robots.txt",
+      "type": "Document",
+      "fields": [
+        {
+          "name": "environment",
+          "title": "Environment",
+          "description": "",
+          "hidden": false,
+          "readOnly": false,
+          "codegen": {
+            "required": false
+          },
+          "hasValidation": true,
+          "definition": {
+            "codegen": {
+              "required": false
+            },
+            "description": null,
+            "hidden": false,
+            "name": "environment",
+            "readOnly": false,
+            "title": "Environment",
+            "hasValidation": true,
+            "type": "String",
+            "list": [
+              {
+                "title": "Production",
+                "value": "production"
+              },
+              {
+                "title": "Staging",
+                "value": "staging"
+              },
+              {
+                "title": "Development",
+                "value": "development"
+              }
+            ]
+          }
+        },
+        {
+          "name": "userAgents",
+          "title": "User Agents",
+          "description": "",
+          "hidden": false,
+          "readOnly": false,
+          "codegen": {
+            "required": false
+          },
+          "hasValidation": false,
+          "definition": {
+            "codegen": {
+              "required": false
+            },
+            "description": null,
+            "hidden": false,
+            "name": "userAgents",
+            "readOnly": false,
+            "title": "User Agents",
+            "hasValidation": false,
+            "type": "Array",
+            "of": [
+              {
+                "codegen": {
+                  "required": false
+                },
+                "description": null,
+                "hidden": false,
+                "name": null,
+                "readOnly": false,
+                "title": null,
+                "hasValidation": false,
+                "type": "Object",
+                "fields": [
+                  {
+                    "name": "name",
+                    "title": "User Agent",
+                    "description": "e.g., *, Googlebot, Bingbot",
+                    "hidden": false,
+                    "readOnly": false,
+                    "codegen": {
+                      "required": false
+                    },
+                    "hasValidation": true,
+                    "definition": {
+                      "codegen": {
+                        "required": false
+                      },
+                      "description": "e.g., *, Googlebot, Bingbot",
+                      "hidden": false,
+                      "name": "name",
+                      "readOnly": false,
+                      "title": "User Agent",
+                      "hasValidation": true,
+                      "type": "String",
+                      "list": null
+                    }
+                  },
+                  {
+                    "name": "allow",
+                    "title": "Allow",
+                    "description": "Paths to allow (e.g., /, /sitemap.xml)",
+                    "hidden": false,
+                    "readOnly": false,
+                    "codegen": {
+                      "required": false
+                    },
+                    "hasValidation": false,
+                    "definition": {
+                      "codegen": {
+                        "required": false
+                      },
+                      "description": "Paths to allow (e.g., /, /sitemap.xml)",
+                      "hidden": false,
+                      "name": "allow",
+                      "readOnly": false,
+                      "title": "Allow",
+                      "hasValidation": false,
+                      "type": "Array",
+                      "of": [
+                        {
+                          "codegen": {
+                            "required": false
+                          },
+                          "description": null,
+                          "hidden": false,
+                          "name": null,
+                          "readOnly": false,
+                          "title": null,
+                          "hasValidation": false,
+                          "type": "String",
+                          "list": null
+                        }
+                      ],
+                      "list": null
+                    }
+                  },
+                  {
+                    "name": "disallow",
+                    "title": "Disallow",
+                    "description": "Paths to disallow (e.g., /admin, /private)",
+                    "hidden": false,
+                    "readOnly": false,
+                    "codegen": {
+                      "required": false
+                    },
+                    "hasValidation": false,
+                    "definition": {
+                      "codegen": {
+                        "required": false
+                      },
+                      "description": "Paths to disallow (e.g., /admin, /private)",
+                      "hidden": false,
+                      "name": "disallow",
+                      "readOnly": false,
+                      "title": "Disallow",
+                      "hasValidation": false,
+                      "type": "Array",
+                      "of": [
+                        {
+                          "codegen": {
+                            "required": false
+                          },
+                          "description": null,
+                          "hidden": false,
+                          "name": null,
+                          "readOnly": false,
+                          "title": null,
+                          "hasValidation": false,
+                          "type": "String",
+                          "list": null
+                        }
+                      ],
+                      "list": null
+                    }
+                  },
+                  {
+                    "name": "crawlDelay",
+                    "title": "Crawl Delay",
+                    "description": "Delay in seconds between requests",
+                    "hidden": false,
+                    "readOnly": false,
+                    "codegen": {
+                      "required": false
+                    },
+                    "hasValidation": false,
+                    "definition": {
+                      "codegen": {
+                        "required": false
+                      },
+                      "description": "Delay in seconds between requests",
+                      "hidden": false,
+                      "name": "crawlDelay",
+                      "readOnly": false,
+                      "title": "Crawl Delay",
+                      "hasValidation": false,
+                      "type": "Number",
+                      "list": null
+                    }
+                  }
+                ]
+              }
+            ],
+            "list": null
+          }
+        },
+        {
+          "name": "sitemap",
+          "title": "Sitemap URL",
+          "description": "URL to your sitemap (e.g., https://example.com/sitemap.xml)",
+          "hidden": false,
+          "readOnly": false,
+          "codegen": {
+            "required": false
+          },
+          "hasValidation": false,
+          "definition": {
+            "codegen": {
+              "required": false
+            },
+            "description": "URL to your sitemap (e.g., https://example.com/sitemap.xml)",
+            "hidden": false,
+            "name": "sitemap",
+            "readOnly": false,
+            "title": "Sitemap URL",
+            "hasValidation": false,
+            "type": "Url"
+          }
+        },
+        {
+          "name": "additionalDirectives",
+          "title": "Additional Directives",
+          "description": "Custom directives to add to robots.txt",
+          "hidden": false,
+          "readOnly": false,
+          "codegen": {
+            "required": false
+          },
+          "hasValidation": false,
+          "definition": {
+            "codegen": {
+              "required": false
+            },
+            "description": "Custom directives to add to robots.txt",
+            "hidden": false,
+            "name": "additionalDirectives",
+            "readOnly": false,
+            "title": "Additional Directives",
+            "hasValidation": false,
+            "type": "Array",
+            "of": [
+              {
+                "codegen": {
+                  "required": false
+                },
+                "description": null,
+                "hidden": false,
+                "name": null,
+                "readOnly": false,
+                "title": null,
+                "hasValidation": false,
+                "type": "Object",
+                "fields": [
+                  {
+                    "name": "directive",
+                    "title": "Directive",
+                    "description": "e.g., Host: example.com",
+                    "hidden": false,
+                    "readOnly": false,
+                    "codegen": {
+                      "required": false
+                    },
+                    "hasValidation": true,
+                    "definition": {
+                      "codegen": {
+                        "required": false
+                      },
+                      "description": "e.g., Host: example.com",
+                      "hidden": false,
+                      "name": "directive",
+                      "readOnly": false,
+                      "title": "Directive",
+                      "hasValidation": true,
+                      "type": "String",
+                      "list": null
+                    }
+                  }
+                ]
+              }
+            ],
+            "list": null
+          }
+        },
+        {
+          "name": "isActive",
+          "title": "Active",
+          "description": "Whether this robots.txt configuration is active",
+          "hidden": false,
+          "readOnly": false,
+          "codegen": {
+            "required": false
+          },
+          "hasValidation": false,
+          "definition": {
+            "codegen": {
+              "required": false
+            },
+            "description": "Whether this robots.txt configuration is active",
+            "hidden": false,
+            "name": "isActive",
+            "readOnly": false,
+            "title": "Active",
+            "hasValidation": false,
+            "type": "Boolean"
+          }
+        }
+      ]
+    },
+    {
+      "codegen": {
+        "required": false
+      },
+      "description": null,
+      "hidden": false,
+      "readOnly": false,
+      "hasValidation": false,
       "name": "navigation",
       "title": "Navigation",
       "type": "Document",
@@ -4426,6 +4753,155 @@
       "hidden": false,
       "readOnly": false,
       "hasValidation": false,
+      "name": "redirect",
+      "title": "Redirect",
+      "type": "Document",
+      "fields": [
+        {
+          "name": "from",
+          "title": "From Path",
+          "description": "The path to redirect from (e.g., /old-page)",
+          "hidden": false,
+          "readOnly": false,
+          "codegen": {
+            "required": false
+          },
+          "hasValidation": true,
+          "definition": {
+            "codegen": {
+              "required": false
+            },
+            "description": "The path to redirect from (e.g., /old-page)",
+            "hidden": false,
+            "name": "from",
+            "readOnly": false,
+            "title": "From Path",
+            "hasValidation": true,
+            "type": "String",
+            "list": null
+          }
+        },
+        {
+          "name": "to",
+          "title": "To URL",
+          "description": "The URL to redirect to (can be internal or external)",
+          "hidden": false,
+          "readOnly": false,
+          "codegen": {
+            "required": false
+          },
+          "hasValidation": true,
+          "definition": {
+            "codegen": {
+              "required": false
+            },
+            "description": "The URL to redirect to (can be internal or external)",
+            "hidden": false,
+            "name": "to",
+            "readOnly": false,
+            "title": "To URL",
+            "hasValidation": true,
+            "type": "String",
+            "list": null
+          }
+        },
+        {
+          "name": "statusCode",
+          "title": "Status Code",
+          "description": "",
+          "hidden": false,
+          "readOnly": false,
+          "codegen": {
+            "required": false
+          },
+          "hasValidation": true,
+          "definition": {
+            "codegen": {
+              "required": false
+            },
+            "description": null,
+            "hidden": false,
+            "name": "statusCode",
+            "readOnly": false,
+            "title": "Status Code",
+            "hasValidation": true,
+            "type": "Number",
+            "list": [
+              {
+                "title": "301 - Permanent Redirect",
+                "value": 301
+              },
+              {
+                "title": "302 - Temporary Redirect",
+                "value": 302
+              },
+              {
+                "title": "307 - Temporary Redirect (Preserve Method)",
+                "value": 307
+              },
+              {
+                "title": "308 - Permanent Redirect (Preserve Method)",
+                "value": 308
+              }
+            ]
+          }
+        },
+        {
+          "name": "isActive",
+          "title": "Active",
+          "description": "Whether this redirect is currently active",
+          "hidden": false,
+          "readOnly": false,
+          "codegen": {
+            "required": false
+          },
+          "hasValidation": false,
+          "definition": {
+            "codegen": {
+              "required": false
+            },
+            "description": "Whether this redirect is currently active",
+            "hidden": false,
+            "name": "isActive",
+            "readOnly": false,
+            "title": "Active",
+            "hasValidation": false,
+            "type": "Boolean"
+          }
+        },
+        {
+          "name": "notes",
+          "title": "Notes",
+          "description": "Internal notes about this redirect",
+          "hidden": false,
+          "readOnly": false,
+          "codegen": {
+            "required": false
+          },
+          "hasValidation": false,
+          "definition": {
+            "codegen": {
+              "required": false
+            },
+            "description": "Internal notes about this redirect",
+            "hidden": false,
+            "name": "notes",
+            "readOnly": false,
+            "title": "Notes",
+            "hasValidation": false,
+            "type": "Text"
+          }
+        }
+      ]
+    },
+    {
+      "codegen": {
+        "required": false
+      },
+      "description": null,
+      "hidden": false,
+      "readOnly": false,
+      "hasValidation": false,
       "name": "testimonial",
       "title": "Testimonial",
       "type": "Document",
@@ -5240,9 +5716,9 @@
           }
         },
         {
-          "name": "ogImage",
-          "title": "Open Graph Image",
-          "description": "1200×630 recommended.",
+          "name": "canonicalUrl",
+          "title": "Canonical URL",
+          "description": "Override the canonical URL for this page. Leave empty to use the page URL.",
           "hidden": false,
           "readOnly": false,
           "codegen": {
@@ -5253,14 +5729,949 @@
             "codegen": {
               "required": false
             },
-            "description": "1200×630 recommended.",
+            "description": "Override the canonical URL for this page. Leave empty to use the page URL.",
             "hidden": false,
-            "name": "ogImage",
+            "name": "canonicalUrl",
             "readOnly": false,
-            "title": "Open Graph Image",
+            "title": "Canonical URL",
             "hasValidation": false,
-            "type": "Image",
-            "fields": null
+            "type": "Url"
+          }
+        },
+        {
+          "name": "metaRobots",
+          "title": "Meta Robots",
+          "description": "",
+          "hidden": false,
+          "readOnly": false,
+          "codegen": {
+            "required": false
+          },
+          "hasValidation": false,
+          "definition": {
+            "codegen": {
+              "required": false
+            },
+            "description": null,
+            "hidden": false,
+            "name": "metaRobots",
+            "readOnly": false,
+            "title": "Meta Robots",
+            "hasValidation": false,
+            "type": "Object",
+            "fields": [
+              {
+                "name": "index",
+                "title": "Index",
+                "description": "",
+                "hidden": false,
+                "readOnly": false,
+                "codegen": {
+                  "required": false
+                },
+                "hasValidation": false,
+                "definition": {
+                  "codegen": {
+                    "required": false
+                  },
+                  "description": null,
+                  "hidden": false,
+                  "name": "index",
+                  "readOnly": false,
+                  "title": "Index",
+                  "hasValidation": false,
+                  "type": "Boolean"
+                }
+              },
+              {
+                "name": "follow",
+                "title": "Follow",
+                "description": "",
+                "hidden": false,
+                "readOnly": false,
+                "codegen": {
+                  "required": false
+                },
+                "hasValidation": false,
+                "definition": {
+                  "codegen": {
+                    "required": false
+                  },
+                  "description": null,
+                  "hidden": false,
+                  "name": "follow",
+                  "readOnly": false,
+                  "title": "Follow",
+                  "hasValidation": false,
+                  "type": "Boolean"
+                }
+              },
+              {
+                "name": "noarchive",
+                "title": "No Archive",
+                "description": "",
+                "hidden": false,
+                "readOnly": false,
+                "codegen": {
+                  "required": false
+                },
+                "hasValidation": false,
+                "definition": {
+                  "codegen": {
+                    "required": false
+                  },
+                  "description": null,
+                  "hidden": false,
+                  "name": "noarchive",
+                  "readOnly": false,
+                  "title": "No Archive",
+                  "hasValidation": false,
+                  "type": "Boolean"
+                }
+              },
+              {
+                "name": "nosnippet",
+                "title": "No Snippet",
+                "description": "",
+                "hidden": false,
+                "readOnly": false,
+                "codegen": {
+                  "required": false
+                },
+                "hasValidation": false,
+                "definition": {
+                  "codegen": {
+                    "required": false
+                  },
+                  "description": null,
+                  "hidden": false,
+                  "name": "nosnippet",
+                  "readOnly": false,
+                  "title": "No Snippet",
+                  "hasValidation": false,
+                  "type": "Boolean"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "name": "socialMedia",
+          "title": "Social Media",
+          "description": "",
+          "hidden": false,
+          "readOnly": false,
+          "codegen": {
+            "required": false
+          },
+          "hasValidation": false,
+          "definition": {
+            "codegen": {
+              "required": false
+            },
+            "description": null,
+            "hidden": false,
+            "name": "socialMedia",
+            "readOnly": false,
+            "title": "Social Media",
+            "hasValidation": false,
+            "type": "Object",
+            "fields": [
+              {
+                "name": "ogTitle",
+                "title": "Open Graph Title",
+                "description": "Override title for social media sharing",
+                "hidden": false,
+                "readOnly": false,
+                "codegen": {
+                  "required": false
+                },
+                "hasValidation": false,
+                "definition": {
+                  "codegen": {
+                    "required": false
+                  },
+                  "description": "Override title for social media sharing",
+                  "hidden": false,
+                  "name": "ogTitle",
+                  "readOnly": false,
+                  "title": "Open Graph Title",
+                  "hasValidation": false,
+                  "type": "String",
+                  "list": null
+                }
+              },
+              {
+                "name": "ogDescription",
+                "title": "Open Graph Description",
+                "description": "Override description for social media sharing",
+                "hidden": false,
+                "readOnly": false,
+                "codegen": {
+                  "required": false
+                },
+                "hasValidation": false,
+                "definition": {
+                  "codegen": {
+                    "required": false
+                  },
+                  "description": "Override description for social media sharing",
+                  "hidden": false,
+                  "name": "ogDescription",
+                  "readOnly": false,
+                  "title": "Open Graph Description",
+                  "hasValidation": false,
+                  "type": "Text"
+                }
+              },
+              {
+                "name": "ogImage",
+                "title": "Open Graph Image",
+                "description": "1200×630 recommended for social media sharing",
+                "hidden": false,
+                "readOnly": false,
+                "codegen": {
+                  "required": false
+                },
+                "hasValidation": false,
+                "definition": {
+                  "codegen": {
+                    "required": false
+                  },
+                  "description": "1200×630 recommended for social media sharing",
+                  "hidden": false,
+                  "name": "ogImage",
+                  "readOnly": false,
+                  "title": "Open Graph Image",
+                  "hasValidation": false,
+                  "type": "Image",
+                  "fields": null
+                }
+              },
+              {
+                "name": "twitterTitle",
+                "title": "Twitter Title",
+                "description": "Override title for Twitter sharing",
+                "hidden": false,
+                "readOnly": false,
+                "codegen": {
+                  "required": false
+                },
+                "hasValidation": false,
+                "definition": {
+                  "codegen": {
+                    "required": false
+                  },
+                  "description": "Override title for Twitter sharing",
+                  "hidden": false,
+                  "name": "twitterTitle",
+                  "readOnly": false,
+                  "title": "Twitter Title",
+                  "hasValidation": false,
+                  "type": "String",
+                  "list": null
+                }
+              },
+              {
+                "name": "twitterDescription",
+                "title": "Twitter Description",
+                "description": "Override description for Twitter sharing",
+                "hidden": false,
+                "readOnly": false,
+                "codegen": {
+                  "required": false
+                },
+                "hasValidation": false,
+                "definition": {
+                  "codegen": {
+                    "required": false
+                  },
+                  "description": "Override description for Twitter sharing",
+                  "hidden": false,
+                  "name": "twitterDescription",
+                  "readOnly": false,
+                  "title": "Twitter Description",
+                  "hasValidation": false,
+                  "type": "Text"
+                }
+              },
+              {
+                "name": "twitterImage",
+                "title": "Twitter Image",
+                "description": "1200×630 recommended for Twitter sharing",
+                "hidden": false,
+                "readOnly": false,
+                "codegen": {
+                  "required": false
+                },
+                "hasValidation": false,
+                "definition": {
+                  "codegen": {
+                    "required": false
+                  },
+                  "description": "1200×630 recommended for Twitter sharing",
+                  "hidden": false,
+                  "name": "twitterImage",
+                  "readOnly": false,
+                  "title": "Twitter Image",
+                  "hasValidation": false,
+                  "type": "Image",
+                  "fields": null
+                }
+              },
+              {
+                "name": "twitterCard",
+                "title": "Twitter Card Type",
+                "description": "",
+                "hidden": false,
+                "readOnly": false,
+                "codegen": {
+                  "required": false
+                },
+                "hasValidation": false,
+                "definition": {
+                  "codegen": {
+                    "required": false
+                  },
+                  "description": null,
+                  "hidden": false,
+                  "name": "twitterCard",
+                  "readOnly": false,
+                  "title": "Twitter Card Type",
+                  "hasValidation": false,
+                  "type": "String",
+                  "list": [
+                    {
+                      "title": "Summary",
+                      "value": "summary"
+                    },
+                    {
+                      "title": "Summary Large Image",
+                      "value": "summary_large_image"
+                    },
+                    {
+                      "title": "App",
+                      "value": "app"
+                    },
+                    {
+                      "title": "Player",
+                      "value": "player"
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        },
+        {
+          "name": "structuredData",
+          "title": "Structured Data",
+          "description": "",
+          "hidden": false,
+          "readOnly": false,
+          "codegen": {
+            "required": false
+          },
+          "hasValidation": false,
+          "definition": {
+            "codegen": {
+              "required": false
+            },
+            "description": null,
+            "hidden": false,
+            "name": "structuredData",
+            "readOnly": false,
+            "title": "Structured Data",
+            "hasValidation": false,
+            "type": "Object",
+            "fields": [
+              {
+                "name": "enableLocalBusiness",
+                "title": "Enable Local Business Schema",
+                "description": "",
+                "hidden": false,
+                "readOnly": false,
+                "codegen": {
+                  "required": false
+                },
+                "hasValidation": false,
+                "definition": {
+                  "codegen": {
+                    "required": false
+                  },
+                  "description": null,
+                  "hidden": false,
+                  "name": "enableLocalBusiness",
+                  "readOnly": false,
+                  "title": "Enable Local Business Schema",
+                  "hasValidation": false,
+                  "type": "Boolean"
+                }
+              },
+              {
+                "name": "enableFAQ",
+                "title": "Enable FAQ Schema",
+                "description": "",
+                "hidden": false,
+                "readOnly": false,
+                "codegen": {
+                  "required": false
+                },
+                "hasValidation": false,
+                "definition": {
+                  "codegen": {
+                    "required": false
+                  },
+                  "description": null,
+                  "hidden": false,
+                  "name": "enableFAQ",
+                  "readOnly": false,
+                  "title": "Enable FAQ Schema",
+                  "hasValidation": false,
+                  "type": "Boolean"
+                }
+              },
+              {
+                "name": "enableOffer",
+                "title": "Enable Offer Schema",
+                "description": "",
+                "hidden": false,
+                "readOnly": false,
+                "codegen": {
+                  "required": false
+                },
+                "hasValidation": false,
+                "definition": {
+                  "codegen": {
+                    "required": false
+                  },
+                  "description": null,
+                  "hidden": false,
+                  "name": "enableOffer",
+                  "readOnly": false,
+                  "title": "Enable Offer Schema",
+                  "hasValidation": false,
+                  "type": "Boolean"
+                }
+              },
+              {
+                "name": "enableService",
+                "title": "Enable Service Schema",
+                "description": "",
+                "hidden": false,
+                "readOnly": false,
+                "codegen": {
+                  "required": false
+                },
+                "hasValidation": false,
+                "definition": {
+                  "codegen": {
+                    "required": false
+                  },
+                  "description": null,
+                  "hidden": false,
+                  "name": "enableService",
+                  "readOnly": false,
+                  "title": "Enable Service Schema",
+                  "hasValidation": false,
+                  "type": "Boolean"
+                }
+              },
+              {
+                "name": "enableProduct",
+                "title": "Enable Product Schema",
+                "description": "",
+                "hidden": false,
+                "readOnly": false,
+                "codegen": {
+                  "required": false
+                },
+                "hasValidation": false,
+                "definition": {
+                  "codegen": {
+                    "required": false
+                  },
+                  "description": null,
+                  "hidden": false,
+                  "name": "enableProduct",
+                  "readOnly": false,
+                  "title": "Enable Product Schema",
+                  "hasValidation": false,
+                  "type": "Boolean"
+                }
+              },
+              {
+                "name": "customJsonLd",
+                "title": "Custom JSON-LD",
+                "description": "Custom JSON-LD structured data (JSON format)",
+                "hidden": false,
+                "readOnly": false,
+                "codegen": {
+                  "required": false
+                },
+                "hasValidation": true,
+                "definition": {
+                  "codegen": {
+                    "required": false
+                  },
+                  "description": "Custom JSON-LD structured data (JSON format)",
+                  "hidden": false,
+                  "name": "customJsonLd",
+                  "readOnly": false,
+                  "title": "Custom JSON-LD",
+                  "hasValidation": true,
+                  "type": "Text"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "name": "hreflang",
+          "title": "Hreflang",
+          "description": "Language and URL pairs for international SEO",
+          "hidden": false,
+          "readOnly": false,
+          "codegen": {
+            "required": false
+          },
+          "hasValidation": false,
+          "definition": {
+            "codegen": {
+              "required": false
+            },
+            "description": "Language and URL pairs for international SEO",
+            "hidden": false,
+            "name": "hreflang",
+            "readOnly": false,
+            "title": "Hreflang",
+            "hasValidation": false,
+            "type": "Array",
+            "of": [
+              {
+                "codegen": {
+                  "required": false
+                },
+                "description": null,
+                "hidden": false,
+                "name": null,
+                "readOnly": false,
+                "title": null,
+                "hasValidation": false,
+                "type": "Object",
+                "fields": [
+                  {
+                    "name": "language",
+                    "title": "Language",
+                    "description": "",
+                    "hidden": false,
+                    "readOnly": false,
+                    "codegen": {
+                      "required": false
+                    },
+                    "hasValidation": true,
+                    "definition": {
+                      "codegen": {
+                        "required": false
+                      },
+                      "description": null,
+                      "hidden": false,
+                      "name": "language",
+                      "readOnly": false,
+                      "title": "Language",
+                      "hasValidation": true,
+                      "type": "String",
+                      "list": null
+                    }
+                  },
+                  {
+                    "name": "url",
+                    "title": "URL",
+                    "description": "",
+                    "hidden": false,
+                    "readOnly": false,
+                    "codegen": {
+                      "required": false
+                    },
+                    "hasValidation": true,
+                    "definition": {
+                      "codegen": {
+                        "required": false
+                      },
+                      "description": null,
+                      "hidden": false,
+                      "name": "url",
+                      "readOnly": false,
+                      "title": "URL",
+                      "hasValidation": true,
+                      "type": "Url"
+                    }
+                  }
+                ]
+              }
+            ],
+            "list": null
+          }
+        },
+        {
+          "name": "customHeadScripts",
+          "title": "Custom Head Scripts",
+          "description": "Custom scripts to inject into the page head or body",
+          "hidden": false,
+          "readOnly": false,
+          "codegen": {
+            "required": false
+          },
+          "hasValidation": false,
+          "definition": {
+            "codegen": {
+              "required": false
+            },
+            "description": "Custom scripts to inject into the page head or body",
+            "hidden": false,
+            "name": "customHeadScripts",
+            "readOnly": false,
+            "title": "Custom Head Scripts",
+            "hasValidation": false,
+            "type": "Array",
+            "of": [
+              {
+                "codegen": {
+                  "required": false
+                },
+                "description": null,
+                "hidden": false,
+                "name": null,
+                "readOnly": false,
+                "title": null,
+                "hasValidation": false,
+                "type": "Object",
+                "fields": [
+                  {
+                    "name": "name",
+                    "title": "Script Name",
+                    "description": "",
+                    "hidden": false,
+                    "readOnly": false,
+                    "codegen": {
+                      "required": false
+                    },
+                    "hasValidation": true,
+                    "definition": {
+                      "codegen": {
+                        "required": false
+                      },
+                      "description": null,
+                      "hidden": false,
+                      "name": "name",
+                      "readOnly": false,
+                      "title": "Script Name",
+                      "hasValidation": true,
+                      "type": "String",
+                      "list": null
+                    }
+                  },
+                  {
+                    "name": "script",
+                    "title": "Script Content",
+                    "description": "",
+                    "hidden": false,
+                    "readOnly": false,
+                    "codegen": {
+                      "required": false
+                    },
+                    "hasValidation": true,
+                    "definition": {
+                      "codegen": {
+                        "required": false
+                      },
+                      "description": null,
+                      "hidden": false,
+                      "name": "script",
+                      "readOnly": false,
+                      "title": "Script Content",
+                      "hasValidation": true,
+                      "type": "Text"
+                    }
+                  },
+                  {
+                    "name": "position",
+                    "title": "Position",
+                    "description": "",
+                    "hidden": false,
+                    "readOnly": false,
+                    "codegen": {
+                      "required": false
+                    },
+                    "hasValidation": false,
+                    "definition": {
+                      "codegen": {
+                        "required": false
+                      },
+                      "description": null,
+                      "hidden": false,
+                      "name": "position",
+                      "readOnly": false,
+                      "title": "Position",
+                      "hasValidation": false,
+                      "type": "String",
+                      "list": [
+                        {
+                          "title": "Head",
+                          "value": "head"
+                        },
+                        {
+                          "title": "Body Start",
+                          "value": "body-start"
+                        },
+                        {
+                          "title": "Body End",
+                          "value": "body-end"
+                        }
+                      ]
+                    }
+                  }
+                ]
+              }
+            ],
+            "list": null
+          }
+        },
+        {
+          "name": "fallbackDescription",
+          "title": "Fallback Description Source",
+          "description": "Fallback source for description when meta description is empty",
+          "hidden": false,
+          "readOnly": false,
+          "codegen": {
+            "required": false
+          },
+          "hasValidation": false,
+          "definition": {
+            "codegen": {
+              "required": false
+            },
+            "description": "Fallback source for description when meta description is empty",
+            "hidden": false,
+            "name": "fallbackDescription",
+            "readOnly": false,
+            "title": "Fallback Description Source",
+            "hasValidation": false,
+            "type": "String",
+            "list": [
+              {
+                "title": "Meta Description",
+                "value": "meta"
+              },
+              {
+                "title": "Page Content",
+                "value": "content"
+              },
+              {
+                "title": "Site Description",
+                "value": "site"
+              }
+            ]
+          }
+        },
+        {
+          "name": "imageOptimization",
+          "title": "Image Optimization",
+          "description": "",
+          "hidden": false,
+          "readOnly": false,
+          "codegen": {
+            "required": false
+          },
+          "hasValidation": false,
+          "definition": {
+            "codegen": {
+              "required": false
+            },
+            "description": null,
+            "hidden": false,
+            "name": "imageOptimization",
+            "readOnly": false,
+            "title": "Image Optimization",
+            "hasValidation": false,
+            "type": "Object",
+            "fields": [
+              {
+                "name": "width",
+                "title": "Image Width",
+                "description": "Default width for images on this page",
+                "hidden": false,
+                "readOnly": false,
+                "codegen": {
+                  "required": false
+                },
+                "hasValidation": false,
+                "definition": {
+                  "codegen": {
+                    "required": false
+                  },
+                  "description": "Default width for images on this page",
+                  "hidden": false,
+                  "name": "width",
+                  "readOnly": false,
+                  "title": "Image Width",
+                  "hasValidation": false,
+                  "type": "Number",
+                  "list": null
+                }
+              },
+              {
+                "name": "height",
+                "title": "Image Height",
+                "description": "Default height for images on this page",
+                "hidden": false,
+                "readOnly": false,
+                "codegen": {
+                  "required": false
+                },
+                "hasValidation": false,
+                "definition": {
+                  "codegen": {
+                    "required": false
+                  },
+                  "description": "Default height for images on this page",
+                  "hidden": false,
+                  "name": "height",
+                  "readOnly": false,
+                  "title": "Image Height",
+                  "hasValidation": false,
+                  "type": "Number",
+                  "list": null
+                }
+              },
+              {
+                "name": "priority",
+                "title": "Priority Loading",
+                "description": "Load images with high priority",
+                "hidden": false,
+                "readOnly": false,
+                "codegen": {
+                  "required": false
+                },
+                "hasValidation": false,
+                "definition": {
+                  "codegen": {
+                    "required": false
+                  },
+                  "description": "Load images with high priority",
+                  "hidden": false,
+                  "name": "priority",
+                  "readOnly": false,
+                  "title": "Priority Loading",
+                  "hasValidation": false,
+                  "type": "Boolean"
+                }
+              },
+              {
+                "name": "loading",
+                "title": "Loading Strategy",
+                "description": "",
+                "hidden": false,
+                "readOnly": false,
+                "codegen": {
+                  "required": false
+                },
+                "hasValidation": false,
+                "definition": {
+                  "codegen": {
+                    "required": false
+                  },
+                  "description": null,
+                  "hidden": false,
+                  "name": "loading",
+                  "readOnly": false,
+                  "title": "Loading Strategy",
+                  "hasValidation": false,
+                  "type": "String",
+                  "list": [
+                    {
+                      "title": "Lazy",
+                      "value": "lazy"
+                    },
+                    {
+                      "title": "Eager",
+                      "value": "eager"
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        },
+        {
+          "name": "pagination",
+          "title": "Pagination",
+          "description": "Pagination links for series of pages",
+          "hidden": false,
+          "readOnly": false,
+          "codegen": {
+            "required": false
+          },
+          "hasValidation": false,
+          "definition": {
+            "codegen": {
+              "required": false
+            },
+            "description": "Pagination links for series of pages",
+            "hidden": false,
+            "name": "pagination",
+            "readOnly": false,
+            "title": "Pagination",
+            "hasValidation": false,
+            "type": "Object",
+            "fields": [
+              {
+                "name": "prevUrl",
+                "title": "Previous Page URL",
+                "description": "URL for the previous page in a series",
+                "hidden": false,
+                "readOnly": false,
+                "codegen": {
+                  "required": false
+                },
+                "hasValidation": false,
+                "definition": {
+                  "codegen": {
+                    "required": false
+                  },
+                  "description": "URL for the previous page in a series",
+                  "hidden": false,
+                  "name": "prevUrl",
+                  "readOnly": false,
+                  "title": "Previous Page URL",
+                  "hasValidation": false,
+                  "type": "Url"
+                }
+              },
+              {
+                "name": "nextUrl",
+                "title": "Next Page URL",
+                "description": "URL for the next page in a series",
+                "hidden": false,
+                "readOnly": false,
+                "codegen": {
+                  "required": false
+                },
+                "hasValidation": false,
+                "definition": {
+                  "codegen": {
+                    "required": false
+                  },
+                  "description": "URL for the next page in a series",
+                  "hidden": false,
+                  "name": "nextUrl",
+                  "readOnly": false,
+                  "title": "Next Page URL",
+                  "hasValidation": false,
+                  "type": "Url"
+                }
+              }
+            ]
           }
         }
       ]
@@ -5574,9 +6985,9 @@
           }
         },
         {
-          "name": "ogImage",
-          "title": "Open Graph Image",
-          "description": "1200×630 recommended.",
+          "name": "canonicalUrl",
+          "title": "Canonical URL",
+          "description": "Override the canonical URL for this page. Leave empty to use the page URL.",
           "hidden": false,
           "readOnly": false,
           "codegen": {
@@ -5587,14 +6998,949 @@
             "codegen": {
               "required": false
             },
-            "description": "1200×630 recommended.",
+            "description": "Override the canonical URL for this page. Leave empty to use the page URL.",
             "hidden": false,
-            "name": "ogImage",
+            "name": "canonicalUrl",
             "readOnly": false,
-            "title": "Open Graph Image",
+            "title": "Canonical URL",
             "hasValidation": false,
-            "type": "Image",
-            "fields": null
+            "type": "Url"
+          }
+        },
+        {
+          "name": "metaRobots",
+          "title": "Meta Robots",
+          "description": "",
+          "hidden": false,
+          "readOnly": false,
+          "codegen": {
+            "required": false
+          },
+          "hasValidation": false,
+          "definition": {
+            "codegen": {
+              "required": false
+            },
+            "description": null,
+            "hidden": false,
+            "name": "metaRobots",
+            "readOnly": false,
+            "title": "Meta Robots",
+            "hasValidation": false,
+            "type": "Object",
+            "fields": [
+              {
+                "name": "index",
+                "title": "Index",
+                "description": "",
+                "hidden": false,
+                "readOnly": false,
+                "codegen": {
+                  "required": false
+                },
+                "hasValidation": false,
+                "definition": {
+                  "codegen": {
+                    "required": false
+                  },
+                  "description": null,
+                  "hidden": false,
+                  "name": "index",
+                  "readOnly": false,
+                  "title": "Index",
+                  "hasValidation": false,
+                  "type": "Boolean"
+                }
+              },
+              {
+                "name": "follow",
+                "title": "Follow",
+                "description": "",
+                "hidden": false,
+                "readOnly": false,
+                "codegen": {
+                  "required": false
+                },
+                "hasValidation": false,
+                "definition": {
+                  "codegen": {
+                    "required": false
+                  },
+                  "description": null,
+                  "hidden": false,
+                  "name": "follow",
+                  "readOnly": false,
+                  "title": "Follow",
+                  "hasValidation": false,
+                  "type": "Boolean"
+                }
+              },
+              {
+                "name": "noarchive",
+                "title": "No Archive",
+                "description": "",
+                "hidden": false,
+                "readOnly": false,
+                "codegen": {
+                  "required": false
+                },
+                "hasValidation": false,
+                "definition": {
+                  "codegen": {
+                    "required": false
+                  },
+                  "description": null,
+                  "hidden": false,
+                  "name": "noarchive",
+                  "readOnly": false,
+                  "title": "No Archive",
+                  "hasValidation": false,
+                  "type": "Boolean"
+                }
+              },
+              {
+                "name": "nosnippet",
+                "title": "No Snippet",
+                "description": "",
+                "hidden": false,
+                "readOnly": false,
+                "codegen": {
+                  "required": false
+                },
+                "hasValidation": false,
+                "definition": {
+                  "codegen": {
+                    "required": false
+                  },
+                  "description": null,
+                  "hidden": false,
+                  "name": "nosnippet",
+                  "readOnly": false,
+                  "title": "No Snippet",
+                  "hasValidation": false,
+                  "type": "Boolean"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "name": "socialMedia",
+          "title": "Social Media",
+          "description": "",
+          "hidden": false,
+          "readOnly": false,
+          "codegen": {
+            "required": false
+          },
+          "hasValidation": false,
+          "definition": {
+            "codegen": {
+              "required": false
+            },
+            "description": null,
+            "hidden": false,
+            "name": "socialMedia",
+            "readOnly": false,
+            "title": "Social Media",
+            "hasValidation": false,
+            "type": "Object",
+            "fields": [
+              {
+                "name": "ogTitle",
+                "title": "Open Graph Title",
+                "description": "Override title for social media sharing",
+                "hidden": false,
+                "readOnly": false,
+                "codegen": {
+                  "required": false
+                },
+                "hasValidation": false,
+                "definition": {
+                  "codegen": {
+                    "required": false
+                  },
+                  "description": "Override title for social media sharing",
+                  "hidden": false,
+                  "name": "ogTitle",
+                  "readOnly": false,
+                  "title": "Open Graph Title",
+                  "hasValidation": false,
+                  "type": "String",
+                  "list": null
+                }
+              },
+              {
+                "name": "ogDescription",
+                "title": "Open Graph Description",
+                "description": "Override description for social media sharing",
+                "hidden": false,
+                "readOnly": false,
+                "codegen": {
+                  "required": false
+                },
+                "hasValidation": false,
+                "definition": {
+                  "codegen": {
+                    "required": false
+                  },
+                  "description": "Override description for social media sharing",
+                  "hidden": false,
+                  "name": "ogDescription",
+                  "readOnly": false,
+                  "title": "Open Graph Description",
+                  "hasValidation": false,
+                  "type": "Text"
+                }
+              },
+              {
+                "name": "ogImage",
+                "title": "Open Graph Image",
+                "description": "1200×630 recommended for social media sharing",
+                "hidden": false,
+                "readOnly": false,
+                "codegen": {
+                  "required": false
+                },
+                "hasValidation": false,
+                "definition": {
+                  "codegen": {
+                    "required": false
+                  },
+                  "description": "1200×630 recommended for social media sharing",
+                  "hidden": false,
+                  "name": "ogImage",
+                  "readOnly": false,
+                  "title": "Open Graph Image",
+                  "hasValidation": false,
+                  "type": "Image",
+                  "fields": null
+                }
+              },
+              {
+                "name": "twitterTitle",
+                "title": "Twitter Title",
+                "description": "Override title for Twitter sharing",
+                "hidden": false,
+                "readOnly": false,
+                "codegen": {
+                  "required": false
+                },
+                "hasValidation": false,
+                "definition": {
+                  "codegen": {
+                    "required": false
+                  },
+                  "description": "Override title for Twitter sharing",
+                  "hidden": false,
+                  "name": "twitterTitle",
+                  "readOnly": false,
+                  "title": "Twitter Title",
+                  "hasValidation": false,
+                  "type": "String",
+                  "list": null
+                }
+              },
+              {
+                "name": "twitterDescription",
+                "title": "Twitter Description",
+                "description": "Override description for Twitter sharing",
+                "hidden": false,
+                "readOnly": false,
+                "codegen": {
+                  "required": false
+                },
+                "hasValidation": false,
+                "definition": {
+                  "codegen": {
+                    "required": false
+                  },
+                  "description": "Override description for Twitter sharing",
+                  "hidden": false,
+                  "name": "twitterDescription",
+                  "readOnly": false,
+                  "title": "Twitter Description",
+                  "hasValidation": false,
+                  "type": "Text"
+                }
+              },
+              {
+                "name": "twitterImage",
+                "title": "Twitter Image",
+                "description": "1200×630 recommended for Twitter sharing",
+                "hidden": false,
+                "readOnly": false,
+                "codegen": {
+                  "required": false
+                },
+                "hasValidation": false,
+                "definition": {
+                  "codegen": {
+                    "required": false
+                  },
+                  "description": "1200×630 recommended for Twitter sharing",
+                  "hidden": false,
+                  "name": "twitterImage",
+                  "readOnly": false,
+                  "title": "Twitter Image",
+                  "hasValidation": false,
+                  "type": "Image",
+                  "fields": null
+                }
+              },
+              {
+                "name": "twitterCard",
+                "title": "Twitter Card Type",
+                "description": "",
+                "hidden": false,
+                "readOnly": false,
+                "codegen": {
+                  "required": false
+                },
+                "hasValidation": false,
+                "definition": {
+                  "codegen": {
+                    "required": false
+                  },
+                  "description": null,
+                  "hidden": false,
+                  "name": "twitterCard",
+                  "readOnly": false,
+                  "title": "Twitter Card Type",
+                  "hasValidation": false,
+                  "type": "String",
+                  "list": [
+                    {
+                      "title": "Summary",
+                      "value": "summary"
+                    },
+                    {
+                      "title": "Summary Large Image",
+                      "value": "summary_large_image"
+                    },
+                    {
+                      "title": "App",
+                      "value": "app"
+                    },
+                    {
+                      "title": "Player",
+                      "value": "player"
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        },
+        {
+          "name": "structuredData",
+          "title": "Structured Data",
+          "description": "",
+          "hidden": false,
+          "readOnly": false,
+          "codegen": {
+            "required": false
+          },
+          "hasValidation": false,
+          "definition": {
+            "codegen": {
+              "required": false
+            },
+            "description": null,
+            "hidden": false,
+            "name": "structuredData",
+            "readOnly": false,
+            "title": "Structured Data",
+            "hasValidation": false,
+            "type": "Object",
+            "fields": [
+              {
+                "name": "enableLocalBusiness",
+                "title": "Enable Local Business Schema",
+                "description": "",
+                "hidden": false,
+                "readOnly": false,
+                "codegen": {
+                  "required": false
+                },
+                "hasValidation": false,
+                "definition": {
+                  "codegen": {
+                    "required": false
+                  },
+                  "description": null,
+                  "hidden": false,
+                  "name": "enableLocalBusiness",
+                  "readOnly": false,
+                  "title": "Enable Local Business Schema",
+                  "hasValidation": false,
+                  "type": "Boolean"
+                }
+              },
+              {
+                "name": "enableFAQ",
+                "title": "Enable FAQ Schema",
+                "description": "",
+                "hidden": false,
+                "readOnly": false,
+                "codegen": {
+                  "required": false
+                },
+                "hasValidation": false,
+                "definition": {
+                  "codegen": {
+                    "required": false
+                  },
+                  "description": null,
+                  "hidden": false,
+                  "name": "enableFAQ",
+                  "readOnly": false,
+                  "title": "Enable FAQ Schema",
+                  "hasValidation": false,
+                  "type": "Boolean"
+                }
+              },
+              {
+                "name": "enableOffer",
+                "title": "Enable Offer Schema",
+                "description": "",
+                "hidden": false,
+                "readOnly": false,
+                "codegen": {
+                  "required": false
+                },
+                "hasValidation": false,
+                "definition": {
+                  "codegen": {
+                    "required": false
+                  },
+                  "description": null,
+                  "hidden": false,
+                  "name": "enableOffer",
+                  "readOnly": false,
+                  "title": "Enable Offer Schema",
+                  "hasValidation": false,
+                  "type": "Boolean"
+                }
+              },
+              {
+                "name": "enableService",
+                "title": "Enable Service Schema",
+                "description": "",
+                "hidden": false,
+                "readOnly": false,
+                "codegen": {
+                  "required": false
+                },
+                "hasValidation": false,
+                "definition": {
+                  "codegen": {
+                    "required": false
+                  },
+                  "description": null,
+                  "hidden": false,
+                  "name": "enableService",
+                  "readOnly": false,
+                  "title": "Enable Service Schema",
+                  "hasValidation": false,
+                  "type": "Boolean"
+                }
+              },
+              {
+                "name": "enableProduct",
+                "title": "Enable Product Schema",
+                "description": "",
+                "hidden": false,
+                "readOnly": false,
+                "codegen": {
+                  "required": false
+                },
+                "hasValidation": false,
+                "definition": {
+                  "codegen": {
+                    "required": false
+                  },
+                  "description": null,
+                  "hidden": false,
+                  "name": "enableProduct",
+                  "readOnly": false,
+                  "title": "Enable Product Schema",
+                  "hasValidation": false,
+                  "type": "Boolean"
+                }
+              },
+              {
+                "name": "customJsonLd",
+                "title": "Custom JSON-LD",
+                "description": "Custom JSON-LD structured data (JSON format)",
+                "hidden": false,
+                "readOnly": false,
+                "codegen": {
+                  "required": false
+                },
+                "hasValidation": true,
+                "definition": {
+                  "codegen": {
+                    "required": false
+                  },
+                  "description": "Custom JSON-LD structured data (JSON format)",
+                  "hidden": false,
+                  "name": "customJsonLd",
+                  "readOnly": false,
+                  "title": "Custom JSON-LD",
+                  "hasValidation": true,
+                  "type": "Text"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "name": "hreflang",
+          "title": "Hreflang",
+          "description": "Language and URL pairs for international SEO",
+          "hidden": false,
+          "readOnly": false,
+          "codegen": {
+            "required": false
+          },
+          "hasValidation": false,
+          "definition": {
+            "codegen": {
+              "required": false
+            },
+            "description": "Language and URL pairs for international SEO",
+            "hidden": false,
+            "name": "hreflang",
+            "readOnly": false,
+            "title": "Hreflang",
+            "hasValidation": false,
+            "type": "Array",
+            "of": [
+              {
+                "codegen": {
+                  "required": false
+                },
+                "description": null,
+                "hidden": false,
+                "name": null,
+                "readOnly": false,
+                "title": null,
+                "hasValidation": false,
+                "type": "Object",
+                "fields": [
+                  {
+                    "name": "language",
+                    "title": "Language",
+                    "description": "",
+                    "hidden": false,
+                    "readOnly": false,
+                    "codegen": {
+                      "required": false
+                    },
+                    "hasValidation": true,
+                    "definition": {
+                      "codegen": {
+                        "required": false
+                      },
+                      "description": null,
+                      "hidden": false,
+                      "name": "language",
+                      "readOnly": false,
+                      "title": "Language",
+                      "hasValidation": true,
+                      "type": "String",
+                      "list": null
+                    }
+                  },
+                  {
+                    "name": "url",
+                    "title": "URL",
+                    "description": "",
+                    "hidden": false,
+                    "readOnly": false,
+                    "codegen": {
+                      "required": false
+                    },
+                    "hasValidation": true,
+                    "definition": {
+                      "codegen": {
+                        "required": false
+                      },
+                      "description": null,
+                      "hidden": false,
+                      "name": "url",
+                      "readOnly": false,
+                      "title": "URL",
+                      "hasValidation": true,
+                      "type": "Url"
+                    }
+                  }
+                ]
+              }
+            ],
+            "list": null
+          }
+        },
+        {
+          "name": "customHeadScripts",
+          "title": "Custom Head Scripts",
+          "description": "Custom scripts to inject into the page head or body",
+          "hidden": false,
+          "readOnly": false,
+          "codegen": {
+            "required": false
+          },
+          "hasValidation": false,
+          "definition": {
+            "codegen": {
+              "required": false
+            },
+            "description": "Custom scripts to inject into the page head or body",
+            "hidden": false,
+            "name": "customHeadScripts",
+            "readOnly": false,
+            "title": "Custom Head Scripts",
+            "hasValidation": false,
+            "type": "Array",
+            "of": [
+              {
+                "codegen": {
+                  "required": false
+                },
+                "description": null,
+                "hidden": false,
+                "name": null,
+                "readOnly": false,
+                "title": null,
+                "hasValidation": false,
+                "type": "Object",
+                "fields": [
+                  {
+                    "name": "name",
+                    "title": "Script Name",
+                    "description": "",
+                    "hidden": false,
+                    "readOnly": false,
+                    "codegen": {
+                      "required": false
+                    },
+                    "hasValidation": true,
+                    "definition": {
+                      "codegen": {
+                        "required": false
+                      },
+                      "description": null,
+                      "hidden": false,
+                      "name": "name",
+                      "readOnly": false,
+                      "title": "Script Name",
+                      "hasValidation": true,
+                      "type": "String",
+                      "list": null
+                    }
+                  },
+                  {
+                    "name": "script",
+                    "title": "Script Content",
+                    "description": "",
+                    "hidden": false,
+                    "readOnly": false,
+                    "codegen": {
+                      "required": false
+                    },
+                    "hasValidation": true,
+                    "definition": {
+                      "codegen": {
+                        "required": false
+                      },
+                      "description": null,
+                      "hidden": false,
+                      "name": "script",
+                      "readOnly": false,
+                      "title": "Script Content",
+                      "hasValidation": true,
+                      "type": "Text"
+                    }
+                  },
+                  {
+                    "name": "position",
+                    "title": "Position",
+                    "description": "",
+                    "hidden": false,
+                    "readOnly": false,
+                    "codegen": {
+                      "required": false
+                    },
+                    "hasValidation": false,
+                    "definition": {
+                      "codegen": {
+                        "required": false
+                      },
+                      "description": null,
+                      "hidden": false,
+                      "name": "position",
+                      "readOnly": false,
+                      "title": "Position",
+                      "hasValidation": false,
+                      "type": "String",
+                      "list": [
+                        {
+                          "title": "Head",
+                          "value": "head"
+                        },
+                        {
+                          "title": "Body Start",
+                          "value": "body-start"
+                        },
+                        {
+                          "title": "Body End",
+                          "value": "body-end"
+                        }
+                      ]
+                    }
+                  }
+                ]
+              }
+            ],
+            "list": null
+          }
+        },
+        {
+          "name": "fallbackDescription",
+          "title": "Fallback Description Source",
+          "description": "Fallback source for description when meta description is empty",
+          "hidden": false,
+          "readOnly": false,
+          "codegen": {
+            "required": false
+          },
+          "hasValidation": false,
+          "definition": {
+            "codegen": {
+              "required": false
+            },
+            "description": "Fallback source for description when meta description is empty",
+            "hidden": false,
+            "name": "fallbackDescription",
+            "readOnly": false,
+            "title": "Fallback Description Source",
+            "hasValidation": false,
+            "type": "String",
+            "list": [
+              {
+                "title": "Meta Description",
+                "value": "meta"
+              },
+              {
+                "title": "Page Content",
+                "value": "content"
+              },
+              {
+                "title": "Site Description",
+                "value": "site"
+              }
+            ]
+          }
+        },
+        {
+          "name": "imageOptimization",
+          "title": "Image Optimization",
+          "description": "",
+          "hidden": false,
+          "readOnly": false,
+          "codegen": {
+            "required": false
+          },
+          "hasValidation": false,
+          "definition": {
+            "codegen": {
+              "required": false
+            },
+            "description": null,
+            "hidden": false,
+            "name": "imageOptimization",
+            "readOnly": false,
+            "title": "Image Optimization",
+            "hasValidation": false,
+            "type": "Object",
+            "fields": [
+              {
+                "name": "width",
+                "title": "Image Width",
+                "description": "Default width for images on this page",
+                "hidden": false,
+                "readOnly": false,
+                "codegen": {
+                  "required": false
+                },
+                "hasValidation": false,
+                "definition": {
+                  "codegen": {
+                    "required": false
+                  },
+                  "description": "Default width for images on this page",
+                  "hidden": false,
+                  "name": "width",
+                  "readOnly": false,
+                  "title": "Image Width",
+                  "hasValidation": false,
+                  "type": "Number",
+                  "list": null
+                }
+              },
+              {
+                "name": "height",
+                "title": "Image Height",
+                "description": "Default height for images on this page",
+                "hidden": false,
+                "readOnly": false,
+                "codegen": {
+                  "required": false
+                },
+                "hasValidation": false,
+                "definition": {
+                  "codegen": {
+                    "required": false
+                  },
+                  "description": "Default height for images on this page",
+                  "hidden": false,
+                  "name": "height",
+                  "readOnly": false,
+                  "title": "Image Height",
+                  "hasValidation": false,
+                  "type": "Number",
+                  "list": null
+                }
+              },
+              {
+                "name": "priority",
+                "title": "Priority Loading",
+                "description": "Load images with high priority",
+                "hidden": false,
+                "readOnly": false,
+                "codegen": {
+                  "required": false
+                },
+                "hasValidation": false,
+                "definition": {
+                  "codegen": {
+                    "required": false
+                  },
+                  "description": "Load images with high priority",
+                  "hidden": false,
+                  "name": "priority",
+                  "readOnly": false,
+                  "title": "Priority Loading",
+                  "hasValidation": false,
+                  "type": "Boolean"
+                }
+              },
+              {
+                "name": "loading",
+                "title": "Loading Strategy",
+                "description": "",
+                "hidden": false,
+                "readOnly": false,
+                "codegen": {
+                  "required": false
+                },
+                "hasValidation": false,
+                "definition": {
+                  "codegen": {
+                    "required": false
+                  },
+                  "description": null,
+                  "hidden": false,
+                  "name": "loading",
+                  "readOnly": false,
+                  "title": "Loading Strategy",
+                  "hasValidation": false,
+                  "type": "String",
+                  "list": [
+                    {
+                      "title": "Lazy",
+                      "value": "lazy"
+                    },
+                    {
+                      "title": "Eager",
+                      "value": "eager"
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        },
+        {
+          "name": "pagination",
+          "title": "Pagination",
+          "description": "Pagination links for series of pages",
+          "hidden": false,
+          "readOnly": false,
+          "codegen": {
+            "required": false
+          },
+          "hasValidation": false,
+          "definition": {
+            "codegen": {
+              "required": false
+            },
+            "description": "Pagination links for series of pages",
+            "hidden": false,
+            "name": "pagination",
+            "readOnly": false,
+            "title": "Pagination",
+            "hasValidation": false,
+            "type": "Object",
+            "fields": [
+              {
+                "name": "prevUrl",
+                "title": "Previous Page URL",
+                "description": "URL for the previous page in a series",
+                "hidden": false,
+                "readOnly": false,
+                "codegen": {
+                  "required": false
+                },
+                "hasValidation": false,
+                "definition": {
+                  "codegen": {
+                    "required": false
+                  },
+                  "description": "URL for the previous page in a series",
+                  "hidden": false,
+                  "name": "prevUrl",
+                  "readOnly": false,
+                  "title": "Previous Page URL",
+                  "hasValidation": false,
+                  "type": "Url"
+                }
+              },
+              {
+                "name": "nextUrl",
+                "title": "Next Page URL",
+                "description": "URL for the next page in a series",
+                "hidden": false,
+                "readOnly": false,
+                "codegen": {
+                  "required": false
+                },
+                "hasValidation": false,
+                "definition": {
+                  "codegen": {
+                    "required": false
+                  },
+                  "description": "URL for the next page in a series",
+                  "hidden": false,
+                  "name": "nextUrl",
+                  "readOnly": false,
+                  "title": "Next Page URL",
+                  "hasValidation": false,
+                  "type": "Url"
+                }
+              }
+            ]
           }
         }
       ]

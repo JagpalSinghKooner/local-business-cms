@@ -1,6 +1,7 @@
 import { MetadataRoute } from "next";
 import { groq } from "next-sanity";
 import { sanity } from "@/sanity/client";
+import { env } from "@/lib/env";
 
 type PageRecord = {
   slug?: string;
@@ -40,7 +41,7 @@ const sitemapQuery = groq`{
 }`;
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const base = (process.env.NEXT_PUBLIC_SITE_URL ?? "https://www.buddsplumbing.com").replace(/\/+$/, "");
+  const base = env.NEXT_PUBLIC_SITE_URL.replace(/\/+$/, "");
 
   const { pages = [], services = [], locations = [] } = await sanity.fetch<{
     pages?: PageRecord[];

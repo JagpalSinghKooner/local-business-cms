@@ -7,6 +7,10 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
+    "type-check": "tsc --noEmit",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "validate": "pnpm lint && pnpm type-check",
     "sanitize:types": "sanity-codegen schema-codegen",
     "sanity:export": "node scripts/sanity-export.mjs",
     "sanity:import": "node scripts/sanity-import.mjs",
@@ -14,7 +18,8 @@
     "test:seo:basic": "playwright test --config=playwright.config.simple.ts",
     "test:seo:ui": "playwright test tests/seo/ --ui",
     "test:seo:headed": "playwright test tests/seo/ --headed",
-    "test:seo:debug": "playwright test tests/seo/ --debug"
+    "test:seo:debug": "playwright test tests/seo/ --debug",
+    "prepare": "husky"
   },
   "dependencies": {
     "@portabletext/react": "^4.0.3",
@@ -50,11 +55,16 @@
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "@types/sanitize-html": "^2.16.0",
     "autoprefixer": "^10.4.21",
     "babel-plugin-module-resolver": "^5.0.2",
     "eslint": "^9",
     "eslint-config-next": "15.5.5",
+    "eslint-config-prettier": "^10.1.8",
+    "husky": "^9.1.7",
+    "lint-staged": "^16.2.5",
     "postcss": "^8.5.6",
+    "prettier": "^3.6.2",
     "structured-data-testing-tool": "^4.5.0",
     "tailwindcss": "3.4.13",
     "typescript": "^5"

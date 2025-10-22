@@ -1,13 +1,18 @@
 "use client";
 import { PortableText, type PortableTextComponents } from '@portabletext/react'
 import type { PortableContent } from '@/types'
+import { getImageUrl, getImageAlt } from '@/types/sanity-helpers'
 
 const components: PortableTextComponents = {
   types: {
-    image: ({ value }) => (
-      // eslint-disable-next-line @next/next/no-img-element
-      <img src={value?.asset?.url} alt={value?.alt || ''} />
-    ),
+    image: ({ value }) => {
+      const imageUrl = getImageUrl(value)
+      const imageAlt = getImageAlt(value)
+      return imageUrl ? (
+        // eslint-disable-next-line @next/next/no-img-element
+        <img src={imageUrl} alt={imageAlt} />
+      ) : null
+    },
   },
   marks: {
     link: ({ children, value }) => {
@@ -57,7 +62,8 @@ type PortableProps = {
 export default function Portable({ value, className }: PortableProps) {
   if (!value || value.length === 0) return null
 
-  const content = <PortableText value={value} components={components} />
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const content = <PortableText value={value as any} components={components} />
 
   return className ? <div className={className}>{content}</div> : content
 }

@@ -9,6 +9,7 @@ import { buildBreadcrumbs } from '@/lib/breadcrumbs'
 import { getGlobalDataset, getPageBySlug, listLocations, listOffers } from '@/sanity/loaders'
 import type { PortableContent } from '@/types'
 import { ApplyScriptOverrides } from '@/components/scripts/ScriptOverridesProvider'
+import { type ScriptOverride } from '@/types/sanity-helpers'
 import PagePreview from '@/components/preview/PagePreview'
 
 export const revalidate = 3600
@@ -55,7 +56,7 @@ export default async function LocationsPage() {
 
   return (
     <main className="pb-16">
-      <ApplyScriptOverrides overrides={page?.scriptOverrides as any} />
+      <ApplyScriptOverrides overrides={(page?.scriptOverrides as ScriptOverride[] | undefined) ?? []} />
       <Breadcrumbs trail={breadcrumbs} />
       {page?.sections?.length ? (
         <SectionRenderer

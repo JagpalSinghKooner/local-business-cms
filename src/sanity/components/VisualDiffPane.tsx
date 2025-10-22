@@ -41,13 +41,17 @@ const collectDiffs = (published: unknown, draft: unknown, path = ''): DiffEntry[
   return [{ path, draftValue: draft, publishedValue: published }]
 }
 
+interface VisualDiffPaneProps {
+  documentId?: string
+}
+
 const formatValue = (value: unknown) =>
   typeof value === 'string' || typeof value === 'number' || typeof value === 'boolean'
     ? value
     : JSON.stringify(value, null, 2)
 
-export default function VisualDiffPane(props: any) {
-  const documentId: string | undefined = props?.documentId
+export default function VisualDiffPane(props: VisualDiffPaneProps) {
+  const documentId = props?.documentId
   const client = useClient({ apiVersion: '2024-05-01' })
   const [state, setState] = useState<{ published: unknown; draft: unknown; loading: boolean }>({
     published: null,
@@ -83,13 +87,15 @@ export default function VisualDiffPane(props: any) {
     }
   }, [client, documentId])
 
-  if (!documentId) {
-    return <div className="p-4 text-sm">Save the document to view differences.</div>
-  }
+  // Always call hooks before any conditional returns
   const diffs = useMemo(() => {
     if (!state.draft && !state.published) return []
     return collectDiffs(state.published, state.draft).filter((entry) => entry.path)
   }, [state.draft, state.published])
+
+  if (!documentId) {
+    return <div className="p-4 text-sm">Save the document to view differences.</div>
+  }
 
   if (state.loading) {
     return <div className="flex h-full items-center justify-center text-sm text-muted">Loading diff…</div>
