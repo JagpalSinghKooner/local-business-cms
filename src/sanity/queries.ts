@@ -113,10 +113,11 @@ export const globalSettingsQ = groq`{
       shadow
     }
   },
-  "services": *[_type == "service" && defined(slug.current)] | order(title asc){
+  "services": *[_type == "service" && defined(slug.current)] | order(title asc) [0...100]{
     title,
     "slug": slug.current,
     "intro": coalesce(body[0..1], []),
+    _updatedAt,
     "category": category->{
       title,
       "slug": slug.current
@@ -129,14 +130,15 @@ export const globalSettingsQ = groq`{
       }
     }
   },
-  "locations": *[_type == "location" && defined(slug.current)] | order(city asc){
+  "locations": *[_type == "location" && defined(slug.current)] | order(city asc) [0...100]{
     city,
     "slug": slug.current,
-    "intro": coalesce(intro, [])
+    "intro": coalesce(intro, []),
+    _updatedAt
   }
 }`
 
-export const servicesQ = groq`*[_type == "service" && defined(slug.current)]|order(title asc){
+export const servicesQ = groq`*[_type == "service" && defined(slug.current)]|order(title asc)[0...100]{
   title,
   "slug": slug.current,
   "intro": coalesce(body[0..1], []),
@@ -150,7 +152,7 @@ export const servicesQ = groq`*[_type == "service" && defined(slug.current)]|ord
   seo
 }`
 
-export const servicesListQ = groq`*[_type == "service" && defined(slug.current)]|order(title asc){
+export const servicesListQ = groq`*[_type == "service" && defined(slug.current)]|order(title asc)[0...100]{
   title,
   "slug": slug.current,
   "intro": coalesce(body[0..1], []),
@@ -167,7 +169,7 @@ export const servicesListQ = groq`*[_type == "service" && defined(slug.current)]
   }
 }`
 
-export const offersListQ = groq`*[_type == "offer" && defined(slug.current)]|order(validTo desc){
+export const offersListQ = groq`*[_type == "offer" && defined(slug.current)]|order(validTo desc)[0...100]{
   title,
   summary,
   "slug": slug.current,
@@ -217,10 +219,7 @@ export const serviceBySlugQ = groq`*[_type=="service" && slug.current==$slug][0]
   },
   displayOptions,
   seo,
-  locations[]->{
-    city,
-    "slug":slug.current
-  },
+  locations[]->{ city, "slug":slug.current } | defined(@),
   scriptOverrides[]{
     scriptKey,
     enabled
@@ -240,51 +239,15 @@ export const serviceBySlugQ = groq`*[_type=="service" && slug.current==$slug][0]
         null
       )
     },
-    "servicesSelected": select(_type == 'section.services' => services[]->{
-      _id,
-      title,
-      "intro": coalesce(body[0..1], []),
-      "slug": slug.current,
-      heroImage{
-        alt,
-        asset->{
-          url,
-          metadata{ lqip, dimensions{ width, height } }
-        }
-      },
-      seo
-    }),
+    "servicesSelected": select(_type == 'section.services' => services[]->{ _id, title, "intro": coalesce(body[0..1], []), "slug": slug.current, heroImage{ alt, asset->{ url, metadata{ lqip, dimensions{ width, height } } } }, seo } | defined(@)),
     "servicesCategory": select(_type == 'section.services' => category->{
       title,
       "slug": slug.current
     }),
-    "locationsSelected": select(_type == 'section.locations' => locations[]->{
-      _id,
-      city,
-      "slug": slug.current,
-      intro
-    }),
-    "testimonialsSelected": select(_type == 'section.testimonials' => testimonials[]->{
-      _id,
-      author,
-      quote,
-      role,
-      location,
-      rating
-    }),
-    "faqsSelected": select(_type == 'section.faq' => faqs[]->{
-      _id,
-      question,
-      answer
-    }),
-    "offersSelected": select(_type == 'section.offers' => offers[]->{
-      _id,
-      title,
-      summary,
-      "slug": slug.current,
-      validFrom,
-      validTo
-    }),
+    "locationsSelected": select(_type == 'section.locations' => locations[]->{ _id, city, "slug": slug.current, intro } | defined(@)),
+    "testimonialsSelected": select(_type == 'section.testimonials' => testimonials[]->{ _id, author, quote, role, location, rating } | defined(@)),
+    "faqsSelected": select(_type == 'section.faq' => faqs[]->{ _id, question, answer } | defined(@)),
+    "offersSelected": select(_type == 'section.offers' => offers[]->{ _id, title, summary, "slug": slug.current, validFrom, validTo } | defined(@)),
     ctas[]{
       ...
     },
@@ -344,30 +307,9 @@ export const serviceBySlugQ = groq`*[_type=="service" && slug.current==$slug][0]
     }),
     "postsResolved": select(
       _type == 'section.blogList' => select(
-        sourceMode == 'selected' => posts[]->{
-          title,
-          "slug": slug.current,
-          "excerpt": coalesce(pt::text(body[0]), ''),
-          "coverImage": hero.asset->url,
-          "author": author,
-          "publishedAt": date
-        },
-        sourceMode == 'category' => *[_type == "post" && references(^.category._ref)] | order(date desc){
-          title,
-          "slug": slug.current,
-          "excerpt": coalesce(pt::text(body[0]), ''),
-          "coverImage": hero.asset->url,
-          "author": author,
-          "publishedAt": date
-        },
-        true => *[_type == "post"] | order(date desc){
-          title,
-          "slug": slug.current,
-          "excerpt": coalesce(pt::text(body[0]), ''),
-          "coverImage": hero.asset->url,
-          "author": author,
-          "publishedAt": date
-        }
+        sourceMode == 'selected' => posts[]->{ title, "slug": slug.current, "excerpt": coalesce(pt::text(body[0]), ''), "coverImage": hero.asset->url, "author": author, "publishedAt": date } | defined(@),
+        sourceMode == 'category' => *[_type == "post" && references(^.category._ref)] | order(date desc) [0...100]{ title, "slug": slug.current, "excerpt": coalesce(pt::text(body[0]), ''), "coverImage": hero.asset->url, "author": author, "publishedAt": date },
+        true => *[_type == "post"] | order(date desc) [0...100]{ title, "slug": slug.current, "excerpt": coalesce(pt::text(body[0]), ''), "coverImage": hero.asset->url, "author": author, "publishedAt": date }
       )
     )
   }
@@ -412,27 +354,12 @@ export const locationBySlugQ = groq`*[_type=="location" && slug.current==$slug][
       }
     }
   },
-  services[]->{
-    title,
-    "slug":slug.current,
-    "intro": coalesce(body[0..1], []),
-    heroImage{
-      alt,
-      asset->{
-        url,
-        metadata{ lqip, dimensions{ width, height } }
-      }
-    },
-    category->{
-      title,
-      "slug": slug.current
-    }
-  },
+  services[]->{ title, "slug":slug.current, "intro": coalesce(body[0..1], []), heroImage{ alt, asset->{ url, metadata{ lqip, dimensions{ width, height } } } }, category->{ title, "slug": slug.current } } | defined(@),
   displayOptions,
   seo
 }`
 
-export const locationsListQ = groq`*[_type == "location" && defined(slug.current)]|order(city asc){
+export const locationsListQ = groq`*[_type == "location" && defined(slug.current)]|order(city asc)[0...100]{
   city,
   "slug": slug.current,
   "intro": coalesce(intro, [])
@@ -456,51 +383,15 @@ export const pageBySlugQ = groq`*[_type == "page" && slug.current == $slug][0]{
         null
       )
     },
-    "servicesSelected": services[]->{
-      _id,
-      title,
-      "intro": coalesce(body[0..1], []),
-      "slug": slug.current,
-      heroImage{
-        alt,
-        asset->{
-          url,
-          metadata{ lqip, dimensions{ width, height } }
-        }
-      },
-      seo
-    },
+    "servicesSelected": services[]->{ _id, title, "intro": coalesce(body[0..1], []), "slug": slug.current, heroImage{ alt, asset->{ url, metadata{ lqip, dimensions{ width, height } } } }, seo } | defined(@),
     "servicesCategory": category->{
       title,
       "slug": slug.current
     },
-    "locationsSelected": locations[]->{
-      _id,
-      city,
-      "slug": slug.current,
-      intro
-    },
-    "testimonialsSelected": testimonials[]->{
-      _id,
-      author,
-      quote,
-      role,
-      location,
-      rating
-    },
-    "faqsSelected": faqs[]->{
-      _id,
-      question,
-      answer
-    },
-    "offersSelected": offers[]->{
-      _id,
-      title,
-      summary,
-      "slug": slug.current,
-      validFrom,
-      validTo
-    },
+    "locationsSelected": locations[]->{ _id, city, "slug": slug.current, intro } | defined(@),
+    "testimonialsSelected": testimonials[]->{ _id, author, quote, role, location, rating } | defined(@),
+    "faqsSelected": faqs[]->{ _id, question, answer } | defined(@),
+    "offersSelected": offers[]->{ _id, title, summary, "slug": slug.current, validFrom, validTo } | defined(@),
     ctas[]{
       ...
     },
@@ -562,30 +453,9 @@ export const pageBySlugQ = groq`*[_type == "page" && slug.current == $slug][0]{
     }),
     "postsResolved": select(
       _type == 'section.blogList' => select(
-        sourceMode == 'selected' => posts[]->{
-          title,
-          "slug": slug.current,
-          "excerpt": coalesce(pt::text(body[0]), ''),
-          "coverImage": hero.asset->url,
-          "author": author,
-          "publishedAt": date
-        },
-        sourceMode == 'category' => *[_type == "post" && references(^.category._ref)] | order(date desc){
-          title,
-          "slug": slug.current,
-          "excerpt": coalesce(pt::text(body[0]), ''),
-          "coverImage": hero.asset->url,
-          "author": author,
-          "publishedAt": date
-        },
-        true => *[_type == "post"] | order(date desc){
-          title,
-          "slug": slug.current,
-          "excerpt": coalesce(pt::text(body[0]), ''),
-          "coverImage": hero.asset->url,
-          "author": author,
-          "publishedAt": date
-        }
+        sourceMode == 'selected' => posts[]->{ title, "slug": slug.current, "excerpt": coalesce(pt::text(body[0]), ''), "coverImage": hero.asset->url, "author": author, "publishedAt": date } | defined(@),
+        sourceMode == 'category' => *[_type == "post" && references(^.category._ref)] | order(date desc) [0...100]{ title, "slug": slug.current, "excerpt": coalesce(pt::text(body[0]), ''), "coverImage": hero.asset->url, "author": author, "publishedAt": date },
+        true => *[_type == "post"] | order(date desc) [0...100]{ title, "slug": slug.current, "excerpt": coalesce(pt::text(body[0]), ''), "coverImage": hero.asset->url, "author": author, "publishedAt": date }
       )
     )
   },
