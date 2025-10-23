@@ -39,7 +39,7 @@ const nextConfig: NextConfig = {
               "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
               "img-src 'self' data: https: blob:",
               "font-src 'self' data: https://fonts.gstatic.com",
-              "connect-src 'self' https://*.sanity.io https://www.google-analytics.com",
+              "connect-src 'self' https://*.sanity.io https://api.sanity.io https://www.google-analytics.com",
               'frame-src https://calendly.com https://app.hubspot.com https://docs.google.com',
             ].join('; '),
           },

@@ -16,6 +16,9 @@ export default defineConfig({
   projectId: process.env.NEXT_PUBLIC_SANITY_PROJECT_ID!,
   dataset: process.env.NEXT_PUBLIC_SANITY_DATASET!,
   basePath: '/studio',
+
+  // Suppress version check errors in production (CSP restrictions)
+  unstable_clientOnly: true,
   plugins: [
     structureTool({ structure: deskStructure }),
     siteSwitcherTool(),
