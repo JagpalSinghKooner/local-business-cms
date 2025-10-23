@@ -14,7 +14,6 @@ import PagePreview from '@/components/preview/PagePreview'
 
 // Route segment config for optimal performance
 export const revalidate = 3600 // ISR: Revalidate every hour
-export const dynamic = 'force-static' // Force static generation
 export const fetchCache = 'force-cache' // Aggressive caching
 
 function extractText(nodes?: PortableContent): string | undefined {
@@ -59,7 +58,9 @@ export default async function LocationsPage() {
 
   return (
     <main className="pb-16">
-      <ApplyScriptOverrides overrides={(page?.scriptOverrides as ScriptOverride[] | undefined) ?? []} />
+      <ApplyScriptOverrides
+        overrides={(page?.scriptOverrides as ScriptOverride[] | undefined) ?? []}
+      />
       <Breadcrumbs trail={breadcrumbs} />
       {page?.sections?.length ? (
         <SectionRenderer
@@ -74,7 +75,9 @@ export default async function LocationsPage() {
 
       <section className="py-16">
         <Container className="space-y-6">
-          {page?.title ? <h1 className="text-3xl font-semibold text-strong">{page.title}</h1> : null}
+          {page?.title ? (
+            <h1 className="text-3xl font-semibold text-strong">{page.title}</h1>
+          ) : null}
           {page?.body?.length ? (
             <div className="prose prose-theme max-w-none">
               <Portable value={page.body} />
@@ -82,8 +85,14 @@ export default async function LocationsPage() {
           ) : null}
           <ul className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {locations.map((location) => (
-              <li key={location.slug} className="rounded-2xl border border-divider bg-surface shadow-elevated">
-                <Link href={`/locations/${location.slug}`} className="flex h-full flex-col gap-3 p-6">
+              <li
+                key={location.slug}
+                className="rounded-2xl border border-divider bg-surface shadow-elevated"
+              >
+                <Link
+                  href={`/locations/${location.slug}`}
+                  className="flex h-full flex-col gap-3 p-6"
+                >
                   <span className="text-lg font-semibold text-strong">{location.city}</span>
                   {location.intro ? (
                     <p className="text-sm text-muted line-clamp-3">{extractText(location.intro)}</p>

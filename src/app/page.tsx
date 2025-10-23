@@ -12,7 +12,6 @@ import { getOgImageUrl, type ScriptOverride } from '@/types/sanity-helpers'
 
 // Route segment config for optimal performance
 export const revalidate = 3600 // ISR: Revalidate every hour
-export const dynamic = 'force-static' // Force static generation
 export const fetchCache = 'force-cache' // Aggressive caching
 
 const HOME_SLUG = 'home'
@@ -31,10 +30,7 @@ export async function generateMetadata() {
       global.site?.metaDescription ||
       global.site?.tagline ||
       'Professional services delivered by trusted local experts.',
-    image:
-      getOgImageUrl(page?.socialMedia) ??
-      getOgImageUrl(global.site?.ogImage) ??
-      null,
+    image: getOgImageUrl(page?.socialMedia) ?? getOgImageUrl(global.site?.ogImage) ?? null,
   })
 }
 
@@ -61,7 +57,7 @@ export default async function Home() {
           <Container className="space-y-4 text-center">
             <h1 className="text-4xl font-semibold text-strong">Welcome</h1>
             <p className="text-base text-muted">
-              Create a page with slug “home” in Sanity to control the homepage content.
+              Create a page with slug &ldquo;home&rdquo; in Sanity to control the homepage content.
             </p>
           </Container>
         </section>

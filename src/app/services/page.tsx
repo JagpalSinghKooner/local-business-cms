@@ -13,7 +13,6 @@ import PagePreview from '@/components/preview/PagePreview'
 
 // Route segment config for optimal performance
 export const revalidate = 3600 // ISR: Revalidate every hour
-export const dynamic = 'force-static' // Force static generation
 export const fetchCache = 'force-cache' // Aggressive caching
 
 export default async function ServicesPage() {
@@ -43,7 +42,9 @@ export default async function ServicesPage() {
 
   return (
     <main className="pb-16">
-      <ApplyScriptOverrides overrides={(page?.scriptOverrides as ScriptOverride[] | undefined) ?? []} />
+      <ApplyScriptOverrides
+        overrides={(page?.scriptOverrides as ScriptOverride[] | undefined) ?? []}
+      />
       <Breadcrumbs trail={breadcrumbs} />
       {page?.sections?.length ? (
         <SectionRenderer
@@ -58,7 +59,9 @@ export default async function ServicesPage() {
 
       <section className="py-16">
         <Container className="space-y-6">
-          {page?.title ? <h1 className="text-3xl font-semibold text-strong">{page.title}</h1> : null}
+          {page?.title ? (
+            <h1 className="text-3xl font-semibold text-strong">{page.title}</h1>
+          ) : null}
           {page?.body?.length ? (
             <div className="prose prose-theme max-w-none">
               <Portable value={page.body} />

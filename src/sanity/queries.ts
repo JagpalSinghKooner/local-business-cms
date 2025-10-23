@@ -219,7 +219,7 @@ export const serviceBySlugQ = groq`*[_type=="service" && slug.current==$slug][0]
   },
   displayOptions,
   seo,
-  locations[]->{ city, "slug":slug.current } | defined(@),
+  "locations": locations[defined(@)]->{ city, "slug":slug.current },
   scriptOverrides[]{
     scriptKey,
     enabled
@@ -239,15 +239,15 @@ export const serviceBySlugQ = groq`*[_type=="service" && slug.current==$slug][0]
         null
       )
     },
-    "servicesSelected": select(_type == 'section.services' => services[]->{ _id, title, "intro": coalesce(body[0..1], []), "slug": slug.current, heroImage{ alt, asset->{ url, metadata{ lqip, dimensions{ width, height } } } }, seo } | defined(@)),
+    "servicesSelected": select(_type == 'section.services' => services[defined(@)]->{ _id, title, "intro": coalesce(body[0..1], []), "slug": slug.current, heroImage{ alt, asset->{ url, metadata{ lqip, dimensions{ width, height } } } }, seo }),
     "servicesCategory": select(_type == 'section.services' => category->{
       title,
       "slug": slug.current
     }),
-    "locationsSelected": select(_type == 'section.locations' => locations[]->{ _id, city, "slug": slug.current, intro } | defined(@)),
-    "testimonialsSelected": select(_type == 'section.testimonials' => testimonials[]->{ _id, author, quote, role, location, rating } | defined(@)),
-    "faqsSelected": select(_type == 'section.faq' => faqs[]->{ _id, question, answer } | defined(@)),
-    "offersSelected": select(_type == 'section.offers' => offers[]->{ _id, title, summary, "slug": slug.current, validFrom, validTo } | defined(@)),
+    "locationsSelected": select(_type == 'section.locations' => locations[defined(@)]->{ _id, city, "slug": slug.current, intro }),
+    "testimonialsSelected": select(_type == 'section.testimonials' => testimonials[defined(@)]->{ _id, author, quote, role, location, rating }),
+    "faqsSelected": select(_type == 'section.faq' => faqs[defined(@)]->{ _id, question, answer }),
+    "offersSelected": select(_type == 'section.offers' => offers[defined(@)]->{ _id, title, summary, "slug": slug.current, validFrom, validTo }),
     ctas[]{
       ...
     },
@@ -307,7 +307,7 @@ export const serviceBySlugQ = groq`*[_type=="service" && slug.current==$slug][0]
     }),
     "postsResolved": select(
       _type == 'section.blogList' => select(
-        sourceMode == 'selected' => posts[]->{ title, "slug": slug.current, "excerpt": coalesce(pt::text(body[0]), ''), "coverImage": hero.asset->url, "author": author, "publishedAt": date } | defined(@),
+        sourceMode == 'selected' => posts[defined(@)]->{ title, "slug": slug.current, "excerpt": coalesce(pt::text(body[0]), ''), "coverImage": hero.asset->url, "author": author, "publishedAt": date },
         sourceMode == 'category' => *[_type == "post" && references(^.category._ref)] | order(date desc) [0...100]{ title, "slug": slug.current, "excerpt": coalesce(pt::text(body[0]), ''), "coverImage": hero.asset->url, "author": author, "publishedAt": date },
         true => *[_type == "post"] | order(date desc) [0...100]{ title, "slug": slug.current, "excerpt": coalesce(pt::text(body[0]), ''), "coverImage": hero.asset->url, "author": author, "publishedAt": date }
       )
@@ -354,7 +354,7 @@ export const locationBySlugQ = groq`*[_type=="location" && slug.current==$slug][
       }
     }
   },
-  services[]->{ title, "slug":slug.current, "intro": coalesce(body[0..1], []), heroImage{ alt, asset->{ url, metadata{ lqip, dimensions{ width, height } } } }, category->{ title, "slug": slug.current } } | defined(@),
+  "services": services[defined(@)]->{ title, "slug":slug.current, "intro": coalesce(body[0..1], []), heroImage{ alt, asset->{ url, metadata{ lqip, dimensions{ width, height } } } }, category->{ title, "slug": slug.current } },
   displayOptions,
   seo
 }`
@@ -383,15 +383,15 @@ export const pageBySlugQ = groq`*[_type == "page" && slug.current == $slug][0]{
         null
       )
     },
-    "servicesSelected": services[]->{ _id, title, "intro": coalesce(body[0..1], []), "slug": slug.current, heroImage{ alt, asset->{ url, metadata{ lqip, dimensions{ width, height } } } }, seo } | defined(@),
+    "servicesSelected": services[defined(@)]->{ _id, title, "intro": coalesce(body[0..1], []), "slug": slug.current, heroImage{ alt, asset->{ url, metadata{ lqip, dimensions{ width, height } } } }, seo },
     "servicesCategory": category->{
       title,
       "slug": slug.current
     },
-    "locationsSelected": locations[]->{ _id, city, "slug": slug.current, intro } | defined(@),
-    "testimonialsSelected": testimonials[]->{ _id, author, quote, role, location, rating } | defined(@),
-    "faqsSelected": faqs[]->{ _id, question, answer } | defined(@),
-    "offersSelected": offers[]->{ _id, title, summary, "slug": slug.current, validFrom, validTo } | defined(@),
+    "locationsSelected": locations[defined(@)]->{ _id, city, "slug": slug.current, intro },
+    "testimonialsSelected": testimonials[defined(@)]->{ _id, author, quote, role, location, rating },
+    "faqsSelected": faqs[defined(@)]->{ _id, question, answer },
+    "offersSelected": offers[defined(@)]->{ _id, title, summary, "slug": slug.current, validFrom, validTo },
     ctas[]{
       ...
     },
@@ -453,7 +453,7 @@ export const pageBySlugQ = groq`*[_type == "page" && slug.current == $slug][0]{
     }),
     "postsResolved": select(
       _type == 'section.blogList' => select(
-        sourceMode == 'selected' => posts[]->{ title, "slug": slug.current, "excerpt": coalesce(pt::text(body[0]), ''), "coverImage": hero.asset->url, "author": author, "publishedAt": date } | defined(@),
+        sourceMode == 'selected' => posts[defined(@)]->{ title, "slug": slug.current, "excerpt": coalesce(pt::text(body[0]), ''), "coverImage": hero.asset->url, "author": author, "publishedAt": date },
         sourceMode == 'category' => *[_type == "post" && references(^.category._ref)] | order(date desc) [0...100]{ title, "slug": slug.current, "excerpt": coalesce(pt::text(body[0]), ''), "coverImage": hero.asset->url, "author": author, "publishedAt": date },
         true => *[_type == "post"] | order(date desc) [0...100]{ title, "slug": slug.current, "excerpt": coalesce(pt::text(body[0]), ''), "coverImage": hero.asset->url, "author": author, "publishedAt": date }
       )
