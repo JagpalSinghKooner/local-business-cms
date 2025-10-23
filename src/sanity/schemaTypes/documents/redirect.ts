@@ -5,6 +5,8 @@ export default defineType({
   name: "redirect",
   title: "Redirect",
   type: "document",
+  description:
+    "Manage URL redirects with pattern matching, priority ordering, and loop detection. Test redirects using the validation script: pnpm redirects:validate",
   validation: (Rule) =>
     Rule.custom(async (doc, _context: ValidationContext) => {
       if (!doc) return true;
