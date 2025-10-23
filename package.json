@@ -16,7 +16,7 @@
     "sanity:import": "node scripts/sanity-import.mjs",
     "redirects:export": "tsx scripts/redirect-bulk-export.ts",
     "redirects:import": "tsx scripts/redirect-bulk-import.ts",
-    "redirects:validate": "tsx scripts/redirect-validate.ts",
+    "redirects:validate": "tsx scripts/validate-redirects.ts",
     "test": "playwright test",
     "test:seo": "playwright test tests/seo/",
     "test:seo:basic": "playwright test --config=playwright.config.simple.ts",

@@ -4964,7 +4964,7 @@
       "description": null,
       "hidden": false,
       "readOnly": false,
-      "hasValidation": false,
+      "hasValidation": true,
       "name": "redirect",
       "title": "Redirect",
       "type": "Document",
@@ -5119,6 +5119,66 @@
           }
         },
         {
+          "name": "caseSensitive",
+          "title": "Case Sensitive",
+          "description": "Whether the from path should be matched case-sensitively",
+          "hidden": false,
+          "readOnly": false,
+          "codegen": {
+            "required": false
+          },
+          "hasValidation": false,
+          "definition": {
+            "codegen": {
+              "required": false
+            },
+            "description": "Whether the from path should be matched case-sensitively",
+            "hidden": false,
+            "name": "caseSensitive",
+            "readOnly": false,
+            "title": "Case Sensitive",
+            "hasValidation": false,
+            "type": "Boolean"
+          }
+        },
+        {
+          "name": "queryStringHandling",
+          "title": "Query String Handling",
+          "description": "How to handle query strings in the redirect",
+          "hidden": false,
+          "readOnly": false,
+          "codegen": {
+            "required": false
+          },
+          "hasValidation": false,
+          "definition": {
+            "codegen": {
+              "required": false
+            },
+            "description": "How to handle query strings in the redirect",
+            "hidden": false,
+            "name": "queryStringHandling",
+            "readOnly": false,
+            "title": "Query String Handling",
+            "hasValidation": false,
+            "type": "String",
+            "list": [
+              {
+                "title": "Preserve - Keep query strings from original URL",
+                "value": "preserve"
+              },
+              {
+                "title": "Remove - Strip all query strings",
+                "value": "remove"
+              },
+              {
+                "title": "Ignore - Don't match query strings at all",
+                "value": "ignore"
+              }
+            ]
+          }
+        },
+        {
           "name": "notes",
           "title": "Notes",
           "description": "Internal notes about this redirect",
@@ -5144,7 +5204,7 @@
         {
           "name": "priority",
           "title": "Priority",
-          "description": "Lower numbers are checked first (default: 100). Use for ordering redirect rules.",
+          "description": "Higher numbers are evaluated first (default: 0). Use 10+ for important redirects.",
           "hidden": false,
           "readOnly": false,
           "codegen": {
@@ -5155,12 +5215,36 @@
             "codegen": {
               "required": false
             },
-            "description": "Lower numbers are checked first (default: 100). Use for ordering redirect rules.",
+            "description": "Higher numbers are evaluated first (default: 0). Use 10+ for important redirects.",
             "hidden": false,
             "name": "priority",
             "readOnly": false,
             "title": "Priority",
             "hasValidation": true,
+            "type": "Number",
+            "list": null
+          }
+        },
+        {
+          "name": "order",
+          "title": "Order",
+          "description": "Auto-incremented position for redirects with same priority",
+          "hidden": true,
+          "readOnly": true,
+          "codegen": {
+            "required": false
+          },
+          "hasValidation": false,
+          "definition": {
+            "codegen": {
+              "required": false
+            },
+            "description": "Auto-incremented position for redirects with same priority",
+            "hidden": true,
+            "name": "order",
+            "readOnly": true,
+            "title": "Order",
+            "hasValidation": false,
             "type": "Number",
             "list": null
           }

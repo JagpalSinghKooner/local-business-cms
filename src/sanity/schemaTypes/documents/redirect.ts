@@ -1,9 +1,58 @@
 import { defineField, defineType } from "sanity";
+import type { ValidationContext } from "sanity";
 
 export default defineType({
   name: "redirect",
   title: "Redirect",
   type: "document",
+  validation: (Rule) =>
+    Rule.custom(async (doc, _context: ValidationContext) => {
+      if (!doc) return true;
+
+      const { from, to, matchType } = doc as {
+        from?: string;
+        to?: string;
+        matchType?: string;
+      };
+
+      // Basic validation errors
+      const errors: string[] = [];
+
+      // Check for self-redirect
+      if (from && to && from === to) {
+        errors.push("Redirect cannot point to itself");
+      }
+
+      // Validate regex if match type is regex
+      if (matchType === "regex" && from) {
+        try {
+          new RegExp(from);
+        } catch (err) {
+          errors.push(
+            `Invalid regex pattern: ${err instanceof Error ? err.message : "Unknown error"}`
+          );
+        }
+      }
+
+      // Validate destination URL format
+      if (to && to.trim() === "") {
+        errors.push("Destination URL cannot be empty");
+      } else if (to && !to.startsWith("/")) {
+        try {
+          new URL(to);
+        } catch {
+          errors.push(
+            "Destination URL must be a valid absolute URL or start with /"
+          );
+        }
+      }
+
+      if (errors.length > 0) {
+        return errors.join(". ");
+      }
+
+      return true;
+    }),
   fields: [
     defineField({
       name: "from",
@@ -73,6 +122,28 @@ export default defineType({
       description: "Whether this redirect is currently active",
     }),
     defineField({
+      name: "caseSensitive",
+      title: "Case Sensitive",
+      type: "boolean",
+      initialValue: false,
+      description: "Whether the from path should be matched case-sensitively",
+    }),
+    defineField({
+      name: "queryStringHandling",
+      title: "Query String Handling",
+      type: "string",
+      options: {
+        list: [
+          { title: "Preserve - Keep query strings from original URL", value: "preserve" },
+          { title: "Remove - Strip all query strings", value: "remove" },
+          { title: "Ignore - Don't match query strings at all", value: "ignore" },
+        ],
+        layout: "radio",
+      },
+      initialValue: "preserve",
+      description: "How to handle query strings in the redirect",
+    }),
+    defineField({
       name: "notes",
       title: "Notes",
       type: "text",
@@ -83,9 +154,18 @@ export default defineType({
       name: "priority",
       title: "Priority",
       type: "number",
-      description: "Lower numbers are checked first (default: 100). Use for ordering redirect rules.",
-      initialValue: 100,
+      description: "Higher numbers are evaluated first (default: 0). Use 10+ for important redirects.",
+      initialValue: 0,
       validation: (Rule) => Rule.min(0).max(999),
+    }),
+    defineField({
+      name: "order",
+      title: "Order",
+      type: "number",
+      description: "Auto-incremented position for redirects with same priority",
+      initialValue: 0,
+      readOnly: true,
+      hidden: true,
     }),
     defineField({
       name: "validationWarnings",
@@ -103,17 +183,27 @@ export default defineType({
       matchType: "matchType",
       statusCode: "statusCode",
       isActive: "isActive",
+      priority: "priority",
       warnings: "validationWarnings",
     },
-    prepare({ from, to, matchType, statusCode, isActive, warnings }) {
+    prepare({ from, to, matchType, statusCode, isActive, priority, warnings }) {
       const warningIcon = warnings && warnings.length > 0 ? " ⚠️" : "";
+      const priorityBadge = priority && priority > 0 ? ` [P${priority}]` : "";
       return {
-        title: `${from} → ${to}${warningIcon}`,
+        title: `${from} → ${to}${warningIcon}${priorityBadge}`,
         subtitle: `${matchType} | ${statusCode} | ${isActive ? "Active" : "Inactive"}`,
       };
     },
   },
   orderings: [
+    {
+      title: "Priority (High to Low)",
+      name: "priorityDesc",
+      by: [
+        { field: "priority", direction: "desc" },
+        { field: "order", direction: "asc" },
+      ],
+    },
     {
       title: "From Path A-Z",
       name: "fromAsc",

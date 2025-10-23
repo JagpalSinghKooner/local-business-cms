@@ -16,6 +16,9 @@ export type RedirectRule = {
   statusCode: number
   isActive?: boolean
   priority?: number
+  order?: number
+  caseSensitive?: boolean
+  queryStringHandling?: 'preserve' | 'remove' | 'ignore'
 }
 
 export type ValidationResult = {
@@ -61,14 +64,19 @@ export function detectRedirectLoop(
       if (!r.isActive) return false
       if (r._id === redirect._id) return false // Skip self
 
+      const caseSensitive = r.caseSensitive ?? false
+      const testCurrent = caseSensitive ? current : current.toLowerCase()
+      const testFrom = caseSensitive ? r.from : r.from.toLowerCase()
+
       switch (r.matchType) {
         case 'exact':
-          return r.from === current
+          return testFrom === testCurrent
         case 'wildcard':
-          return matchWildcard(current, r.from)
+          return matchWildcard(testCurrent, testFrom, caseSensitive)
         case 'regex':
           try {
-            return new RegExp(r.from).test(current)
+            const flags = caseSensitive ? '' : 'i'
+            return new RegExp(r.from, flags).test(current)
           } catch {
             return false
           }
@@ -99,9 +107,10 @@ export function detectRedirectLoop(
 /**
  * Match wildcard pattern
  */
-function matchWildcard(path: string, pattern: string): boolean {
+function matchWildcard(path: string, pattern: string, caseSensitive = false): boolean {
   const regexPattern = pattern.replace(/\*/g, '(.*)')
-  return new RegExp(`^${regexPattern}$`).test(path)
+  const flags = caseSensitive ? '' : 'i'
+  return new RegExp(`^${regexPattern}$`, flags).test(path)
 }
 
 /**
@@ -111,31 +120,25 @@ export function validateRedirect(redirect: RedirectRule, allRedirects: RedirectR
   const warnings: string[] = []
   const errors: string[] = []
 
-  // Check for self-redirect
+  // Rule 1: Source ≠ Destination
   if (redirect.from === redirect.to) {
-    errors.push('Redirect points to itself')
+    errors.push('Redirect points to itself (from and to are identical)')
   }
 
-  // Check for redirect loop
-  const { hasLoop, chain } = detectRedirectLoop(redirect, allRedirects)
-  if (hasLoop) {
-    errors.push(`Redirect loop detected: ${chain.join(' → ')}`)
+  // Rule 2: No circular references (check full chain)
+  const chainValidation = validateRedirectChain(redirect.from, allRedirects)
+  if (chainValidation.hasLoop) {
+    errors.push(`Redirect loop detected: ${chainValidation.chain.join(' → ')}`)
   }
 
-  // Warn about long redirect chains
-  if (chain.length > 3) {
-    warnings.push(`Long redirect chain (${chain.length} hops): ${chain.join(' → ')}`)
+  // Warn about long redirect chains (Rule 2 continued)
+  if (chainValidation.tooLong) {
+    warnings.push(`Redirect chain too long (${chainValidation.chain.length} hops): ${chainValidation.chain.join(' → ')}`)
+  } else if (chainValidation.chain.length > 3) {
+    warnings.push(`Long redirect chain (${chainValidation.chain.length} hops): ${chainValidation.chain.join(' → ')}`)
   }
 
-  // Check for duplicate "from" paths
-  const duplicates = allRedirects.filter(
-    (r) => r._id !== redirect._id && r.isActive && r.from === redirect.from && r.matchType === 'exact'
-  )
-  if (duplicates.length > 0) {
-    warnings.push(`Duplicate redirect from "${redirect.from}" - this rule may never be reached`)
-  }
-
-  // Validate regex patterns
+  // Rule 3: Valid regex syntax
   if (redirect.matchType === 'regex') {
     try {
       new RegExp(redirect.from)
@@ -144,13 +147,50 @@ export function validateRedirect(redirect: RedirectRule, allRedirects: RedirectR
     }
   }
 
-  // Check for suspicious patterns
+  // Rule 4: No duplicate sources (unless priority differs or one is inactive)
+  const duplicates = allRedirects.filter(
+    (r) =>
+      r._id !== redirect._id &&
+      r.isActive &&
+      r.from === redirect.from &&
+      r.matchType === redirect.matchType &&
+      (r.priority ?? 0) === (redirect.priority ?? 0)
+  )
+  if (duplicates.length > 0) {
+    errors.push(`Duplicate redirect from "${redirect.from}" with same priority - this rule may never be reached`)
+  }
+
+  // Rule 5: Destination URL is valid format
+  if (!redirect.to || redirect.to.trim() === '') {
+    errors.push('Destination URL cannot be empty')
+  } else {
+    // Check if destination is absolute URL (should be valid URL)
+    if (!redirect.to.startsWith('/')) {
+      try {
+        new URL(redirect.to)
+      } catch {
+        errors.push(`Invalid destination URL: "${redirect.to}" - must be a valid absolute URL or start with /`)
+      }
+    }
+  }
+
+  // Additional validation: Check for suspicious patterns
   if (redirect.from.includes('*') && redirect.matchType !== 'wildcard') {
-    warnings.push('Pattern contains * but match type is not "wildcard"')
+    warnings.push('Pattern contains * but match type is not "wildcard" - did you mean to use wildcard matching?')
   }
 
   if (redirect.from.startsWith('^') && redirect.matchType !== 'regex') {
-    warnings.push('Pattern starts with ^ but match type is not "regex"')
+    warnings.push('Pattern starts with ^ but match type is not "regex" - did you mean to use regex matching?')
+  }
+
+  // Check for trailing slash inconsistencies
+  if (redirect.from.endsWith('/') && redirect.from.length > 1) {
+    warnings.push('Source path has trailing slash - note that middleware removes trailing slashes before matching')
+  }
+
+  // Check for query strings in source
+  if (redirect.from.includes('?') && redirect.matchType === 'exact') {
+    warnings.push('Source contains query string - consider using queryStringHandling field instead')
   }
 
   return {
@@ -179,22 +219,40 @@ export function validateAllRedirects(redirects: RedirectRule[]): Map<string, Val
  * Process redirect matching
  */
 export function findMatchingRedirect(path: string, redirects: RedirectRule[]): RedirectRule | null {
-  // Sort by priority (lower first)
+  // Sort by priority DESC (higher first), then order ASC
   const sorted = [...redirects]
     .filter((r) => r.isActive)
-    .sort((a, b) => (a.priority ?? 100) - (b.priority ?? 100))
+    .sort((a, b) => {
+      const priorityA = a.priority ?? 0
+      const priorityB = b.priority ?? 0
+
+      // Higher priority first
+      if (priorityA !== priorityB) {
+        return priorityB - priorityA
+      }
+
+      // Same priority, sort by order ASC
+      const orderA = a.order ?? 0
+      const orderB = b.order ?? 0
+      return orderA - orderB
+    })
 
   for (const redirect of sorted) {
+    const caseSensitive = redirect.caseSensitive ?? false
+    const testPath = caseSensitive ? path : path.toLowerCase()
+    const testFrom = caseSensitive ? redirect.from : redirect.from.toLowerCase()
+
     switch (redirect.matchType) {
       case 'exact':
-        if (redirect.from === path) return redirect
+        if (testFrom === testPath) return redirect
         break
       case 'wildcard':
-        if (matchWildcard(path, redirect.from)) return redirect
+        if (matchWildcard(testPath, testFrom, caseSensitive)) return redirect
         break
       case 'regex':
         try {
-          if (new RegExp(redirect.from).test(path)) return redirect
+          const flags = caseSensitive ? '' : 'i'
+          if (new RegExp(redirect.from, flags).test(path)) return redirect
         } catch {
           // Invalid regex, skip
         }
@@ -203,6 +261,84 @@ export function findMatchingRedirect(path: string, redirects: RedirectRule[]): R
   }
 
   return null
+}
+
+/**
+ * Check if following a redirect chain would result in a loop or exceed max depth
+ * Returns the full chain and whether it's problematic
+ */
+export function validateRedirectChain(
+  startPath: string,
+  redirects: RedirectRule[],
+  maxDepth = 3
+): { isValid: boolean; chain: string[]; hasLoop: boolean; tooLong: boolean } {
+  const visited = new Set<string>()
+  const chain: string[] = [startPath]
+  let currentPath = startPath
+  let depth = 0
+
+  while (depth < maxDepth + 1) {
+    // Check for loop
+    if (visited.has(currentPath)) {
+      return {
+        isValid: false,
+        chain: [...chain, currentPath],
+        hasLoop: true,
+        tooLong: false,
+      }
+    }
+
+    visited.add(currentPath)
+
+    // Find matching redirect
+    const matchedRedirect = findMatchingRedirect(currentPath, redirects)
+
+    if (!matchedRedirect) {
+      // No more redirects, chain ends here
+      return {
+        isValid: true,
+        chain,
+        hasLoop: false,
+        tooLong: false,
+      }
+    }
+
+    // Get destination
+    const destination = applyRedirectCaptureGroups(currentPath, matchedRedirect)
+
+    // External redirect - chain ends
+    if (!destination.startsWith('/')) {
+      chain.push(destination)
+      return {
+        isValid: true,
+        chain,
+        hasLoop: false,
+        tooLong: false,
+      }
+    }
+
+    chain.push(destination)
+    currentPath = destination
+    depth++
+
+    // Check if chain is too long
+    if (depth > maxDepth) {
+      return {
+        isValid: false,
+        chain,
+        hasLoop: false,
+        tooLong: true,
+      }
+    }
+  }
+
+  // Shouldn't reach here, but return invalid if we do
+  return {
+    isValid: false,
+    chain,
+    hasLoop: false,
+    tooLong: true,
+  }
 }
 
 /**

@@ -2,6 +2,7 @@ import type { NextRequest } from 'next/server'
 import { NextResponse } from 'next/server'
 import { client } from '@/sanity/client'
 import { findMatchingRedirect, applyRedirectCaptureGroups, type RedirectRule } from '@/lib/redirect-validation'
+import { trackRedirect } from '@/lib/redirect-monitoring'
 
 const FALLBACK_HOST = 'www.buddsplumbing.com'
 
@@ -38,14 +39,17 @@ async function getRedirects(): Promise<RedirectRule[]> {
 
   try {
     const redirects = await client.fetch<RedirectRule[]>(`
-      *[_type == "redirect" && isActive == true] | order(priority asc) {
+      *[_type == "redirect" && isActive == true] | order(priority desc, order asc) {
         _id,
         from,
         to,
         matchType,
         statusCode,
         isActive,
-        priority
+        priority,
+        order,
+        caseSensitive,
+        queryStringHandling
       }
     `)
 
@@ -82,22 +86,86 @@ export async function middleware(req: NextRequest) {
     return NextResponse.redirect(url, 308)
   }
 
-  // Handle custom redirects from CMS (with wildcard/regex support)
+  // Handle custom redirects from CMS (with wildcard/regex support and loop detection)
   const redirects = await getRedirects()
   const currentPath = url.pathname
 
-  const matchedRedirect = findMatchingRedirect(currentPath, redirects)
+  // Performance tracking
+  const redirectStartTime = performance.now()
 
-  if (matchedRedirect) {
-    const destination = applyRedirectCaptureGroups(currentPath, matchedRedirect)
+  // Loop detection: track visited paths to prevent infinite redirects
+  const visited = new Set<string>()
+  const MAX_REDIRECT_DEPTH = 3
+  let depth = 0
+  let testPath = currentPath
 
-    // Handle relative URLs
-    if (destination.startsWith('/')) {
-      url.pathname = destination
-      return NextResponse.redirect(url, matchedRedirect.statusCode)
-    } else {
-      // Handle absolute URLs
+  while (depth < MAX_REDIRECT_DEPTH) {
+    // Check if we've already visited this path (loop detected)
+    if (visited.has(testPath)) {
+      console.error(`Redirect loop detected: ${Array.from(visited).join(' → ')} → ${testPath}`)
+      return NextResponse.next() // Break the loop, continue to original destination
+    }
+
+    visited.add(testPath)
+
+    // Try to find a matching redirect
+    const matchedRedirect = findMatchingRedirect(testPath, redirects)
+
+    if (!matchedRedirect) {
+      // No more redirects in chain
+      break
+    }
+
+    // Apply capture groups to get the destination
+    let destination = applyRedirectCaptureGroups(testPath, matchedRedirect)
+
+    // If this is an external redirect (absolute URL), we're done
+    if (!destination.startsWith('/')) {
+      // Handle query string for external redirects
+      const queryStringHandling = matchedRedirect.queryStringHandling ?? 'preserve'
+      if (queryStringHandling === 'preserve' && url.search) {
+        const separator = destination.includes('?') ? '&' : '?'
+        destination = `${destination}${separator}${url.search.slice(1)}`
+      }
+
+      // Track performance
+      const processingTime = performance.now() - redirectStartTime
+      trackRedirect(currentPath, destination, matchedRedirect.matchType, processingTime)
+
       return NextResponse.redirect(destination, matchedRedirect.statusCode)
+    }
+
+    // Check if this is the final destination (no more redirects)
+    testPath = destination
+    depth++
+
+    // If this is the last iteration and we found a redirect, apply it
+    if (depth === MAX_REDIRECT_DEPTH) {
+      console.warn(`Redirect chain too long (${MAX_REDIRECT_DEPTH} hops): ${Array.from(visited).join(' → ')} → ${testPath}`)
+      // Apply the final redirect anyway
+    }
+  }
+
+  // If we have a final destination different from original, apply the redirect
+  if (testPath !== currentPath) {
+    const finalRedirect = findMatchingRedirect(Array.from(visited)[visited.size - 1], redirects)
+
+    if (finalRedirect) {
+      url.pathname = testPath
+
+      // Handle query strings
+      const queryStringHandling = finalRedirect.queryStringHandling ?? 'preserve'
+      if (queryStringHandling === 'remove') {
+        url.search = ''
+      } else if (queryStringHandling === 'preserve') {
+        // Keep existing query parameters (default behavior)
+      }
+
+      // Track performance
+      const processingTime = performance.now() - redirectStartTime
+      trackRedirect(currentPath, testPath, finalRedirect.matchType, processingTime)
+
+      return NextResponse.redirect(url, finalRedirect.statusCode)
     }
   }
 

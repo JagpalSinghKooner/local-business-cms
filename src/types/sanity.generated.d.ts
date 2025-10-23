@@ -1060,6 +1060,18 @@ Whether this redirect is currently active
       isActive?: boolean;
 
       /**
+       * Case Sensitive - `Boolean`
+Whether the from path should be matched case-sensitively
+       */
+      caseSensitive?: boolean;
+
+      /**
+       * Query String Handling - `String`
+How to handle query strings in the redirect
+       */
+      queryStringHandling?: "preserve" | "remove" | "ignore";
+
+      /**
        * Notes - `Text`
 Internal notes about this redirect
        */
@@ -1067,9 +1079,15 @@ Internal notes about this redirect
 
       /**
        * Priority - `Number`
-Lower numbers are checked first (default: 100). Use for ordering redirect rules.
+Higher numbers are evaluated first (default: 0). Use 10+ for important redirects.
        */
       priority?: number;
+
+      /**
+       * Order - `Number`
+Auto-incremented position for redirects with same priority
+       */
+      order?: number;
 
       /**
        * Validation Warnings - `Array`
