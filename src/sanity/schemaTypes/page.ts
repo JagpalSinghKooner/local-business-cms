@@ -20,7 +20,22 @@ export default defineType({
       name: 'slug',
       type: 'slug',
       options: { source: 'title' },
-      validation: (r) => r.required(),
+      validation: (Rule) =>
+        Rule.required().custom(async (slug, context) => {
+          if (!slug?.current) return true
+          const { document, getClient } = context
+          const client = getClient({ apiVersion: '2024-01-01' })
+          const id = document._id.replace(/^drafts\./, '')
+          const params = {
+            draft: `drafts.${id}`,
+            published: id,
+            slug: slug.current,
+            type: document._type,
+          }
+          const query = `!defined(*[_type == $type && slug.current == $slug && !(_id in [$draft, $published])][0]._id)`
+          const isUnique = await client.fetch(query, params)
+          return isUnique || 'Slug must be unique within this content type'
+        }),
       group: 'content',
     }),
     defineField({
@@ -94,14 +109,20 @@ export default defineType({
       name: 'body',
       title: 'Legacy Body',
       type: 'array',
-      of: [
-        { type: 'block' },
-        { type: 'image', options: { hotspot: true } },
-      ],
+      of: [{ type: 'block' }, { type: 'image', options: { hotspot: true } }],
       description: 'Optional fallback content. Prefer building pages with sections.',
       group: 'content',
     }),
     ...seoFields.map((f) => ({ ...f, group: 'seo' })),
+    defineField({
+      name: '_schemaVersion',
+      type: 'string',
+      title: 'Schema Version',
+      initialValue: '1',
+      readOnly: true,
+      hidden: true,
+      description: 'Internal: tracks schema version for safe migrations',
+    }),
   ],
   preview: { select: { title: 'title', subtitle: 'slug.current' } },
 })

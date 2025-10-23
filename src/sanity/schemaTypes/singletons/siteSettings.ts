@@ -24,6 +24,7 @@ export default defineType({
   title: 'Global Settings',
   type: 'document',
   icon: CogIcon,
+  __experimental_liveEdit: true,
   groups: [
     { name: 'brand', title: 'Brand' },
     { name: 'contact', title: 'Contact' },
@@ -117,6 +118,7 @@ export default defineType({
       title: 'Primary Email',
       type: 'string',
       group: 'contact',
+      validation: (rule) => rule.email(),
     }),
     defineField({
       name: 'address',
@@ -256,6 +258,15 @@ export default defineType({
       type: 'array',
       group: 'integrations',
       of: [defineArrayMember({ type: 'trackingScript' })],
+    }),
+    defineField({
+      name: '_schemaVersion',
+      type: 'string',
+      title: 'Schema Version',
+      initialValue: '1',
+      readOnly: true,
+      hidden: true,
+      description: 'Internal: tracks schema version for safe migrations',
     }),
   ],
   preview: {

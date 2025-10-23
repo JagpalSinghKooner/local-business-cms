@@ -21,15 +21,42 @@ export default defineType({
       type: 'slug',
       options: {
         source: 'title',
-        slugify: (v) => v.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, ''),
+        slugify: (v) =>
+          v
+            .toLowerCase()
+            .replace(/[^a-z0-9]+/g, '-')
+            .replace(/(^-|-$)/g, ''),
       },
-      validation: (r) => r.required(),
+      validation: (Rule) =>
+        Rule.required().custom(async (slug, context) => {
+          if (!slug?.current) return true
+          const { document, getClient } = context
+          const client = getClient({ apiVersion: '2024-01-01' })
+          const id = document._id.replace(/^drafts\./, '')
+          const params = {
+            draft: `drafts.${id}`,
+            published: id,
+            slug: slug.current,
+            type: document._type,
+          }
+          const query = `!defined(*[_type == $type && slug.current == $slug && !(_id in [$draft, $published])][0]._id)`
+          const isUnique = await client.fetch(query, params)
+          return isUnique || 'Slug must be unique within this content type'
+        }),
     }),
     defineField({
       name: 'heroImage',
       type: 'image',
       options: { hotspot: true },
       description: '16:9 recommended',
+      fields: [
+        {
+          name: 'alt',
+          type: 'string',
+          title: 'Alt text',
+          validation: (Rule) => Rule.required().error('Alt text required for accessibility'),
+        },
+      ],
     }),
     defineField({
       name: 'breadcrumbs',
@@ -104,20 +131,34 @@ export default defineType({
         defineArrayMember({
           type: 'object',
           fields: [
-            defineField({ name: 'scriptKey', title: 'Script key', type: 'string', validation: (rule) => rule.required() }),
+            defineField({
+              name: 'scriptKey',
+              title: 'Script key',
+              type: 'string',
+              validation: (rule) => rule.required(),
+            }),
             defineField({ name: 'enabled', title: 'Enabled', type: 'boolean', initialValue: true }),
           ],
         }),
       ],
     }),
     defineField({ name: 'seo', type: 'seo' }),
+    defineField({
+      name: '_schemaVersion',
+      type: 'string',
+      title: 'Schema Version',
+      initialValue: '1',
+      readOnly: true,
+      hidden: true,
+      description: 'Internal: tracks schema version for safe migrations',
+    }),
   ],
   orderings: [{ name: 'titleAsc', title: 'Title A→Z', by: [{ field: 'title', direction: 'asc' }] }],
   preview: {
     select: {
       title: 'title',
       media: 'heroImage',
-      slug: 'slug.current'
+      slug: 'slug.current',
     },
     prepare({ title, media, slug }) {
       return {
@@ -125,6 +166,6 @@ export default defineType({
         subtitle: slug ? `/${slug}` : 'No slug',
         media,
       }
-    }
+    },
   },
 })

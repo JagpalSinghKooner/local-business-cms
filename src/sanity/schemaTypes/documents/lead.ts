@@ -69,6 +69,15 @@ export default defineType({
       initialValue: () => new Date().toISOString(),
       readOnly: true,
     }),
+    defineField({
+      name: '_schemaVersion',
+      type: 'string',
+      title: 'Schema Version',
+      initialValue: '1',
+      readOnly: true,
+      hidden: true,
+      description: 'Internal: tracks schema version for safe migrations',
+    }),
   ],
   preview: {
     select: {

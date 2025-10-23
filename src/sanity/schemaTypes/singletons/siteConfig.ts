@@ -51,6 +51,7 @@ export default defineType({
   title: 'Site Configuration',
   type: 'document',
   icon: CogIcon,
+  __experimental_liveEdit: true,
   groups: [
     { name: 'deployment', title: 'Deployment' },
     { name: 'brand', title: 'Brand' },
@@ -66,7 +67,8 @@ export default defineType({
       title: 'Site ID',
       type: 'slug',
       group: 'deployment',
-      description: 'Unique identifier for this site (e.g., "budds-plumbing", "acme-hvac"). Should match dataset name.',
+      description:
+        'Unique identifier for this site (e.g., "budds-plumbing", "acme-hvac"). Should match dataset name.',
       validation: (rule) => rule.required(),
       options: {
         source: 'name',
@@ -78,7 +80,8 @@ export default defineType({
       title: 'Sanity Dataset Name',
       type: 'string',
       group: 'deployment',
-      description: 'The Sanity dataset for this site (e.g., "site-budds"). Must match NEXT_PUBLIC_SANITY_DATASET env var.',
+      description:
+        'The Sanity dataset for this site (e.g., "site-budds"). Must match NEXT_PUBLIC_SANITY_DATASET env var.',
       readOnly: true,
       initialValue: () => process.env.SANITY_STUDIO_DATASET || 'production',
       validation: (rule) => rule.custom(validateDatasetName),
@@ -106,7 +109,8 @@ export default defineType({
       title: 'Primary Deployment URL',
       type: 'url',
       group: 'deployment',
-      description: 'The production URL where this site is deployed (e.g., https://buddsplumbing.com)',
+      description:
+        'The production URL where this site is deployed (e.g., https://buddsplumbing.com)',
       validation: (rule) => rule.required().custom(validateProductionUrl),
     }),
     defineField({
@@ -289,7 +293,8 @@ export default defineType({
       title: 'Default Meta Title',
       type: 'string',
       group: 'seo',
-      description: 'Fallback title for pages without specific meta titles. Each site has its own SEO defaults.',
+      description:
+        'Fallback title for pages without specific meta titles. Each site has its own SEO defaults.',
       validation: (rule) => rule.custom(validateMetaTitle),
     }),
     defineField({
@@ -298,7 +303,8 @@ export default defineType({
       type: 'text',
       rows: 3,
       group: 'seo',
-      description: 'Fallback description for pages without specific meta descriptions. Each site has its own SEO defaults.',
+      description:
+        'Fallback description for pages without specific meta descriptions. Each site has its own SEO defaults.',
       validation: (rule) => rule.custom(validateMetaDescription),
     }),
     defineField({
@@ -306,7 +312,8 @@ export default defineType({
       title: 'Default Open Graph Image',
       type: 'image',
       group: 'seo',
-      description: 'Fallback social sharing image for pages without specific OG images. Each site has its own default.',
+      description:
+        'Fallback social sharing image for pages without specific OG images. Each site has its own default.',
       options: { hotspot: true },
     }),
     defineField({
@@ -314,7 +321,8 @@ export default defineType({
       title: 'Twitter Handle',
       type: 'string',
       group: 'seo',
-      description: 'Twitter handle for this site (without @ symbol). Each site can have its own social accounts.',
+      description:
+        'Twitter handle for this site (without @ symbol). Each site can have its own social accounts.',
       placeholder: 'yourbusiness',
       validation: (rule) => rule.custom(validateSocialUsername('twitter')),
     }),
@@ -323,7 +331,8 @@ export default defineType({
       title: 'Robots Directives',
       type: 'string',
       group: 'seo',
-      description: 'Site-wide robots meta tag directives. Defaults to "index,follow" if left blank. Can be overridden per page.',
+      description:
+        'Site-wide robots meta tag directives. Defaults to "index,follow" if left blank. Can be overridden per page.',
       options: {
         list: [
           { title: 'Index, Follow (Default)', value: 'index,follow' },
@@ -369,6 +378,15 @@ export default defineType({
       group: 'integrations',
       of: [defineArrayMember({ type: 'trackingScript' })],
     }),
+    defineField({
+      name: '_schemaVersion',
+      type: 'string',
+      title: 'Schema Version',
+      initialValue: '1',
+      readOnly: true,
+      hidden: true,
+      description: 'Internal: tracks schema version for safe migrations',
+    }),
   ],
   preview: {
     select: {
@@ -378,12 +396,13 @@ export default defineType({
       status: 'status',
     },
     prepare({ title, subtitle, media, status }) {
-      const statusEmoji = {
-        active: '🟢',
-        staging: '🟡',
-        inactive: '🔴',
-        development: '🚧',
-      }[status as string] || ''
+      const statusEmoji =
+        {
+          active: '🟢',
+          staging: '🟡',
+          inactive: '🔴',
+          development: '🚧',
+        }[status as string] || ''
 
       return {
         title: `${statusEmoji} ${title}`,
