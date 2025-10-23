@@ -19,7 +19,12 @@ type ServicesByCategory = {
   services: Array<{ label: string; href: string }>
 }
 
-export default function MegaMenu({ services = [], locations = [], isMobile = false, onNavigate }: MegaMenuProps) {
+export default function MegaMenu({
+  services = [],
+  locations = [],
+  isMobile = false,
+  onNavigate,
+}: MegaMenuProps) {
   const [open, setOpen] = useState<MenuKey | null>(null)
   const [hoveredCategory, setHoveredCategory] = useState<string | null>(null)
   const [expandedMobileCategory, setExpandedMobileCategory] = useState<string | null>(null)
@@ -39,7 +44,7 @@ export default function MegaMenu({ services = [], locations = [], isMobile = fal
     const categoryTitle = service.category?.title || 'Uncategorized'
     const categorySlug = service.category?.slug || 'uncategorized'
 
-    let category = acc.find(c => c.categorySlug === categorySlug)
+    let category = acc.find((c) => c.categorySlug === categorySlug)
     if (!category) {
       category = { categoryTitle, categorySlug, services: [] }
       acc.push(category)
@@ -47,7 +52,7 @@ export default function MegaMenu({ services = [], locations = [], isMobile = fal
 
     category.services.push({
       label: service.title,
-      href: normalizeHref(`/services/${service.slug}`)
+      href: normalizeHref(`/services/${service.slug}`),
     })
 
     return acc
@@ -58,7 +63,7 @@ export default function MegaMenu({ services = [], locations = [], isMobile = fal
 
   const locationsItems = locations.map((location) => ({
     label: location.city,
-    href: normalizeHref(`/locations/${location.slug}`)
+    href: normalizeHref(`/locations/${location.slug}`),
   }))
 
   const hasServices = servicesByCategory.length > 0
@@ -103,7 +108,7 @@ export default function MegaMenu({ services = [], locations = [], isMobile = fal
     if (dropdownRect) {
       setCategoryRect({
         top: rect.top - dropdownRect.top,
-        left: dropdownRect.width
+        left: dropdownRect.width,
       })
     }
 
@@ -156,28 +161,38 @@ export default function MegaMenu({ services = [], locations = [], isMobile = fal
               type="button"
               onClick={() => setOpen(open === 'services' ? null : 'services')}
               className="flex w-full items-center justify-between px-4 py-3 text-left text-base font-medium text-strong"
+              aria-expanded={open === 'services'}
+              aria-controls="services-menu"
             >
               Services
-              <span aria-hidden className={`transition-transform ${open === 'services' ? 'rotate-180' : ''}`}>
+              <span
+                aria-hidden
+                className={`transition-transform ${open === 'services' ? 'rotate-180' : ''}`}
+              >
                 ▾
               </span>
             </button>
             {open === 'services' && (
-              <div className="bg-surface-muted">
+              <div id="services-menu" className="bg-surface-muted">
                 {servicesByCategory.map((category) => (
                   <div key={category.categorySlug} className="border-t border-divider/50">
                     <button
                       type="button"
                       onClick={() => toggleMobileCategory(category.categorySlug)}
                       className="flex w-full items-center justify-between px-6 py-2.5 text-left text-sm font-semibold text-strong"
+                      aria-expanded={expandedMobileCategory === category.categorySlug}
+                      aria-controls={`category-${category.categorySlug}`}
                     >
                       {category.categoryTitle}
-                      <span aria-hidden className={`text-xs transition-transform ${expandedMobileCategory === category.categorySlug ? 'rotate-180' : ''}`}>
+                      <span
+                        aria-hidden
+                        className={`text-xs transition-transform ${expandedMobileCategory === category.categorySlug ? 'rotate-180' : ''}`}
+                      >
                         ▾
                       </span>
                     </button>
                     {expandedMobileCategory === category.categorySlug && (
-                      <ul className="bg-surface px-6 pb-2">
+                      <ul id={`category-${category.categorySlug}`} className="bg-surface px-6 pb-2">
                         {category.services.map((service) => (
                           <li key={service.href}>
                             <Link
@@ -204,14 +219,19 @@ export default function MegaMenu({ services = [], locations = [], isMobile = fal
               type="button"
               onClick={() => setOpen(open === 'locations' ? null : 'locations')}
               className="flex w-full items-center justify-between px-4 py-3 text-left text-base font-medium text-strong"
+              aria-expanded={open === 'locations'}
+              aria-controls="locations-menu"
             >
               Locations
-              <span aria-hidden className={`transition-transform ${open === 'locations' ? 'rotate-180' : ''}`}>
+              <span
+                aria-hidden
+                className={`transition-transform ${open === 'locations' ? 'rotate-180' : ''}`}
+              >
                 ▾
               </span>
             </button>
             {open === 'locations' && (
-              <div className="bg-surface-muted px-4 pb-4 pt-2">
+              <div id="locations-menu" className="bg-surface-muted px-4 pb-4 pt-2">
                 <ul className="grid grid-cols-2 gap-1">
                   {locationsItems.map((item) => (
                     <li key={item.href}>
@@ -255,7 +275,9 @@ export default function MegaMenu({ services = [], locations = [], isMobile = fal
             aria-haspopup="true"
           >
             Services
-            <span aria-hidden className="text-xs">▾</span>
+            <span aria-hidden className="text-xs">
+              ▾
+            </span>
           </button>
 
           {open === 'services' && (
@@ -276,7 +298,9 @@ export default function MegaMenu({ services = [], locations = [], isMobile = fal
                     >
                       <div className="flex cursor-pointer items-center justify-between rounded-md px-3 py-2 text-sm font-medium text-strong transition hover:bg-[var(--color-brand-primary)]/10 hover:text-[var(--color-brand-primary)]">
                         <span>{category.categoryTitle}</span>
-                        <span aria-hidden className="text-xs text-muted">›</span>
+                        <span aria-hidden className="text-xs text-muted">
+                          ›
+                        </span>
                       </div>
                     </li>
                   ))}
@@ -289,13 +313,13 @@ export default function MegaMenu({ services = [], locations = [], isMobile = fal
                   className="absolute z-40 w-[280px] rounded-2xl border border-divider bg-surface p-2 shadow-elevated"
                   style={{
                     left: `calc(50% - 140px + ${categoryRect.left}px + 8px)`,
-                    top: `calc(100% + 12px + ${categoryRect.top}px)`
+                    top: `calc(100% + 12px + ${categoryRect.top}px)`,
                   }}
                   onPointerEnter={keepSubmenuOpen}
                   onPointerLeave={scheduleClose}
                 >
                   {servicesByCategory
-                    .filter(cat => cat.categorySlug === hoveredCategory)
+                    .filter((cat) => cat.categorySlug === hoveredCategory)
                     .map((category) => (
                       <div key={category.categorySlug}>
                         <ul>
@@ -339,7 +363,9 @@ export default function MegaMenu({ services = [], locations = [], isMobile = fal
             aria-haspopup="true"
           >
             Locations
-            <span aria-hidden className="text-xs">▾</span>
+            <span aria-hidden className="text-xs">
+              ▾
+            </span>
           </button>
 
           {open === 'locations' && (

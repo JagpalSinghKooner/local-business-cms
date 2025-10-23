@@ -23,7 +23,11 @@ function SubmitButton() {
   )
 }
 
-export default function LeadCaptureForm({ defaultService, pagePath, businessName }: LeadCaptureFormProps) {
+export default function LeadCaptureForm({
+  defaultService,
+  pagePath,
+  businessName,
+}: LeadCaptureFormProps) {
   const [state, formAction] = useActionState<LeadFormState, FormData>(submitLead, initialLeadState)
   const [formReady, setFormReady] = useState(false)
 
@@ -37,9 +41,17 @@ export default function LeadCaptureForm({ defaultService, pagePath, businessName
       <input type="hidden" name="page" value={pagePath ?? ''} />
       {defaultService ? <input type="hidden" name="service" value={defaultService} /> : null}
       <input type="hidden" name="formReady" value={formReady ? 'yes' : ''} />
-      <div className="sr-only" aria-hidden>
-        <label htmlFor="lead-company">Company</label>
-        <input id="lead-company" name="company" tabIndex={-1} autoComplete="off" />
+
+      {/* Honeypot field - hidden from real users */}
+      <div style={{ position: 'absolute', left: '-9999px' }} aria-hidden="true">
+        <label htmlFor="lead-company">Company (do not fill)</label>
+        <input
+          id="lead-company"
+          name="company"
+          tabIndex={-1}
+          autoComplete="off"
+          aria-hidden="true"
+        />
       </div>
 
       <div className="grid gap-2">
@@ -53,7 +65,9 @@ export default function LeadCaptureForm({ defaultService, pagePath, businessName
           placeholder="Jane Doe"
           className="rounded-xl border border-divider bg-surface px-3 py-2 text-sm outline-none ring-offset-2 focus-visible:ring-2 focus-visible:ring-[var(--color-brand-primary)]"
         />
-        {state.fieldErrors?.name ? <p className="text-xs text-red-600">{state.fieldErrors.name}</p> : null}
+        {state.fieldErrors?.name ? (
+          <p className="text-xs text-red-600">{state.fieldErrors.name}</p>
+        ) : null}
       </div>
 
       <div className="grid gap-2">
@@ -68,7 +82,9 @@ export default function LeadCaptureForm({ defaultService, pagePath, businessName
           placeholder="you@email.com"
           className="rounded-xl border border-divider bg-surface px-3 py-2 text-sm outline-none ring-offset-2 focus-visible:ring-2 focus-visible:ring-[var(--color-brand-primary)]"
         />
-        {state.fieldErrors?.email ? <p className="text-xs text-red-600">{state.fieldErrors.email}</p> : null}
+        {state.fieldErrors?.email ? (
+          <p className="text-xs text-red-600">{state.fieldErrors.email}</p>
+        ) : null}
       </div>
 
       <div className="grid gap-2">
@@ -97,10 +113,22 @@ export default function LeadCaptureForm({ defaultService, pagePath, businessName
       </div>
 
       {state.status === 'success' ? (
-        <p className="rounded-xl bg-emerald-50 px-3 py-2 text-sm text-emerald-700">{state.message}</p>
+        <p
+          role="status"
+          aria-live="polite"
+          className="rounded-xl bg-emerald-50 px-3 py-2 text-sm text-emerald-700"
+        >
+          {state.message}
+        </p>
       ) : null}
       {state.status === 'error' || state.status === 'disabled' ? (
-        <p className="rounded-xl bg-red-50 px-3 py-2 text-sm text-red-700">{state.message}</p>
+        <p
+          role="alert"
+          aria-live="assertive"
+          className="rounded-xl bg-red-50 px-3 py-2 text-sm text-red-700"
+        >
+          {state.message}
+        </p>
       ) : null}
 
       <SubmitButton />
