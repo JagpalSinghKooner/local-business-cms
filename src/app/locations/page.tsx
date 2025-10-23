@@ -12,7 +12,10 @@ import { ApplyScriptOverrides } from '@/components/scripts/ScriptOverridesProvid
 import { type ScriptOverride } from '@/types/sanity-helpers'
 import PagePreview from '@/components/preview/PagePreview'
 
-export const revalidate = 3600
+// Route segment config for optimal performance
+export const revalidate = 3600 // ISR: Revalidate every hour
+export const dynamic = 'force-static' // Force static generation
+export const fetchCache = 'force-cache' // Aggressive caching
 
 function extractText(nodes?: PortableContent): string | undefined {
   if (!Array.isArray(nodes)) return undefined

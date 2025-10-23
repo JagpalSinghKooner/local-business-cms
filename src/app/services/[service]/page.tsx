@@ -21,7 +21,10 @@ import { getOgImageUrl, getImageUrl, getImageAlt } from '@/types/sanity-helpers'
 type Params = { service: string }
 type LocationRef = { city: string; slug: string }
 
-export const revalidate = 3600
+// Route segment config for optimal performance
+export const revalidate = 3600 // ISR: Revalidate every hour
+export const dynamicParams = true // Allow dynamic params not in generateStaticParams
+export const fetchCache = 'force-cache' // Aggressive caching
 
 /**
  * Generate static paths for all service and service+location combinations

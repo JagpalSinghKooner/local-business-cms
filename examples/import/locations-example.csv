@@ -1,0 +1,6 @@
+name,slug,city,state,county,zipCode,latitude,longitude,serviceRadius,population
+Toronto,toronto,Toronto,ON,York Region,M5V,43.6532,-79.3832,50,2930000
+Mississauga,mississauga,Mississauga,ON,Peel Region,L5B,43.5890,-79.6441,30,721599
+Brampton,brampton,Brampton,ON,Peel Region,L6T,43.7315,-79.7624,25,593638
+Markham,markham,Markham,ON,York Region,L3R,43.8561,-79.3370,20,328966
+Vaughan,vaughan,Vaughan,ON,York Region,L4L,43.8361,-79.4983,20,306233

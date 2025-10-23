@@ -3,6 +3,7 @@ import { NextResponse } from 'next/server'
 import { client } from '@/sanity/client'
 import { findMatchingRedirect, applyRedirectCaptureGroups, type RedirectRule } from '@/lib/redirect-validation'
 import { trackRedirect } from '@/lib/redirect-monitoring'
+import { getDatasetForDomain, isDomainRegistered } from '@/lib/site-detection'
 
 const FALLBACK_HOST = 'www.buddsplumbing.com'
 
@@ -73,6 +74,45 @@ async function getRedirects(): Promise<RedirectRule[]> {
 
 export async function middleware(req: NextRequest) {
   const url = req.nextUrl.clone()
+
+  // Multi-tenant: Domain-based site detection (optional advanced routing)
+  // Note: This is for monitoring and logging. The actual dataset is determined
+  // by NEXT_PUBLIC_SANITY_DATASET at build time. For dynamic multi-site routing,
+  // deploy separate Next.js instances with different env vars per site.
+  const requestDomain = url.hostname
+  const isMultiTenantMode = process.env.MULTI_TENANT_ENABLED === 'true'
+  let siteHeaders: Record<string, string> = {}
+
+  if (isMultiTenantMode) {
+    // Check if domain has explicit dataset mapping
+    const mappedDataset = getDatasetForDomain(requestDomain)
+    const currentDataset = process.env.NEXT_PUBLIC_SANITY_DATASET
+
+    if (mappedDataset) {
+      // Domain is registered in multi-tenant config
+      if (mappedDataset !== currentDataset) {
+        // WARNING: Domain maps to different dataset than current deployment
+        console.warn(
+          `[Multi-Tenant] Domain "${requestDomain}" maps to dataset "${mappedDataset}" ` +
+          `but this deployment is using "${currentDataset}". ` +
+          `Deploy separate instance or update DOMAIN_DATASET_MAP in site-detection.ts`
+        )
+      }
+    } else if (requestDomain !== 'localhost' && !requestDomain.startsWith('127.0.0.1')) {
+      // Domain not registered and not localhost - potential misconfiguration
+      console.warn(
+        `[Multi-Tenant] Unregistered domain: "${requestDomain}". ` +
+        `Add to DOMAIN_DATASET_MAP in site-detection.ts or deploy separate instance.`
+      )
+    }
+
+    // Prepare headers for downstream consumption (can be used in API routes, server components)
+    siteHeaders = {
+      'x-site-domain': requestDomain,
+      'x-site-dataset': currentDataset || 'unknown',
+      ...(mappedDataset ? { 'x-site-dataset-expected': mappedDataset } : {}),
+    }
+  }
 
   // Handle canonical host redirects
   if (canonicalHost && url.hostname !== canonicalHost) {
@@ -169,7 +209,17 @@ export async function middleware(req: NextRequest) {
     }
   }
 
-  return NextResponse.next()
+  // No redirects, proceed with request
+  const response = NextResponse.next()
+
+  // Add multi-tenant headers if enabled
+  if (isMultiTenantMode && Object.keys(siteHeaders).length > 0) {
+    Object.entries(siteHeaders).forEach(([key, value]) => {
+      response.headers.set(key, value)
+    })
+  }
+
+  return response
 }
 
 export const config = {

@@ -38,20 +38,72 @@ function getRating(name: Metric['name'], value: number): Metric['rating'] {
 }
 
 /**
+ * Performance Budget Configuration
+ * Define maximum acceptable values for each metric
+ */
+export const PERFORMANCE_BUDGET = {
+  LCP: 2500,  // Target: good threshold
+  FID: 100,   // Target: good threshold
+  INP: 200,   // Target: good threshold
+  CLS: 0.1,   // Target: good threshold
+  TTFB: 800,  // Target: good threshold
+  FCP: 1800,  // Target: good threshold
+} as const
+
+/**
+ * Check if metric violates performance budget
+ */
+export function checkPerformanceBudget(metric: Metric): boolean {
+  const budget = PERFORMANCE_BUDGET[metric.name]
+  const violated = metric.value > budget
+
+  if (violated) {
+    console.warn(
+      `[Performance Budget] ${metric.name} violated:`,
+      `${Math.round(metric.value)}${metric.name === 'CLS' ? '' : 'ms'}`,
+      `(budget: ${budget}${metric.name === 'CLS' ? '' : 'ms'})`
+    )
+  }
+
+  return violated
+}
+
+/**
+ * Get network information if available
+ */
+function getNetworkInfo() {
+  if (typeof navigator === 'undefined') return {}
+
+  const connection = (navigator as any).connection || (navigator as any).mozConnection || (navigator as any).webkitConnection
+
+  return {
+    effectiveConnectionType: connection?.effectiveType,
+    saveData: connection?.saveData,
+    downlink: connection?.downlink,
+    rtt: connection?.rtt,
+  }
+}
+
+/**
  * Report Web Vitals to analytics
  */
 export function reportWebVitals(metric: Metric) {
   const rating = getRating(metric.name, metric.value)
+  const budgetViolated = checkPerformanceBudget(metric)
 
-  // Log to console in development
+  // Enhanced logging in development
   if (process.env.NODE_ENV === 'development') {
+    const emoji = rating === 'good' ? '✅' : rating === 'needs-improvement' ? '⚠️' : '❌'
+    const budgetEmoji = budgetViolated ? '🚨' : '✅'
+
     // eslint-disable-next-line no-console
-    console.log(`[Web Vitals] ${metric.name}:`, {
-      value: metric.value,
-      rating,
-      delta: metric.delta,
-      id: metric.id,
-    })
+    console.log(
+      `${emoji} [Web Vitals] ${metric.name}:`,
+      `${Math.round(metric.value)}${metric.name === 'CLS' ? '' : 'ms'}`,
+      `(${rating})`,
+      `${budgetEmoji} Budget: ${PERFORMANCE_BUDGET[metric.name]}${metric.name === 'CLS' ? '' : 'ms'}`,
+      `| ${metric.navigationType}`
+    )
   }
 
   // Send to Google Analytics if available
@@ -66,8 +118,8 @@ export function reportWebVitals(metric: Metric) {
     })
   }
 
-  // Send to custom analytics endpoint (optional)
-  if (typeof window !== 'undefined' && process.env.NEXT_PUBLIC_ANALYTICS_ENDPOINT) {
+  // Send to custom analytics endpoint
+  if (typeof window !== 'undefined') {
     const body = JSON.stringify({
       metric: metric.name,
       value: metric.value,
@@ -75,22 +127,43 @@ export function reportWebVitals(metric: Metric) {
       delta: metric.delta,
       id: metric.id,
       navigationType: metric.navigationType,
+      budgetViolated,
       url: window.location.href,
+      path: window.location.pathname,
       userAgent: navigator.userAgent,
       timestamp: Date.now(),
+      ...getNetworkInfo(),
     })
+
+    const endpoint = process.env.NEXT_PUBLIC_ANALYTICS_ENDPOINT || '/api/analytics/web-vitals'
 
     // Use sendBeacon for reliability (doesn't block page unload)
     if (navigator.sendBeacon) {
-      navigator.sendBeacon(process.env.NEXT_PUBLIC_ANALYTICS_ENDPOINT, body)
+      navigator.sendBeacon(endpoint, body)
     } else {
-      fetch(process.env.NEXT_PUBLIC_ANALYTICS_ENDPOINT, {
+      fetch(endpoint, {
         method: 'POST',
         body,
         headers: { 'Content-Type': 'application/json' },
         keepalive: true,
-      }).catch(console.error)
+      }).catch(() => {
+        // Silently fail - don't affect user experience
+      })
     }
+  }
+}
+
+/**
+ * Get performance summary for all metrics
+ */
+export function getPerformanceSummary(): Record<Metric['name'], { budget: number; threshold: typeof THRESHOLDS[Metric['name']] }> {
+  return {
+    LCP: { budget: PERFORMANCE_BUDGET.LCP, threshold: THRESHOLDS.LCP },
+    FID: { budget: PERFORMANCE_BUDGET.FID, threshold: THRESHOLDS.FID },
+    INP: { budget: PERFORMANCE_BUDGET.INP, threshold: THRESHOLDS.INP },
+    CLS: { budget: PERFORMANCE_BUDGET.CLS, threshold: THRESHOLDS.CLS },
+    TTFB: { budget: PERFORMANCE_BUDGET.TTFB, threshold: THRESHOLDS.TTFB },
+    FCP: { budget: PERFORMANCE_BUDGET.FCP, threshold: THRESHOLDS.FCP },
   }
 }
 

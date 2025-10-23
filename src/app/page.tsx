@@ -10,7 +10,10 @@ import PagePreview from '@/components/preview/PagePreview'
 import { env } from '@/lib/env'
 import { getOgImageUrl, type ScriptOverride } from '@/types/sanity-helpers'
 
-export const revalidate = 3600;
+// Route segment config for optimal performance
+export const revalidate = 3600 // ISR: Revalidate every hour
+export const dynamic = 'force-static' // Force static generation
+export const fetchCache = 'force-cache' // Aggressive caching
 
 const HOME_SLUG = 'home'
 

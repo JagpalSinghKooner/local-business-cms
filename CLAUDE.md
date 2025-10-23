@@ -8,6 +8,29 @@ This is a **Local Business CMS Framework** - a headless CMS-driven website for s
 
 **Key Principle**: Content editors control everything through the CMS - pages, sections, styling, metadata, navigation, etc. The Next.js frontend is a rendering engine that adapts to CMS data.
 
+## 🎯 Multi-Tenant Architecture (CRITICAL)
+
+**ONE CODEBASE, MANY SITES - ZERO CONTENT LEAKS**
+
+### What is SHARED (Deployed to ALL Sites)
+- ✅ **Frontend Code**: All React components, pages, utilities, styles (ONE codebase)
+- ✅ **Sanity Schema**: All document types, fields, validation rules (ONE schema)
+- ✅ **Infrastructure**: Middleware, SEO utils, caching, build config
+- **Deploy once → Updates 100s of sites**
+
+### What is ISOLATED (Per Dataset/Tenant)
+- ❌ **Content Data**: Services, locations, pages, leads, images (UNIQUE per site)
+- ❌ **Configuration**: Site URL, dataset name, tracking IDs (UNIQUE per site)
+- **Guarantee**: Zero cross-tenant data leaks
+
+### Key Commands
+```bash
+pnpm clone-site <source> <target>  # Create new site from template
+pnpm deploy-schema-all             # Deploy schema updates to all datasets
+```
+
+**REMEMBER**: When adding features or fixing bugs, they automatically benefit ALL sites. When adding schema fields, run `pnpm deploy-schema-all` to update all datasets. See `docs/multi-tenant-shared-vs-isolated.md` for full details.
+
 ## Essential Commands
 
 ### Development
@@ -23,6 +46,14 @@ pnpm lint             # Run ESLint
 pnpm sanitize:types   # Generate TypeScript types from Sanity schema (run after schema changes)
 pnpm sanity:export    # Export Sanity content
 pnpm sanity:import    # Import Sanity content
+```
+
+### Multi-Tenant Operations
+```bash
+pnpm clone-site <source> <target>     # Clone dataset to create new site
+pnpm clone-site production site-new   # Example: Create new site
+pnpm deploy-schema-all                # Deploy schema to ALL datasets
+pnpm deploy-schema-all --dry-run      # Preview schema deployment
 ```
 
 ### Testing

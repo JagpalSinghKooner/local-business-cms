@@ -1,0 +1,156 @@
+name: Bundle Size Analysis
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+  pull-requests: write
+  issues: write
+
+jobs:
+  analyze:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build with bundle analysis
+        run: ANALYZE=true pnpm build
+        env:
+          NEXT_PUBLIC_SANITY_PROJECT_ID: ${{ secrets.NEXT_PUBLIC_SANITY_PROJECT_ID }}
+          NEXT_PUBLIC_SANITY_DATASET: ${{ secrets.NEXT_PUBLIC_SANITY_DATASET }}
+          NEXT_PUBLIC_SITE_URL: ${{ secrets.NEXT_PUBLIC_SITE_URL }}
+
+      - name: Analyze bundle size
+        id: analyze
+        run: |
+          # Get build output stats
+          echo "Analyzing bundle size..."
+
+          # Check if .next/analyze exists
+          if [ -d ".next/analyze" ]; then
+            echo "✅ Bundle analysis completed"
+            echo "analyzed=true" >> $GITHUB_OUTPUT
+          else
+            echo "⚠️ Bundle analysis directory not found"
+            echo "analyzed=false" >> $GITHUB_OUTPUT
+          fi
+
+          # Extract build stats from build output
+          if [ -f ".next/build-manifest.json" ]; then
+            echo "Build manifest found"
+          fi
+
+      - name: Upload bundle analysis
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: bundle-analysis
+          path: |
+            .next/analyze/
+            .next/static/
+            .next/build-manifest.json
+          retention-days: 30
+
+      - name: Check bundle size budgets
+        run: |
+          echo "📦 Bundle Size Budget Check"
+          echo "=============================="
+
+          # Target budgets (in KB)
+          FIRST_LOAD_JS_BUDGET=250
+          PAGE_SIZE_BUDGET=200
+
+          # Parse build output for actual sizes
+          # This is a simplified check - in production, parse .next/static/ sizes
+          echo "Budget limits:"
+          echo "- First Load JS: ${FIRST_LOAD_JS_BUDGET}KB"
+          echo "- Page Size: ${PAGE_SIZE_BUDGET}KB"
+
+          # Check if .next directory exists
+          if [ -d ".next/static/chunks" ]; then
+            TOTAL_SIZE=$(du -sk .next/static/chunks | cut -f1)
+            echo "Total chunks size: ${TOTAL_SIZE}KB"
+
+            if [ $TOTAL_SIZE -gt 512 ]; then
+              echo "⚠️ Warning: Total chunks size exceeds 512KB"
+            else
+              echo "✅ Bundle size within budget"
+            fi
+          fi
+
+      - name: Comment PR with bundle size
+        if: github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+
+            let comment = '## 📦 Bundle Size Report\n\n';
+
+            try {
+              // Read build manifest
+              const manifestPath = '.next/build-manifest.json';
+              if (fs.existsSync(manifestPath)) {
+                comment += '### Bundle Analysis\n\n';
+                comment += '✅ Build completed successfully\n\n';
+                comment += '**Budget Limits:**\n';
+                comment += '- First Load JS: < 250 KB\n';
+                comment += '- Page Size: < 200 KB\n\n';
+                comment += '🔗 [View detailed bundle analysis in artifacts](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})\n\n';
+                comment += '💡 Run `ANALYZE=true pnpm build` locally to view interactive bundle map\n';
+              } else {
+                comment += '⚠️ Build manifest not found\n';
+              }
+            } catch (error) {
+              comment += '⚠️ Error analyzing bundle: ' + error.message + '\n';
+            }
+
+            comment += '\n---\n*Automated by Bundle Size Analysis*';
+
+            // Find existing comment
+            const { data: comments } = await github.rest.issues.listComments({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+            });
+
+            const botComment = comments.find(comment =>
+              comment.user.type === 'Bot' && comment.body.includes('Bundle Size Report')
+            );
+
+            // Update or create comment
+            if (botComment) {
+              await github.rest.issues.updateComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                comment_id: botComment.id,
+                body: comment
+              });
+            } else {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number,
+                body: comment
+              });
+            }

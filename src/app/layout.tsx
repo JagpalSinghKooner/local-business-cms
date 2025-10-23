@@ -16,6 +16,7 @@ import { ScriptOverridesProvider } from '@/components/scripts/ScriptOverridesPro
 import { ErrorBoundary } from '@/components/ErrorBoundary'
 import { env } from '@/lib/env'
 import { getImageUrl } from '@/types/sanity-helpers'
+import PerformanceDashboard from '@/components/PerformanceDashboard'
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -110,6 +111,7 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
         <ErrorBoundary>
           <ScriptOverridesProvider>
             <WebVitalsReporter />
+            <PerformanceDashboard />
             <AnalyticsScripts site={site} />
             <JsonLd data={localBusinessJsonLd} />
             {site?.googleTagManagerId ? (

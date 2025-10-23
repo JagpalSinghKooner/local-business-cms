@@ -20,6 +20,7 @@ import type {
   ServiceDetail,
   PageSummary,
 } from '@/types'
+import { getSiteCachePrefix } from '@/lib/site-detection'
 
 type GlobalDataset = {
   site: SiteSettings | null
@@ -30,7 +31,23 @@ type GlobalDataset = {
   pages: PageSummary[]
 }
 
-const fetchOptions = { perspective: 'published' as const, next: { revalidate: 120 } }
+/**
+ * Fetch options for Sanity queries
+ *
+ * Cache isolation notes:
+ * - React cache() provides request-level deduplication
+ * - Next.js ISR provides time-based revalidation (120s)
+ * - Multi-tenant: Each dataset = separate deployment = natural cache isolation
+ * - No cross-site cache pollution possible with Multiple Datasets approach
+ */
+const fetchOptions = {
+  perspective: 'published' as const,
+  next: {
+    revalidate: 120,
+    // Add dataset-specific tag for cache invalidation if needed
+    tags: [getSiteCachePrefix()],
+  },
+}
 
 /**
  * Fetches global dataset (site settings, navigation, tokens, services, locations, pages)

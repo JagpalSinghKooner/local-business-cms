@@ -17,7 +17,10 @@ import { getImageUrl, getImageAlt } from '@/types/sanity-helpers'
 
 type Params = { city: string }
 
-export const revalidate = 3600
+// Route segment config for optimal performance
+export const revalidate = 3600 // ISR: Revalidate every hour
+export const dynamicParams = true // Allow dynamic params
+export const fetchCache = 'force-cache' // Aggressive caching
 
 export async function generateMetadata({ params }: { params: Promise<Params> }) {
   const { city: slug } = await params

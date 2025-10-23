@@ -1,0 +1,6 @@
+title,slug,description,featured,category
+Emergency Plumbing,emergency-plumbing,"24/7 emergency plumbing services for urgent repairs",true,category-emergency
+Drain Cleaning,drain-cleaning,"Professional drain cleaning and unclogging services",false,category-residential
+Water Heater Installation,water-heater-installation,"Expert water heater installation and replacement",true,category-installation
+Leak Detection,leak-detection,"Advanced leak detection using latest technology",false,category-repair
+Pipe Repair,pipe-repair,"Fast and reliable pipe repair services",false,category-repair

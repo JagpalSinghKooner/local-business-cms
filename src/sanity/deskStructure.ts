@@ -11,7 +11,17 @@ const deskStructure = (S: StructureBuilder) =>
             .title('Global Settings')
             .items([
               S.listItem()
-                .title('Site Settings')
+                .title('Site Configuration')
+                .id('siteConfig')
+                .schemaType('siteConfig')
+                .child(
+                  S.editor()
+                    .id('siteConfig')
+                    .schemaType('siteConfig')
+                    .documentId('siteConfig')
+                ),
+              S.listItem()
+                .title('Site Settings (Legacy)')
                 .id('siteSettings')
                 .schemaType('siteSettings')
                 .child(

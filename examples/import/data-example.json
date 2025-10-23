@@ -1,0 +1,38 @@
+[
+  {
+    "_type": "service",
+    "title": "Residential Plumbing",
+    "slug": {
+      "_type": "slug",
+      "current": "residential-plumbing"
+    },
+    "description": "Complete residential plumbing services for homes",
+    "featured": true,
+    "category": {
+      "_type": "reference",
+      "_ref": "category-residential"
+    }
+  },
+  {
+    "_type": "service",
+    "title": "Commercial Plumbing",
+    "slug": {
+      "_type": "slug",
+      "current": "commercial-plumbing"
+    },
+    "description": "Professional commercial plumbing solutions for businesses",
+    "featured": false,
+    "category": {
+      "_type": "reference",
+      "_ref": "category-commercial"
+    }
+  },
+  {
+    "_type": "testimonial",
+    "name": "John Smith",
+    "role": "Homeowner",
+    "content": "Excellent service! The team was professional and fixed our leak quickly.",
+    "rating": 5,
+    "featured": true
+  }
+]
