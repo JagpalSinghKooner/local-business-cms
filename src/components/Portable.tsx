@@ -1,5 +1,5 @@
-"use client";
 import { PortableText, type PortableTextComponents } from '@portabletext/react'
+import Image from 'next/image'
 import type { PortableContent } from '@/types'
 import { getImageUrl, getImageAlt } from '@/types/sanity-helpers'
 
@@ -8,9 +8,18 @@ const components: PortableTextComponents = {
     image: ({ value }) => {
       const imageUrl = getImageUrl(value)
       const imageAlt = getImageAlt(value)
+      const width = value?.asset?.metadata?.dimensions?.width ?? 800
+      const height = value?.asset?.metadata?.dimensions?.height ?? 600
+
       return imageUrl ? (
-        // eslint-disable-next-line @next/next/no-img-element
-        <img src={imageUrl} alt={imageAlt} />
+        <Image
+          src={imageUrl}
+          alt={imageAlt}
+          width={width}
+          height={height}
+          sizes="(min-width: 768px) 700px, 100vw"
+          className="rounded-lg"
+        />
       ) : null
     },
   },
@@ -52,7 +61,7 @@ const components: PortableTextComponents = {
       )
     },
   },
-};
+}
 
 type PortableProps = {
   value?: PortableContent

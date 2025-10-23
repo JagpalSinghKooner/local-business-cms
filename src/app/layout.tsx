@@ -11,7 +11,14 @@ import WebVitalsReporter from '@/components/WebVitalsReporter'
 import { buildLocalBusinessJsonLd } from '@/lib/jsonld'
 import { resolveDesignTokens } from '@/lib/tokens'
 import { getGlobalDataset } from '@/sanity/loaders'
-import type { Navigation, SiteSettings, Tokens, ServiceSummary, LocationSummary, PageSummary } from '@/types'
+import type {
+  Navigation,
+  SiteSettings,
+  Tokens,
+  ServiceSummary,
+  LocationSummary,
+  PageSummary,
+} from '@/types'
 import { ScriptOverridesProvider } from '@/components/scripts/ScriptOverridesProvider'
 import { ErrorBoundary } from '@/components/ErrorBoundary'
 import { env } from '@/lib/env'
@@ -21,11 +28,15 @@ import PerformanceDashboard from '@/components/PerformanceDashboard'
 const geistSans = Geist({
   variable: '--font-geist-sans',
   subsets: ['latin'],
+  display: 'swap',
+  preload: true,
 })
 
 const geistMono = Geist_Mono({
   variable: '--font-geist-mono',
   subsets: ['latin'],
+  display: 'swap',
+  preload: true,
 })
 
 export const metadata: Metadata = {
@@ -34,6 +45,11 @@ export const metadata: Metadata = {
     template: '%s | Local Business',
   },
   description: 'A CMS-driven marketing site for local service businesses.',
+  viewport: {
+    width: 'device-width',
+    initialScale: 1,
+    maximumScale: 5,
+  },
 }
 
 const FALLBACK_NAVIGATION = {

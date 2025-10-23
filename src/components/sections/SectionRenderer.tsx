@@ -21,7 +21,14 @@ import { computeLayoutFromOptions, type LayoutOptions } from './layout'
 import Container from '@/components/layout/Container'
 import { cn } from '@/lib/cn'
 import type { CSSProperties } from 'react'
-import type { PageSection, ServiceSummary, LocationSummary, OfferSummary, SiteSettings } from '@/types'
+import type {
+  PageSection,
+  ServiceSummary,
+  LocationSummary,
+  OfferSummary,
+  SiteSettings,
+} from '@/types'
+import { ErrorBoundary } from '@/components/ui/ErrorBoundary'
 
 type SectionRendererProps = {
   sections?: PageSection[]
@@ -32,114 +39,122 @@ type SectionRendererProps = {
   pagePath?: string
 }
 
-export default function SectionRenderer({ sections = [], services, locations, offers, site, pagePath }: SectionRendererProps) {
+export default function SectionRenderer({
+  sections = [],
+  services,
+  locations,
+  offers,
+  site,
+  pagePath,
+}: SectionRendererProps) {
   return (
     <>
-      {sections.map((section) => {
-        switch (section._type) {
-          case 'section.hero':
-            return <HeroSection key={section._key} section={section} />
-          case 'section.text':
-            return <TextSection key={section._key} section={section} />
-          case 'section.services':
-            return (
-              <ServicesSection
-                key={section._key}
-                section={section as ServicesSectionData}
-                allServices={services}
-              />
-            )
-          case 'section.locations':
-            return (
-              <LocationsSection
-                key={section._key}
-                section={section as LocationsSectionData}
-                allLocations={locations}
-              />
-            )
-          case 'section.testimonials':
-            return <TestimonialsSection key={section._key} section={section as TestimonialsSectionData} />
-          case 'section.faq':
-            return <FaqSection key={section._key} section={section as FaqSectionData} />
-          case 'section.offers':
-            return (
-              <OffersSection
-                key={section._key}
-                section={section as OffersSectionData}
-                allOffers={offers}
-              />
-            )
-          case 'section.cta':
-            return <CtaSection key={section._key} section={section} />
-          case 'section.contact':
-            return <ContactSection key={section._key} section={section} site={site} pagePath={pagePath} />
-          case 'section.features':
-            return <FeaturesSection key={section._key} section={section} />
-          case 'section.steps':
-            return <StepsSection key={section._key} section={section} />
-          case 'section.stats':
-            return <StatsSection key={section._key} section={section} />
-          case 'section.logos':
-            return <LogosSection key={section._key} section={section} />
-          case 'section.mediaText':
-            return <MediaTextSection key={section._key} section={section} />
-          case 'section.timeline':
-            return <TimelineSection key={section._key} section={section} />
-          case 'section.pricingTable':
-            return <PricingTableSection key={section._key} section={section} />
-          case 'section.gallery':
-            return <GallerySection key={section._key} section={section} />
-          case 'section.quote':
-            return <QuoteSection key={section._key} section={section} />
-          case 'section.blogList':
-            return <BlogListSection key={section._key} section={section} />
-          case 'section.layout': {
-            // Type guard for layout section
-            const layoutSection = section as {
-              sections?: PageSection[]
-              layoutSettings?: {
-                layout?: LayoutOptions
+      {sections.map((section, index) => {
+        const renderSection = () => {
+          switch (section._type) {
+            case 'section.hero':
+              return <HeroSection section={section} isFirstSection={index === 0} />
+            case 'section.text':
+              return <TextSection section={section} />
+            case 'section.services':
+              return (
+                <ServicesSection section={section as ServicesSectionData} allServices={services} />
+              )
+            case 'section.locations':
+              return (
+                <LocationsSection
+                  section={section as LocationsSectionData}
+                  allLocations={locations}
+                />
+              )
+            case 'section.testimonials':
+              return <TestimonialsSection section={section as TestimonialsSectionData} />
+            case 'section.faq':
+              return <FaqSection section={section as FaqSectionData} />
+            case 'section.offers':
+              return <OffersSection section={section as OffersSectionData} allOffers={offers} />
+            case 'section.cta':
+              return <CtaSection section={section} />
+            case 'section.contact':
+              return <ContactSection section={section} site={site} pagePath={pagePath} />
+            case 'section.features':
+              return <FeaturesSection section={section} />
+            case 'section.steps':
+              return <StepsSection section={section} />
+            case 'section.stats':
+              return <StatsSection section={section} />
+            case 'section.logos':
+              return <LogosSection section={section} />
+            case 'section.mediaText':
+              return <MediaTextSection section={section} />
+            case 'section.timeline':
+              return <TimelineSection section={section} />
+            case 'section.pricingTable':
+              return <PricingTableSection section={section} />
+            case 'section.gallery':
+              return <GallerySection section={section} />
+            case 'section.quote':
+              return <QuoteSection section={section} />
+            case 'section.blogList':
+              return <BlogListSection section={section} />
+            case 'section.layout': {
+              // Type guard for layout section
+              const layoutSection = section as {
+                sections?: PageSection[]
+                layoutSettings?: {
+                  layout?: LayoutOptions
+                }
+                gap?: string
               }
-              gap?: string
-            }
-            const nestedSections = Array.isArray(layoutSection.sections) ? layoutSection.sections : []
-            const layoutInfo = computeLayoutFromOptions(layoutSection.layoutSettings?.layout, {
-              baseClassName: undefined,
-            })
-            const gapToken = layoutSection.gap ?? 'md'
-            const gapValue = `var(--space-${gapToken})`
-            const containerStyle: CSSProperties = {
-              '--layout-stack-gap': gapValue,
-            } as CSSProperties
+              const nestedSections = Array.isArray(layoutSection.sections)
+                ? layoutSection.sections
+                : []
+              const layoutInfo = computeLayoutFromOptions(layoutSection.layoutSettings?.layout, {
+                baseClassName: undefined,
+              })
+              const gapToken = layoutSection.gap ?? 'md'
+              const gapValue = `var(--space-${gapToken})`
+              const containerStyle: CSSProperties = {
+                '--layout-stack-gap': gapValue,
+              } as CSSProperties
 
-            return (
-              <section
-                key={section._key}
-                className={layoutInfo.wrapperClassName}
-                style={layoutInfo.style}
-                data-animate={layoutInfo.dataAnimate}
-                data-alignment={layoutInfo.dataAlignment}
-              >
-                <Container
-                  width={layoutInfo.containerWidth}
-                  className={cn(layoutInfo.containerClassName, 'flex flex-col gap-[var(--layout-stack-gap)]')}
-                  style={containerStyle}
+              return (
+                <section
+                  className={layoutInfo.wrapperClassName}
+                  style={layoutInfo.style}
+                  data-animate={layoutInfo.dataAnimate}
+                  data-alignment={layoutInfo.dataAlignment}
                 >
-                  <SectionRenderer
-                    sections={nestedSections}
-                    services={services}
-                    locations={locations}
-                    offers={offers}
-                    site={site}
-                    pagePath={pagePath}
-                  />
-                </Container>
-              </section>
-            )
+                  <Container
+                    width={layoutInfo.containerWidth}
+                    className={cn(
+                      layoutInfo.containerClassName,
+                      'flex flex-col gap-[var(--layout-stack-gap)]'
+                    )}
+                    style={containerStyle}
+                  >
+                    <SectionRenderer
+                      sections={nestedSections}
+                      services={services}
+                      locations={locations}
+                      offers={offers}
+                      site={site}
+                      pagePath={pagePath}
+                    />
+                  </Container>
+                </section>
+              )
+            }
+            default:
+              return null
           }
-          default:
-            return null
         }
+
+        return (
+          <ErrorBoundary key={section._key} fallback={null}>
+            {renderSection()}
+          </ErrorBoundary>
+        )
       })}
     </>
   )

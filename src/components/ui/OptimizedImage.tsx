@@ -5,10 +5,12 @@ export type ImageLoadingPriority = 'eager' | 'lazy' | 'auto'
 
 export type OptimizedImageProps = {
   image?: {
-    asset?: (Partial<SanityAssetWithUrl> & {
-      _ref?: string
-      _type?: string
-    }) | null
+    asset?:
+      | (Partial<SanityAssetWithUrl> & {
+          _ref?: string
+          _type?: string
+        })
+      | null
     alt?: string
     hotspot?: {
       x?: number
@@ -101,11 +103,13 @@ export default function OptimizedImage({
     ...(blurDataURL && { placeholder: 'blur' as const, blurDataURL }),
   }
 
-  // Validate dimensions for non-fill images to prevent CLS
+  // Validate dimensions for non-fill images to prevent CLS (dev only)
   if (!fill && (!width || !height)) {
-    console.warn(
-      `OptimizedImage: Missing width or height for image ${imageUrl.substring(0, 50)}... This may cause Cumulative Layout Shift (CLS). Provide dimensions explicitly or ensure metadata.dimensions is fetched in GROQ query.`
-    )
+    if (process.env.NODE_ENV === 'development') {
+      console.warn(
+        `OptimizedImage: Missing width or height for image ${imageUrl.substring(0, 50)}... This may cause Cumulative Layout Shift (CLS). Provide dimensions explicitly or ensure metadata.dimensions is fetched in GROQ query.`
+      )
+    }
   }
 
   return (

@@ -7,6 +7,7 @@ import OptimizedImage from '@/components/ui/OptimizedImage'
 
 type HeroSectionProps = {
   section: Extract<PageSection, { _type: 'section.hero' }>
+  isFirstSection?: boolean
 }
 
 const backgroundClasses: Record<string, string> = {
@@ -15,13 +16,22 @@ const backgroundClasses: Record<string, string> = {
   brand: 'bg-brand text-inverted',
 }
 
-export default function HeroSection({ section }: HeroSectionProps) {
+export default function HeroSection({ section, isFirstSection = false }: HeroSectionProps) {
   const variant = section.variant ?? 'split'
-  const backgroundClass = backgroundClasses[section.background ?? 'default'] ?? backgroundClasses.default
+  const backgroundClass =
+    backgroundClasses[section.background ?? 'default'] ?? backgroundClasses.default
   const ctas = section.ctas ?? []
   const layoutMeta = getSectionLayout(section, {
     baseClassName: variant === 'background' ? 'relative isolate overflow-hidden' : backgroundClass,
   })
+
+  // Use eager priority for first hero section for better LCP
+  const priority = isFirstSection
+    ? 'eager'
+    : ((section.media as { loadingPriority?: string })?.loadingPriority as
+        | 'eager'
+        | 'lazy'
+        | 'auto') || 'auto'
 
   if (variant === 'background') {
     return (
@@ -37,16 +47,20 @@ export default function HeroSection({ section }: HeroSectionProps) {
           fill
           className="object-cover"
           sizes="100vw"
-          priority={((section.media as { loadingPriority?: string })?.loadingPriority as 'eager' | 'lazy' | 'auto') || 'eager'}
+          priority={priority}
         />
         <div className="absolute inset-0 bg-black/40" aria-hidden />
         <Container
           width={layoutMeta.containerWidth}
           className={cn('relative flex min-h-[24rem] flex-col justify-center text-inverted')}
         >
-          {section.eyebrow ? <p className="text-sm uppercase tracking-[0.2em]">{section.eyebrow}</p> : null}
+          {section.eyebrow ? (
+            <p className="text-sm uppercase tracking-[0.2em]">{section.eyebrow}</p>
+          ) : null}
           <h1 className="text-4xl font-semibold tracking-tight md:text-5xl">{section.heading}</h1>
-          {section.subheading ? <p className="mt-4 max-w-2xl text-lg text-inverted">{section.subheading}</p> : null}
+          {section.subheading ? (
+            <p className="mt-4 max-w-2xl text-lg text-inverted">{section.subheading}</p>
+          ) : null}
           {ctas.length ? (
             <div className="mt-8 flex flex-wrap gap-4">
               {ctas.map((cta, index) => (
@@ -71,15 +85,19 @@ export default function HeroSection({ section }: HeroSectionProps) {
         className={cn(
           layoutMeta.containerClassName,
           'grid items-center gap-10 md:grid-cols-2',
-          variant === 'centered' && 'md:grid-cols-1',
+          variant === 'centered' && 'md:grid-cols-1'
         )}
       >
         <div>
           {section.eyebrow ? (
             <p className="text-sm uppercase tracking-[0.2em] text-secondary">{section.eyebrow}</p>
           ) : null}
-          <h1 className="mt-2 text-4xl font-semibold tracking-tight text-strong md:text-5xl">{section.heading}</h1>
-          {section.subheading ? <p className="mt-4 text-lg text-muted">{section.subheading}</p> : null}
+          <h1 className="mt-2 text-4xl font-semibold tracking-tight text-strong md:text-5xl">
+            {section.heading}
+          </h1>
+          {section.subheading ? (
+            <p className="mt-4 text-lg text-muted">{section.subheading}</p>
+          ) : null}
           {ctas.length ? (
             <div className="mt-6 flex flex-wrap gap-3">
               {ctas.map((cta, index) => (
@@ -96,7 +114,7 @@ export default function HeroSection({ section }: HeroSectionProps) {
               fill
               className="object-cover"
               sizes="(min-width: 1024px) 50vw, 100vw"
-              priority={((section.media as { loadingPriority?: string })?.loadingPriority as 'eager' | 'lazy' | 'auto') || 'eager'}
+              priority={priority}
             />
           </div>
         ) : variant === 'centered' ? (
