@@ -7,6 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
+    "typecheck": "tsc --noEmit",
     "type-check": "tsc --noEmit",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
@@ -31,6 +32,9 @@
     "bulk-update": "tsx scripts/bulk-update.ts",
     "import-content": "tsx scripts/import-content.ts",
     "test": "playwright test",
+    "test:e2e": "playwright test tests/e2e/",
+    "test:a11y": "playwright test tests/accessibility/",
+    "test:headed": "playwright test --headed",
     "test:smoke": "tsx scripts/run-smoke-tests.ts",
     "test:smoke:all": "tsx scripts/run-smoke-tests.ts --all",
     "test:seo": "playwright test tests/seo/",
@@ -46,6 +50,7 @@
     "test:images": "playwright test tests/performance/image-optimization.spec.ts",
     "test:images:ui": "playwright test tests/performance/image-optimization.spec.ts --ui",
     "test:ci": "playwright test --reporter=github",
+    "audit:local": "pnpm typecheck && pnpm lint && pnpm test",
     "lhci": "lhci",
     "lhci:autorun": "lhci autorun",
     "analyze": "ANALYZE=true pnpm build",
@@ -75,6 +80,7 @@
     "zod": "^4.1.12"
   },
   "devDependencies": {
+    "@axe-core/playwright": "^4.11.0",
     "@eslint/eslintrc": "^3",
     "@lhci/cli": "^0.15.1",
     "@next/bundle-analyzer": "^16.0.0",
