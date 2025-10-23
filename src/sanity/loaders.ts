@@ -37,15 +37,24 @@ type GlobalDataset = {
  * Cache isolation notes:
  * - React cache() provides request-level deduplication
  * - Next.js ISR provides time-based revalidation (120s)
- * - Multi-tenant: Each dataset = separate deployment = natural cache isolation
- * - No cross-site cache pollution possible with Multiple Datasets approach
+ * - Dataset-scoped tags prevent cross-tenant cache collisions
+ * - Published content uses ISR, draft content bypasses cache
+ *
+ * Multi-tenant approach:
+ * - Each dataset = separate deployment = natural cache isolation
+ * - Cache tags include dataset ID to prevent cross-site pollution
+ * - No shared cache between different business sites
  */
 const fetchOptions = {
   perspective: 'published' as const,
   next: {
     revalidate: 120,
-    // Add dataset-specific tag for cache invalidation if needed
-    tags: [getSiteCachePrefix()],
+    tags: [
+      'sanity',
+      `dataset-${process.env.NEXT_PUBLIC_SANITY_DATASET}`,
+      `project-${process.env.NEXT_PUBLIC_SANITY_PROJECT_ID}`,
+      getSiteCachePrefix(),
+    ],
   },
 }
 
