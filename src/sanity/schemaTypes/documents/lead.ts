@@ -70,7 +70,7 @@ export default defineType({
       readOnly: true,
     }),
     defineField({
-      name: '_schemaVersion',
+      name: 'schemaVersion',
       type: 'string',
       title: 'Schema Version',
       initialValue: '1',

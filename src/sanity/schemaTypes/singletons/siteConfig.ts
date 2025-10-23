@@ -380,7 +380,7 @@ export default defineType({
       of: [defineArrayMember({ type: 'trackingScript' })],
     }),
     defineField({
-      name: '_schemaVersion',
+      name: 'schemaVersion',
       type: 'string',
       title: 'Schema Version',
       initialValue: '1',

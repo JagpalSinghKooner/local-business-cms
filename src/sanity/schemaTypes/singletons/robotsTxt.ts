@@ -95,7 +95,7 @@ export default defineType({
       description: 'Whether this robots.txt configuration is active',
     }),
     defineField({
-      name: '_schemaVersion',
+      name: 'schemaVersion',
       type: 'string',
       title: 'Schema Version',
       initialValue: '1',

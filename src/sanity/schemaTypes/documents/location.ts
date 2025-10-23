@@ -132,7 +132,7 @@ export default defineType({
     }),
     defineField({ name: 'seo', type: 'seo' }),
     defineField({
-      name: '_schemaVersion',
+      name: 'schemaVersion',
       type: 'string',
       title: 'Schema Version',
       initialValue: '1',

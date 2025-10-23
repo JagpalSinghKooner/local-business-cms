@@ -76,7 +76,7 @@ export default defineType({
     }),
     ...seoFields.map((f) => ({ ...f, group: 'seo' })),
     defineField({
-      name: '_schemaVersion',
+      name: 'schemaVersion',
       type: 'string',
       title: 'Schema Version',
       initialValue: '1',
