@@ -17,8 +17,9 @@ export default defineConfig({
   dataset: process.env.NEXT_PUBLIC_SANITY_DATASET!,
   basePath: '/studio',
 
-  // Suppress version check errors in production (CSP restrictions)
-  unstable_clientOnly: true,
+  // Disable version check in embedded Next.js Studio (prevents CSP fetch errors)
+  unstable_noVersionCheck: true,
+
   plugins: [
     structureTool({ structure: deskStructure }),
     siteSwitcherTool(),
