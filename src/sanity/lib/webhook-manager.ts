@@ -11,6 +11,25 @@ const projectId = process.env.NEXT_PUBLIC_SANITY_PROJECT_ID!
 const dataset = process.env.NEXT_PUBLIC_SANITY_DATASET!
 const token = process.env.SANITY_API_TOKEN
 
+// Simple in-memory rate limiter
+const webhookRateLimiter = new Map<string, number[]>()
+
+function checkRateLimit(key: string, maxPerSecond: number = 10): boolean {
+  const now = Date.now()
+  const timestamps = webhookRateLimiter.get(key) || []
+
+  // Remove timestamps older than 1 second
+  const recentTimestamps = timestamps.filter((t) => now - t < 1000)
+
+  if (recentTimestamps.length >= maxPerSecond) {
+    return false // Rate limit exceeded
+  }
+
+  recentTimestamps.push(now)
+  webhookRateLimiter.set(key, recentTimestamps)
+  return true
+}
+
 export type WebhookEvent =
   | 'document.created'
   | 'document.updated'
@@ -27,12 +46,12 @@ export interface WebhookPayload {
   documentTitle?: string
   timestamp: string
   dataset: string
-  document?: any
-  previousData?: any
+  document?: Record<string, unknown>
+  previousData?: Record<string, unknown>
   changes?: Array<{
     field: string
-    oldValue?: any
-    newValue?: any
+    oldValue?: unknown
+    newValue?: unknown
   }>
   metadata?: {
     userId?: string
@@ -86,7 +105,8 @@ export async function getWebhooksForEvent(
       useCdn: false,
     })
 
-    const webhooks = await client.fetch<WebhookConfig[]>(`
+    const webhooks = await client.fetch<WebhookConfig[]>(
+      `
       *[
         _type == "webhook" &&
         enabled == true &&
@@ -110,7 +130,9 @@ export async function getWebhooksForEvent(
         timeout,
         statistics
       }
-    `, { event, documentType })
+    `,
+      { event, documentType }
+    )
 
     return webhooks
   } catch (error) {
@@ -142,6 +164,17 @@ async function deliverWebhook(
 }> {
   const startTime = Date.now()
   const payloadString = JSON.stringify(payload)
+
+  // Check rate limit before delivering
+  const rateLimitKey = `${webhook.url}:${payload.event}`
+  if (!checkRateLimit(rateLimitKey, 10)) {
+    console.warn(`Webhook rate limit exceeded for ${webhook.url}`)
+    return {
+      success: false,
+      error: 'Rate limit exceeded (10 webhooks/sec)',
+      duration: 0,
+    }
+  }
 
   try {
     // Build headers
@@ -184,12 +217,13 @@ async function deliverWebhook(
       responseBody: responseBody.substring(0, 1000), // Limit response size
       duration,
     }
-  } catch (error: any) {
+  } catch (error) {
     const duration = Date.now() - startTime
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error'
 
     return {
       success: false,
-      error: error.message || 'Unknown error',
+      error: errorMessage,
       duration,
     }
   }
@@ -259,10 +293,7 @@ async function logWebhookDelivery(
 /**
  * Update webhook statistics
  */
-async function updateWebhookStatistics(
-  webhookId: string,
-  success: boolean
-): Promise<void> {
+async function updateWebhookStatistics(webhookId: string, success: boolean): Promise<void> {
   if (!token) return
 
   try {
@@ -313,16 +344,28 @@ export async function triggerWebhooks(
   documentId: string,
   documentType: string,
   documentTitle?: string,
-  document?: any,
-  previousData?: any,
+  document?: Record<string, unknown>,
+  previousData?: Record<string, unknown>,
   metadata?: {
     userId?: string
     userName?: string
     workflowState?: string
     previousWorkflowState?: string
-    changes?: Array<{ field: string; oldValue?: any; newValue?: any }>
+    changes?: Array<{ field: string; oldValue?: unknown; newValue?: unknown }>
   }
 ): Promise<void> {
+  // Verify dataset matches to prevent cross-tenant webhook triggering
+  if (
+    process.env.NEXT_PUBLIC_SANITY_DATASET &&
+    document?._dataset &&
+    document._dataset !== process.env.NEXT_PUBLIC_SANITY_DATASET
+  ) {
+    console.warn(
+      `Webhook skipped: dataset mismatch (${document._dataset as string} vs ${process.env.NEXT_PUBLIC_SANITY_DATASET})`
+    )
+    return
+  }
+
   // Get webhooks for this event
   const webhooks = await getWebhooksForEvent(event, documentType)
 
@@ -354,7 +397,15 @@ export async function triggerWebhooks(
     webhooks.map(async (webhook) => {
       let attemptNumber = 1
       let success = false
-      let lastResult: any
+      let lastResult:
+        | {
+            success: boolean
+            statusCode?: number
+            responseBody?: string
+            error?: string
+            duration: number
+          }
+        | undefined
 
       const maxRetries = webhook.retryConfig?.maxRetries ?? 3
       const retryDelay = webhook.retryConfig?.retryDelay ?? 5
@@ -444,10 +495,11 @@ export async function testWebhook(webhookId: string): Promise<{
     await logWebhookDelivery(webhook, testPayload, result, 1, false)
 
     return result
-  } catch (error: any) {
+  } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error'
     return {
       success: false,
-      error: error.message || 'Unknown error',
+      error: errorMessage,
       duration: 0,
     }
   }
