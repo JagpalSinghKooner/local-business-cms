@@ -51,7 +51,8 @@ export default defineType({
   title: 'Site Configuration',
   type: 'document',
   icon: CogIcon,
-  __experimental_liveEdit: true,
+  // Note: __experimental_liveEdit removed due to TypeScript compatibility
+  // Consider re-adding when officially supported in Sanity types
   groups: [
     { name: 'deployment', title: 'Deployment' },
     { name: 'brand', title: 'Brand' },

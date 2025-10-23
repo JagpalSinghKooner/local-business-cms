@@ -24,7 +24,8 @@ export default defineType({
   title: 'Global Settings',
   type: 'document',
   icon: CogIcon,
-  __experimental_liveEdit: true,
+  // Note: __experimental_liveEdit removed due to TypeScript compatibility
+  // Consider re-adding when officially supported in Sanity types
   groups: [
     { name: 'brand', title: 'Brand' },
     { name: 'contact', title: 'Contact' },

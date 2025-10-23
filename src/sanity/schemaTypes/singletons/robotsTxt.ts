@@ -4,7 +4,8 @@ export default defineType({
   name: 'robotsTxt',
   title: 'Robots.txt',
   type: 'document',
-  __experimental_liveEdit: true,
+  // Note: __experimental_liveEdit removed due to TypeScript compatibility
+  // Consider re-adding when officially supported in Sanity types
   fields: [
     defineField({
       name: 'environment',

@@ -24,6 +24,7 @@ export default defineType({
         Rule.required().custom(async (slug, context) => {
           if (!slug?.current) return true
           const { document, getClient } = context
+          if (!document?._id || !document?._type) return true
           const client = getClient({ apiVersion: '2024-01-01' })
           const id = document._id.replace(/^drafts\./, '')
           const params = {

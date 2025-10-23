@@ -83,7 +83,7 @@ export default defineType({
       title: 'To URL',
       type: 'string',
       description: 'The URL to redirect to. Use $1, $2 for wildcard/regex capture groups.',
-      validation: (Rule) => Rule.required().uri({ allowRelative: true }),
+      validation: (Rule) => Rule.required(),
     }),
     defineField({
       name: 'matchType',
