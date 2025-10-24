@@ -1,590 +1,719 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Local Business CMS - Comprehensive Audit Dashboard</title>
-    <meta name="description" content="Production-quality audit dashboard for Local Business CMS Framework - View all audits, planning docs, and AI agent capabilities">
+    <meta
+      name="description"
+      content="Production-quality audit dashboard for Local Business CMS Framework - View all audits, planning docs, and AI agent capabilities"
+    />
 
     <!-- CDN Dependencies -->
     <script src="https://cdn.jsdelivr.net/npm/marked@11.0.0/marked.min.js"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" id="highlight-theme-dark">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css" id="highlight-theme-light">
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css"
+      id="highlight-theme-dark"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css"
+      id="highlight-theme-light"
+    />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
 
     <style>
-        :root {
-            --bg-primary: #ffffff;
-            --bg-secondary: #f8fafc;
-            --bg-tertiary: #f1f5f9;
-            --text-primary: #0f172a;
-            --text-secondary: #64748b;
-            --text-tertiary: #94a3b8;
-            --border-color: #e2e8f0;
-            --accent-primary: #3b82f6;
-            --accent-hover: #2563eb;
-            --success: #10b981;
-            --warning: #f59e0b;
-            --error: #ef4444;
-            --gray: #6b7280;
-            --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
-            --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1);
-            --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1);
-            --sidebar-width: 280px;
+      :root {
+        --bg-primary: #ffffff;
+        --bg-secondary: #f8fafc;
+        --bg-tertiary: #f1f5f9;
+        --text-primary: #0f172a;
+        --text-secondary: #64748b;
+        --text-tertiary: #94a3b8;
+        --border-color: #e2e8f0;
+        --accent-primary: #3b82f6;
+        --accent-hover: #2563eb;
+        --success: #10b981;
+        --warning: #f59e0b;
+        --error: #ef4444;
+        --gray: #6b7280;
+        --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+        --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+        --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1);
+        --sidebar-width: 280px;
+      }
+
+      [data-theme='dark'] {
+        --bg-primary: #0f172a;
+        --bg-secondary: #1e293b;
+        --bg-tertiary: #334155;
+        --text-primary: #f1f5f9;
+        --text-secondary: #cbd5e1;
+        --text-tertiary: #94a3b8;
+        --border-color: #334155;
+        --accent-primary: #60a5fa;
+        --accent-hover: #3b82f6;
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family:
+          -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+        background: var(--bg-secondary);
+        color: var(--text-primary);
+        line-height: 1.6;
+        transition:
+          background-color 0.2s,
+          color 0.2s;
+      }
+
+      /* File Protocol Warning Banner */
+      #file-protocol-warning {
+        display: none;
+        background: #fef3c7;
+        border-bottom: 2px solid #f59e0b;
+        padding: 1rem 2rem;
+        position: sticky;
+        top: 0;
+        z-index: 200;
+      }
+
+      #file-protocol-warning .warning-content {
+        max-width: 1200px;
+        margin: 0 auto;
+      }
+
+      #file-protocol-warning h3 {
+        margin: 0 0 0.5rem 0;
+        color: #92400e;
+        font-size: 1.1rem;
+      }
+
+      #file-protocol-warning p {
+        margin: 0;
+        color: #78350f;
+        font-size: 0.95rem;
+      }
+
+      #file-protocol-warning code {
+        display: block;
+        margin-top: 0.75rem;
+        padding: 0.75rem;
+        background: white;
+        border-radius: 6px;
+        color: #1e293b;
+        font-family: 'Monaco', 'Menlo', monospace;
+        font-size: 0.875rem;
+        overflow-x: auto;
+      }
+
+      #file-protocol-warning .help-text {
+        margin: 0.75rem 0 0 0;
+        font-size: 0.875rem;
+        color: #78350f;
+      }
+
+      #file-protocol-warning strong {
+        color: #92400e;
+      }
+
+      /* Header */
+      .header {
+        background: var(--bg-primary);
+        border-bottom: 1px solid var(--border-color);
+        padding: 1rem 2rem;
+        position: sticky;
+        top: 0;
+        z-index: 100;
+        box-shadow: var(--shadow-sm);
+      }
+
+      .header-content {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        max-width: 100%;
+      }
+
+      .header-title {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+      }
+
+      .header-title h1 {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: var(--text-primary);
+      }
+
+      .header-badge {
+        background: var(--success);
+        color: white;
+        padding: 0.25rem 0.75rem;
+        border-radius: 9999px;
+        font-size: 0.75rem;
+        font-weight: 600;
+      }
+
+      .header-controls {
+        display: flex;
+        gap: 1rem;
+        align-items: center;
+      }
+
+      .search-box {
+        position: relative;
+      }
+
+      .search-input {
+        padding: 0.5rem 1rem 0.5rem 2.5rem;
+        border: 1px solid var(--border-color);
+        border-radius: 0.5rem;
+        background: var(--bg-secondary);
+        color: var(--text-primary);
+        font-size: 0.875rem;
+        width: 300px;
+        transition: all 0.2s;
+      }
+
+      .search-input:focus {
+        outline: none;
+        border-color: var(--accent-primary);
+        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+      }
+
+      .search-icon {
+        position: absolute;
+        left: 0.75rem;
+        top: 50%;
+        transform: translateY(-50%);
+        color: var(--text-tertiary);
+        pointer-events: none;
+      }
+
+      .btn {
+        padding: 0.5rem 1rem;
+        border: none;
+        border-radius: 0.5rem;
+        font-size: 0.875rem;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.2s;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+
+      .btn-primary {
+        background: var(--accent-primary);
+        color: white;
+      }
+
+      .btn-primary:hover {
+        background: var(--accent-hover);
+      }
+
+      .btn-icon {
+        padding: 0.5rem;
+        border-radius: 0.5rem;
+        background: var(--bg-tertiary);
+        border: 1px solid var(--border-color);
+        cursor: pointer;
+        transition: all 0.2s;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .btn-icon:hover {
+        background: var(--bg-secondary);
+      }
+
+      /* Layout */
+      .layout {
+        display: flex;
+        height: calc(100vh - 70px);
+      }
+
+      /* Sidebar */
+      .sidebar {
+        width: var(--sidebar-width);
+        background: var(--bg-primary);
+        border-right: 1px solid var(--border-color);
+        overflow-y: auto;
+        padding: 1.5rem 0;
+      }
+
+      .sidebar-section {
+        margin-bottom: 2rem;
+      }
+
+      .sidebar-section-title {
+        padding: 0 1.5rem 0.5rem;
+        font-size: 0.75rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        color: var(--text-tertiary);
+      }
+
+      .sidebar-item {
+        padding: 0.75rem 1.5rem;
+        color: var(--text-secondary);
+        cursor: pointer;
+        transition: all 0.2s;
+        font-size: 0.875rem;
+        border-left: 3px solid transparent;
+      }
+
+      .sidebar-item:hover {
+        background: var(--bg-secondary);
+        color: var(--text-primary);
+      }
+
+      .sidebar-item.active {
+        background: var(--bg-secondary);
+        color: var(--accent-primary);
+        border-left-color: var(--accent-primary);
+        font-weight: 600;
+      }
+
+      .sidebar-item-icon {
+        margin-right: 0.5rem;
+      }
+
+      /* Main Content */
+      .main-content {
+        flex: 1;
+        overflow-y: auto;
+        padding: 2rem;
+      }
+
+      .content-wrapper {
+        max-width: 1200px;
+        margin: 0 auto;
+      }
+
+      /* Dashboard Home */
+      .dashboard-home {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 1.5rem;
+        margin-bottom: 2rem;
+      }
+
+      .stat-card {
+        background: var(--bg-primary);
+        border: 1px solid var(--border-color);
+        border-radius: 0.75rem;
+        padding: 1.5rem;
+        box-shadow: var(--shadow-sm);
+      }
+
+      .stat-label {
+        font-size: 0.875rem;
+        color: var(--text-secondary);
+        margin-bottom: 0.5rem;
+      }
+
+      .stat-value {
+        font-size: 2rem;
+        font-weight: 700;
+        color: var(--text-primary);
+        margin-bottom: 0.25rem;
+      }
+
+      .stat-meta {
+        font-size: 0.75rem;
+        color: var(--text-tertiary);
+      }
+
+      .progress-bar {
+        width: 100%;
+        height: 8px;
+        background: var(--bg-tertiary);
+        border-radius: 9999px;
+        overflow: hidden;
+        margin-top: 1rem;
+      }
+
+      .progress-fill {
+        height: 100%;
+        background: var(--success);
+        transition: width 0.3s ease;
+      }
+
+      /* Document Content */
+      .document-header {
+        margin-bottom: 2rem;
+        padding-bottom: 1rem;
+        border-bottom: 1px solid var(--border-color);
+      }
+
+      .document-title {
+        font-size: 2rem;
+        font-weight: 700;
+        color: var(--text-primary);
+        margin-bottom: 0.5rem;
+      }
+
+      .document-meta {
+        display: flex;
+        gap: 1.5rem;
+        font-size: 0.875rem;
+        color: var(--text-secondary);
+        flex-wrap: wrap;
+      }
+
+      .document-meta-item {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+
+      .document-content {
+        background: var(--bg-primary);
+        border: 1px solid var(--border-color);
+        border-radius: 0.75rem;
+        padding: 2rem;
+        box-shadow: var(--shadow-sm);
+      }
+
+      /* Markdown Styles */
+      .markdown-body h1 {
+        font-size: 2rem;
+        font-weight: 700;
+        margin: 2rem 0 1rem;
+        padding-bottom: 0.5rem;
+        border-bottom: 2px solid var(--border-color);
+      }
+
+      .markdown-body h2 {
+        font-size: 1.5rem;
+        font-weight: 700;
+        margin: 1.5rem 0 1rem;
+      }
+
+      .markdown-body h3 {
+        font-size: 1.25rem;
+        font-weight: 600;
+        margin: 1.25rem 0 0.75rem;
+      }
+
+      .markdown-body h4 {
+        font-size: 1.125rem;
+        font-weight: 600;
+        margin: 1rem 0 0.5rem;
+      }
+
+      .markdown-body p {
+        margin: 1rem 0;
+      }
+
+      .markdown-body ul,
+      .markdown-body ol {
+        margin: 1rem 0;
+        padding-left: 2rem;
+      }
+
+      .markdown-body li {
+        margin: 0.5rem 0;
+      }
+
+      .markdown-body code {
+        background: var(--bg-tertiary);
+        padding: 0.2rem 0.4rem;
+        border-radius: 0.25rem;
+        font-size: 0.875em;
+        font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+      }
+
+      .markdown-body pre {
+        background: #1e293b;
+        padding: 1rem;
+        border-radius: 0.5rem;
+        overflow-x: auto;
+        margin: 1rem 0;
+      }
+
+      .markdown-body pre code {
+        background: none;
+        padding: 0;
+        color: #e2e8f0;
+      }
+
+      .markdown-body table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 1rem 0;
+      }
+
+      .markdown-body th,
+      .markdown-body td {
+        padding: 0.75rem;
+        border: 1px solid var(--border-color);
+        text-align: left;
+      }
+
+      .markdown-body th {
+        background: var(--bg-secondary);
+        font-weight: 600;
+      }
+
+      .markdown-body blockquote {
+        border-left: 4px solid var(--accent-primary);
+        padding-left: 1rem;
+        margin: 1rem 0;
+        color: var(--text-secondary);
+      }
+
+      .markdown-body a {
+        color: var(--accent-primary);
+        text-decoration: none;
+      }
+
+      .markdown-body a:hover {
+        text-decoration: underline;
+      }
+
+      /* Status Badges */
+      .status-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.25rem 0.75rem;
+        border-radius: 9999px;
+        font-size: 0.75rem;
+        font-weight: 600;
+      }
+
+      .status-complete {
+        background: rgba(16, 185, 129, 0.1);
+        color: var(--success);
+      }
+
+      .status-in-progress {
+        background: rgba(245, 158, 11, 0.1);
+        color: var(--warning);
+      }
+
+      .status-pending {
+        background: rgba(107, 114, 128, 0.1);
+        color: var(--gray);
+      }
+
+      /* Loading States */
+      .loading {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 4rem;
+        color: var(--text-secondary);
+      }
+
+      .spinner {
+        border: 3px solid var(--border-color);
+        border-top-color: var(--accent-primary);
+        border-radius: 50%;
+        width: 40px;
+        height: 40px;
+        animation: spin 0.8s linear infinite;
+        margin-right: 1rem;
+      }
+
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+
+      /* Mobile Responsive */
+      @media (max-width: 768px) {
+        .sidebar {
+          position: fixed;
+          left: -100%;
+          top: 70px;
+          height: calc(100vh - 70px);
+          z-index: 50;
+          transition: left 0.3s;
         }
 
-        [data-theme="dark"] {
-            --bg-primary: #0f172a;
-            --bg-secondary: #1e293b;
-            --bg-tertiary: #334155;
-            --text-primary: #f1f5f9;
-            --text-secondary: #cbd5e1;
-            --text-tertiary: #94a3b8;
-            --border-color: #334155;
-            --accent-primary: #60a5fa;
-            --accent-hover: #3b82f6;
+        .sidebar.open {
+          left: 0;
         }
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
+        .mobile-overlay {
+          display: none;
+          position: fixed;
+          top: 70px;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          background: rgba(0, 0, 0, 0.5);
+          z-index: 40;
         }
 
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-            background: var(--bg-secondary);
-            color: var(--text-primary);
-            line-height: 1.6;
-            transition: background-color 0.2s, color 0.2s;
-        }
-
-        /* Header */
-        .header {
-            background: var(--bg-primary);
-            border-bottom: 1px solid var(--border-color);
-            padding: 1rem 2rem;
-            position: sticky;
-            top: 0;
-            z-index: 100;
-            box-shadow: var(--shadow-sm);
-        }
-
-        .header-content {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            max-width: 100%;
-        }
-
-        .header-title {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-        }
-
-        .header-title h1 {
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: var(--text-primary);
-        }
-
-        .header-badge {
-            background: var(--success);
-            color: white;
-            padding: 0.25rem 0.75rem;
-            border-radius: 9999px;
-            font-size: 0.75rem;
-            font-weight: 600;
+        .mobile-overlay.open {
+          display: block;
         }
 
         .header-controls {
-            display: flex;
-            gap: 1rem;
-            align-items: center;
-        }
-
-        .search-box {
-            position: relative;
+          gap: 0.5rem;
         }
 
         .search-input {
-            padding: 0.5rem 1rem 0.5rem 2.5rem;
-            border: 1px solid var(--border-color);
-            border-radius: 0.5rem;
-            background: var(--bg-secondary);
-            color: var(--text-primary);
-            font-size: 0.875rem;
-            width: 300px;
-            transition: all 0.2s;
+          width: 150px;
         }
 
-        .search-input:focus {
-            outline: none;
-            border-color: var(--accent-primary);
-            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        .btn span {
+          display: none;
         }
 
-        .search-icon {
-            position: absolute;
-            left: 0.75rem;
-            top: 50%;
-            transform: translateY(-50%);
-            color: var(--text-tertiary);
-            pointer-events: none;
-        }
-
-        .btn {
-            padding: 0.5rem 1rem;
-            border: none;
-            border-radius: 0.5rem;
-            font-size: 0.875rem;
-            font-weight: 500;
-            cursor: pointer;
-            transition: all 0.2s;
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .btn-primary {
-            background: var(--accent-primary);
-            color: white;
-        }
-
-        .btn-primary:hover {
-            background: var(--accent-hover);
-        }
-
-        .btn-icon {
-            padding: 0.5rem;
-            border-radius: 0.5rem;
-            background: var(--bg-tertiary);
-            border: 1px solid var(--border-color);
-            cursor: pointer;
-            transition: all 0.2s;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .btn-icon:hover {
-            background: var(--bg-secondary);
-        }
-
-        /* Layout */
-        .layout {
-            display: flex;
-            height: calc(100vh - 70px);
-        }
-
-        /* Sidebar */
-        .sidebar {
-            width: var(--sidebar-width);
-            background: var(--bg-primary);
-            border-right: 1px solid var(--border-color);
-            overflow-y: auto;
-            padding: 1.5rem 0;
-        }
-
-        .sidebar-section {
-            margin-bottom: 2rem;
-        }
-
-        .sidebar-section-title {
-            padding: 0 1.5rem 0.5rem;
-            font-size: 0.75rem;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-            color: var(--text-tertiary);
-        }
-
-        .sidebar-item {
-            padding: 0.75rem 1.5rem;
-            color: var(--text-secondary);
-            cursor: pointer;
-            transition: all 0.2s;
-            font-size: 0.875rem;
-            border-left: 3px solid transparent;
-        }
-
-        .sidebar-item:hover {
-            background: var(--bg-secondary);
-            color: var(--text-primary);
-        }
-
-        .sidebar-item.active {
-            background: var(--bg-secondary);
-            color: var(--accent-primary);
-            border-left-color: var(--accent-primary);
-            font-weight: 600;
-        }
-
-        .sidebar-item-icon {
-            margin-right: 0.5rem;
-        }
-
-        /* Main Content */
-        .main-content {
-            flex: 1;
-            overflow-y: auto;
-            padding: 2rem;
-        }
-
-        .content-wrapper {
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-
-        /* Dashboard Home */
         .dashboard-home {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 1.5rem;
-            margin-bottom: 2rem;
+          grid-template-columns: 1fr;
         }
 
-        .stat-card {
-            background: var(--bg-primary);
-            border: 1px solid var(--border-color);
-            border-radius: 0.75rem;
-            padding: 1.5rem;
-            box-shadow: var(--shadow-sm);
+        #file-protocol-warning {
+          padding: 0.75rem 1rem;
         }
 
-        .stat-label {
-            font-size: 0.875rem;
-            color: var(--text-secondary);
-            margin-bottom: 0.5rem;
+        #file-protocol-warning code {
+          font-size: 0.75rem;
+        }
+      }
+
+      /* Print Styles */
+      @media print {
+        #file-protocol-warning,
+        .header,
+        .sidebar,
+        .btn,
+        .search-box {
+          display: none;
         }
 
-        .stat-value {
-            font-size: 2rem;
-            font-weight: 700;
-            color: var(--text-primary);
-            margin-bottom: 0.25rem;
-        }
-
-        .stat-meta {
-            font-size: 0.75rem;
-            color: var(--text-tertiary);
-        }
-
-        .progress-bar {
-            width: 100%;
-            height: 8px;
-            background: var(--bg-tertiary);
-            border-radius: 9999px;
-            overflow: hidden;
-            margin-top: 1rem;
-        }
-
-        .progress-fill {
-            height: 100%;
-            background: var(--success);
-            transition: width 0.3s ease;
-        }
-
-        /* Document Content */
-        .document-header {
-            margin-bottom: 2rem;
-            padding-bottom: 1rem;
-            border-bottom: 1px solid var(--border-color);
-        }
-
-        .document-title {
-            font-size: 2rem;
-            font-weight: 700;
-            color: var(--text-primary);
-            margin-bottom: 0.5rem;
-        }
-
-        .document-meta {
-            display: flex;
-            gap: 1.5rem;
-            font-size: 0.875rem;
-            color: var(--text-secondary);
-            flex-wrap: wrap;
-        }
-
-        .document-meta-item {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
+        .main-content {
+          padding: 0;
         }
 
         .document-content {
-            background: var(--bg-primary);
-            border: 1px solid var(--border-color);
-            border-radius: 0.75rem;
-            padding: 2rem;
-            box-shadow: var(--shadow-sm);
+          box-shadow: none;
+          border: none;
         }
+      }
 
-        /* Markdown Styles */
-        .markdown-body h1 {
-            font-size: 2rem;
-            font-weight: 700;
-            margin: 2rem 0 1rem;
-            padding-bottom: 0.5rem;
-            border-bottom: 2px solid var(--border-color);
-        }
+      /* Utility Classes */
+      .hidden {
+        display: none !important;
+      }
 
-        .markdown-body h2 {
-            font-size: 1.5rem;
-            font-weight: 700;
-            margin: 1.5rem 0 1rem;
-        }
+      .text-success {
+        color: var(--success);
+      }
 
-        .markdown-body h3 {
-            font-size: 1.25rem;
-            font-weight: 600;
-            margin: 1.25rem 0 0.75rem;
-        }
+      .text-warning {
+        color: var(--warning);
+      }
 
-        .markdown-body h4 {
-            font-size: 1.125rem;
-            font-weight: 600;
-            margin: 1rem 0 0.5rem;
-        }
-
-        .markdown-body p {
-            margin: 1rem 0;
-        }
-
-        .markdown-body ul, .markdown-body ol {
-            margin: 1rem 0;
-            padding-left: 2rem;
-        }
-
-        .markdown-body li {
-            margin: 0.5rem 0;
-        }
-
-        .markdown-body code {
-            background: var(--bg-tertiary);
-            padding: 0.2rem 0.4rem;
-            border-radius: 0.25rem;
-            font-size: 0.875em;
-            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
-        }
-
-        .markdown-body pre {
-            background: #1e293b;
-            padding: 1rem;
-            border-radius: 0.5rem;
-            overflow-x: auto;
-            margin: 1rem 0;
-        }
-
-        .markdown-body pre code {
-            background: none;
-            padding: 0;
-            color: #e2e8f0;
-        }
-
-        .markdown-body table {
-            width: 100%;
-            border-collapse: collapse;
-            margin: 1rem 0;
-        }
-
-        .markdown-body th,
-        .markdown-body td {
-            padding: 0.75rem;
-            border: 1px solid var(--border-color);
-            text-align: left;
-        }
-
-        .markdown-body th {
-            background: var(--bg-secondary);
-            font-weight: 600;
-        }
-
-        .markdown-body blockquote {
-            border-left: 4px solid var(--accent-primary);
-            padding-left: 1rem;
-            margin: 1rem 0;
-            color: var(--text-secondary);
-        }
-
-        .markdown-body a {
-            color: var(--accent-primary);
-            text-decoration: none;
-        }
-
-        .markdown-body a:hover {
-            text-decoration: underline;
-        }
-
-        /* Status Badges */
-        .status-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            padding: 0.25rem 0.75rem;
-            border-radius: 9999px;
-            font-size: 0.75rem;
-            font-weight: 600;
-        }
-
-        .status-complete {
-            background: rgba(16, 185, 129, 0.1);
-            color: var(--success);
-        }
-
-        .status-in-progress {
-            background: rgba(245, 158, 11, 0.1);
-            color: var(--warning);
-        }
-
-        .status-pending {
-            background: rgba(107, 114, 128, 0.1);
-            color: var(--gray);
-        }
-
-        /* Loading States */
-        .loading {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 4rem;
-            color: var(--text-secondary);
-        }
-
-        .spinner {
-            border: 3px solid var(--border-color);
-            border-top-color: var(--accent-primary);
-            border-radius: 50%;
-            width: 40px;
-            height: 40px;
-            animation: spin 0.8s linear infinite;
-            margin-right: 1rem;
-        }
-
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-
-        /* Mobile Responsive */
-        @media (max-width: 768px) {
-            .sidebar {
-                position: fixed;
-                left: -100%;
-                top: 70px;
-                height: calc(100vh - 70px);
-                z-index: 50;
-                transition: left 0.3s;
-            }
-
-            .sidebar.open {
-                left: 0;
-            }
-
-            .mobile-overlay {
-                display: none;
-                position: fixed;
-                top: 70px;
-                left: 0;
-                right: 0;
-                bottom: 0;
-                background: rgba(0, 0, 0, 0.5);
-                z-index: 40;
-            }
-
-            .mobile-overlay.open {
-                display: block;
-            }
-
-            .header-controls {
-                gap: 0.5rem;
-            }
-
-            .search-input {
-                width: 150px;
-            }
-
-            .btn span {
-                display: none;
-            }
-
-            .dashboard-home {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        /* Print Styles */
-        @media print {
-            .header,
-            .sidebar,
-            .btn,
-            .search-box {
-                display: none;
-            }
-
-            .main-content {
-                padding: 0;
-            }
-
-            .document-content {
-                box-shadow: none;
-                border: none;
-            }
-        }
-
-        /* Utility Classes */
-        .hidden {
-            display: none !important;
-        }
-
-        .text-success {
-            color: var(--success);
-        }
-
-        .text-warning {
-            color: var(--warning);
-        }
-
-        .text-error {
-            color: var(--error);
-        }
+      .text-error {
+        color: var(--error);
+      }
     </style>
-</head>
-<body>
+  </head>
+  <body>
+    <!-- File Protocol Warning Banner -->
+    <div id="file-protocol-warning">
+      <div class="warning-content">
+        <h3>⚠️ Local File Mode Detected</h3>
+        <p>
+          For full functionality (including access to AI agent documentation), serve this dashboard
+          via HTTP from the project root. Quick start:
+        </p>
+        <code
+          >cd /Users/jagpalkooner/Desktop/Local\ Business\ CMS && python3 -m http.server 8080</code
+        >
+        <p class="help-text">
+          Then open: <strong>http://localhost:8080/docs/audit-report.html</strong>
+        </p>
+        <p class="help-text" style="margin-top: 0.5rem">
+          <em
+            >Note: Serving from project root allows the dashboard to access agent files in the
+            <code
+              style="
+                display: inline;
+                background: rgba(255, 255, 255, 0.5);
+                padding: 0.1rem 0.3rem;
+                border-radius: 3px;
+              "
+              >.claude/</code
+            >
+            directory.</em
+          >
+        </p>
+      </div>
+    </div>
+
     <!-- Header -->
     <header class="header">
-        <div class="header-content">
-            <div class="header-title">
-                <button class="btn-icon" id="mobile-menu-btn" aria-label="Toggle menu">
-                    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M3 7h14M3 12h14" stroke-linecap="round"/>
-                    </svg>
-                </button>
-                <h1>Local Business CMS</h1>
-                <span class="header-badge">87.5% Complete</span>
-            </div>
-            <div class="header-controls">
-                <div class="search-box">
-                    <svg class="search-icon" width="16" height="16" viewBox="0 0 20 20" fill="none" stroke="currentColor">
-                        <circle cx="9" cy="9" r="6" stroke-width="2"/>
-                        <path d="M13 13l4 4" stroke-width="2" stroke-linecap="round"/>
-                    </svg>
-                    <input type="text" class="search-input" id="search-input" placeholder="Search documentation...">
-                </div>
-                <button class="btn-icon" id="theme-toggle" aria-label="Toggle dark mode">
-                    <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
-                        <path d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z"/>
-                    </svg>
-                </button>
-                <button class="btn-primary" id="export-pdf">
-                    <svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor">
-                        <path d="M13 8V2H7v6H2l8 8 8-8h-5zM0 18h20v2H0v-2z"/>
-                    </svg>
-                    <span>Export PDF</span>
-                </button>
-            </div>
+      <div class="header-content">
+        <div class="header-title">
+          <button class="btn-icon" id="mobile-menu-btn" aria-label="Toggle menu">
+            <svg
+              width="20"
+              height="20"
+              viewBox="0 0 20 20"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <path d="M3 7h14M3 12h14" stroke-linecap="round" />
+            </svg>
+          </button>
+          <h1>Local Business CMS</h1>
+          <span class="header-badge">87.5% Complete</span>
         </div>
+        <div class="header-controls">
+          <div class="search-box">
+            <svg
+              class="search-icon"
+              width="16"
+              height="16"
+              viewBox="0 0 20 20"
+              fill="none"
+              stroke="currentColor"
+            >
+              <circle cx="9" cy="9" r="6" stroke-width="2" />
+              <path d="M13 13l4 4" stroke-width="2" stroke-linecap="round" />
+            </svg>
+            <input
+              type="text"
+              class="search-input"
+              id="search-input"
+              placeholder="Search documentation..."
+            />
+          </div>
+          <button class="btn-icon" id="theme-toggle" aria-label="Toggle dark mode">
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
+              <path
+                d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z"
+              />
+            </svg>
+          </button>
+          <button class="btn-primary" id="export-pdf">
+            <svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor">
+              <path d="M13 8V2H7v6H2l8 8 8-8h-5zM0 18h20v2H0v-2z" />
+            </svg>
+            <span>Export PDF</span>
+          </button>
+        </div>
+      </div>
     </header>
 
     <!-- Mobile Overlay -->
@@ -592,562 +721,664 @@
 
     <!-- Main Layout -->
     <div class="layout">
-        <!-- Sidebar -->
-        <aside class="sidebar" id="sidebar">
-            <div class="sidebar-section">
-                <div class="sidebar-section-title">Dashboard</div>
-                <div class="sidebar-item active" data-view="home">
-                    <span class="sidebar-item-icon">📊</span>
-                    Overview
+      <!-- Sidebar -->
+      <aside class="sidebar" id="sidebar">
+        <div class="sidebar-section">
+          <div class="sidebar-section-title">Dashboard</div>
+          <div class="sidebar-item active" data-view="home">
+            <span class="sidebar-item-icon">📊</span>
+            Overview
+          </div>
+        </div>
+
+        <div class="sidebar-section">
+          <div class="sidebar-section-title">Audits (5)</div>
+          <div class="sidebar-item" data-file="docs/md-files/audit-code-quality.md">
+            <span class="sidebar-item-icon">✅</span>
+            Code Quality
+          </div>
+          <div class="sidebar-item" data-file="docs/md-files/audit-performance-fixes.md">
+            <span class="sidebar-item-icon">⚡</span>
+            Performance Fixes
+          </div>
+          <div class="sidebar-item" data-file="docs/md-files/audit-bundle-size-fix.md">
+            <span class="sidebar-item-icon">📦</span>
+            Bundle Size
+          </div>
+          <div class="sidebar-item" data-file="docs/md-files/audit-schema-scalability.md">
+            <span class="sidebar-item-icon">🗄️</span>
+            Schema Scalability
+          </div>
+          <div class="sidebar-item" data-file="docs/md-files/audit-verification-summary.md">
+            <span class="sidebar-item-icon">🔍</span>
+            Verification Summary
+          </div>
+        </div>
+
+        <div class="sidebar-section">
+          <div class="sidebar-section-title">Planning & Roadmaps</div>
+          <div class="sidebar-item" data-file="docs/md-files/prd-framework.md">
+            <span class="sidebar-item-icon">📋</span>
+            PRD Framework
+          </div>
+          <div class="sidebar-item" data-file="docs/md-files/roadmap-cms-modernization.md">
+            <span class="sidebar-item-icon">🗺️</span>
+            CMS Modernization
+          </div>
+        </div>
+
+        <div class="sidebar-section">
+          <div class="sidebar-section-title">Architecture</div>
+          <div class="sidebar-item" data-file="docs/md-files/schema-multi-tenant-summary.md">
+            <span class="sidebar-item-icon">🏗️</span>
+            Multi-Tenant Summary
+          </div>
+          <div class="sidebar-item" data-file="docs/md-files/seo-groq-optimization.md">
+            <span class="sidebar-item-icon">🔎</span>
+            SEO & GROQ
+          </div>
+          <div class="sidebar-item" data-file="docs/md-files/studio-ux-placeholder-urls.md">
+            <span class="sidebar-item-icon">🎨</span>
+            Studio UX
+          </div>
+        </div>
+
+        <div class="sidebar-section">
+          <div class="sidebar-section-title">AI Agents (17)</div>
+          <div class="sidebar-item" data-file=".claude/agents/ui-designer.md">
+            <span class="sidebar-item-icon">🎨</span>
+            UI Designer
+          </div>
+          <div class="sidebar-item" data-file=".claude/agents/ux-researcher.md">
+            <span class="sidebar-item-icon">🔬</span>
+            UX Researcher
+          </div>
+          <div class="sidebar-item" data-file=".claude/agents/backend-architect.md">
+            <span class="sidebar-item-icon">⚙️</span>
+            Backend Architect
+          </div>
+          <div class="sidebar-item" data-file=".claude/agents/devops-automator.md">
+            <span class="sidebar-item-icon">🚀</span>
+            DevOps Automator
+          </div>
+          <div class="sidebar-item" data-file=".claude/agents/test-writer-fixer.md">
+            <span class="sidebar-item-icon">🧪</span>
+            Test Writer/Fixer
+          </div>
+          <div class="sidebar-item" data-file=".claude/agents/performance-benchmarker.md">
+            <span class="sidebar-item-icon">📊</span>
+            Performance Benchmarker
+          </div>
+          <div class="sidebar-item" data-file=".claude/agents/api-tester.md">
+            <span class="sidebar-item-icon">🔌</span>
+            API Tester
+          </div>
+          <div class="sidebar-item" data-file=".claude/agents/experiment-tracker.md">
+            <span class="sidebar-item-icon">🧬</span>
+            Experiment Tracker
+          </div>
+          <div class="sidebar-item" data-file=".claude/agents/studio-producer.md">
+            <span class="sidebar-item-icon">🎬</span>
+            Studio Producer
+          </div>
+          <div class="sidebar-item" data-file=".claude/agents/studio-coach.md">
+            <span class="sidebar-item-icon">🎓</span>
+            Studio Coach
+          </div>
+          <div class="sidebar-item" data-file=".claude/agents/project-shipper.md">
+            <span class="sidebar-item-icon">🚢</span>
+            Project Shipper
+          </div>
+          <div class="sidebar-item" data-file=".claude/agents/tool-evaluator.md">
+            <span class="sidebar-item-icon">🔧</span>
+            Tool Evaluator
+          </div>
+          <div class="sidebar-item" data-file=".claude/agents/workflow-optimizer.md">
+            <span class="sidebar-item-icon">⚡</span>
+            Workflow Optimizer
+          </div>
+          <div class="sidebar-item" data-file=".claude/agents/test-results-analyzer.md">
+            <span class="sidebar-item-icon">📈</span>
+            Test Results Analyzer
+          </div>
+          <div class="sidebar-item" data-file=".claude/agents/auto-router.md">
+            <span class="sidebar-item-icon">🔀</span>
+            Auto Router
+          </div>
+        </div>
+
+        <div class="sidebar-section">
+          <div class="sidebar-section-title">Reference Docs</div>
+          <div class="sidebar-item" data-file="docs/authoring-guide.md">
+            <span class="sidebar-item-icon">📝</span>
+            Authoring Guide
+          </div>
+          <div class="sidebar-item" data-file="docs/multi-tenant-shared-vs-isolated.md">
+            <span class="sidebar-item-icon">🏢</span>
+            Multi-Tenant Architecture
+          </div>
+          <div class="sidebar-item" data-file="docs/monitoring-guide.md">
+            <span class="sidebar-item-icon">📡</span>
+            Monitoring Guide
+          </div>
+          <div class="sidebar-item" data-file="docs/TESTING-GUIDE.md">
+            <span class="sidebar-item-icon">🧪</span>
+            Testing Guide
+          </div>
+        </div>
+      </aside>
+
+      <!-- Main Content -->
+      <main class="main-content">
+        <div class="content-wrapper" id="content-wrapper">
+          <!-- Dashboard Home (Default View) -->
+          <div id="dashboard-home">
+            <h2 class="document-title" style="margin-bottom: 1.5rem">Project Status Dashboard</h2>
+
+            <div class="dashboard-home">
+              <div class="stat-card">
+                <div class="stat-label">Total Audits</div>
+                <div class="stat-value text-success">5</div>
+                <div class="stat-meta">All verification complete</div>
+              </div>
+
+              <div class="stat-card">
+                <div class="stat-label">AI Agents</div>
+                <div class="stat-value">17</div>
+                <div class="stat-meta">Specialized capabilities</div>
+              </div>
+
+              <div class="stat-card">
+                <div class="stat-label">Project Progress</div>
+                <div class="stat-value text-success">87.5%</div>
+                <div class="stat-meta">7 of 8 phases complete</div>
+                <div class="progress-bar">
+                  <div class="progress-fill" style="width: 87.5%"></div>
                 </div>
+              </div>
+
+              <div class="stat-card">
+                <div class="stat-label">Last Updated</div>
+                <div class="stat-value" style="font-size: 1.5rem">Oct 23, 2025</div>
+                <div class="stat-meta">Phase 7 Complete</div>
+              </div>
             </div>
 
-            <div class="sidebar-section">
-                <div class="sidebar-section-title">Audits (5)</div>
-                <div class="sidebar-item" data-file="md-files/audit-code-quality.md">
-                    <span class="sidebar-item-icon">✅</span>
-                    Code Quality
+            <div class="document-content">
+              <h2>Phase Completion Status</h2>
+              <div style="margin-top: 1.5rem">
+                <div style="margin-bottom: 1rem">
+                  <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem">
+                    <span style="font-weight: 600">Phase 0: Production Hardening</span>
+                    <span class="status-badge status-complete">✓ Complete</span>
+                  </div>
+                  <div class="progress-bar">
+                    <div class="progress-fill" style="width: 100%"></div>
+                  </div>
                 </div>
-                <div class="sidebar-item" data-file="md-files/audit-performance-fixes.md">
-                    <span class="sidebar-item-icon">⚡</span>
-                    Performance Fixes
+
+                <div style="margin-bottom: 1rem">
+                  <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem">
+                    <span style="font-weight: 600">Phase 1: Multi-Location SEO</span>
+                    <span class="status-badge status-complete">✓ Complete</span>
+                  </div>
+                  <div class="progress-bar">
+                    <div class="progress-fill" style="width: 100%"></div>
+                  </div>
                 </div>
-                <div class="sidebar-item" data-file="md-files/audit-bundle-size-fix.md">
-                    <span class="sidebar-item-icon">📦</span>
-                    Bundle Size
+
+                <div style="margin-bottom: 1rem">
+                  <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem">
+                    <span style="font-weight: 600">Phase 2: Type Safety</span>
+                    <span class="status-badge status-complete">✓ Complete</span>
+                  </div>
+                  <div class="progress-bar">
+                    <div class="progress-fill" style="width: 100%"></div>
+                  </div>
                 </div>
-                <div class="sidebar-item" data-file="md-files/audit-schema-scalability.md">
-                    <span class="sidebar-item-icon">🗄️</span>
-                    Schema Scalability
+
+                <div style="margin-bottom: 1rem">
+                  <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem">
+                    <span style="font-weight: 600">Phase 3: Performance & Core Web Vitals</span>
+                    <span class="status-badge status-complete">✓ Complete</span>
+                  </div>
+                  <div class="progress-bar">
+                    <div class="progress-fill" style="width: 100%"></div>
+                  </div>
                 </div>
-                <div class="sidebar-item" data-file="md-files/audit-verification-summary.md">
-                    <span class="sidebar-item-icon">🔍</span>
-                    Verification Summary
+
+                <div style="margin-bottom: 1rem">
+                  <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem">
+                    <span style="font-weight: 600">Phase 4: Testing Infrastructure</span>
+                    <span class="status-badge status-complete">✓ Complete</span>
+                  </div>
+                  <div class="progress-bar">
+                    <div class="progress-fill" style="width: 100%"></div>
+                  </div>
                 </div>
+
+                <div style="margin-bottom: 1rem">
+                  <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem">
+                    <span style="font-weight: 600">Phase 5: Multi-Tenant Architecture</span>
+                    <span class="status-badge status-complete">✓ Complete</span>
+                  </div>
+                  <div class="progress-bar">
+                    <div class="progress-fill" style="width: 100%"></div>
+                  </div>
+                </div>
+
+                <div style="margin-bottom: 1rem">
+                  <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem">
+                    <span style="font-weight: 600">Phase 6: Internationalization</span>
+                    <span class="status-badge status-pending">⏸ On Hold</span>
+                  </div>
+                  <div class="progress-bar">
+                    <div class="progress-fill" style="width: 0%; background: var(--gray)"></div>
+                  </div>
+                </div>
+
+                <div style="margin-bottom: 1rem">
+                  <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem">
+                    <span style="font-weight: 600">Phase 7: Enterprise Features</span>
+                    <span class="status-badge status-complete">✓ Complete</span>
+                  </div>
+                  <div class="progress-bar">
+                    <div class="progress-fill" style="width: 100%"></div>
+                  </div>
+                </div>
+              </div>
+
+              <h2 style="margin-top: 2rem">Key Performance Metrics</h2>
+              <table class="markdown-body" style="margin-top: 1rem">
+                <thead>
+                  <tr>
+                    <th>Metric</th>
+                    <th>Target</th>
+                    <th>Current</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>Lighthouse Performance</td>
+                    <td>≥ 95</td>
+                    <td>97</td>
+                    <td><span class="status-badge status-complete">✓</span></td>
+                  </tr>
+                  <tr>
+                    <td>Lighthouse SEO</td>
+                    <td>100</td>
+                    <td>100</td>
+                    <td><span class="status-badge status-complete">✓</span></td>
+                  </tr>
+                  <tr>
+                    <td>LCP (Largest Contentful Paint)</td>
+                    <td>&lt; 2.5s</td>
+                    <td>2.0s</td>
+                    <td><span class="status-badge status-complete">✓</span></td>
+                  </tr>
+                  <tr>
+                    <td>CLS (Cumulative Layout Shift)</td>
+                    <td>&lt; 0.1</td>
+                    <td>0.05</td>
+                    <td><span class="status-badge status-complete">✓</span></td>
+                  </tr>
+                  <tr>
+                    <td>First Load JS</td>
+                    <td>&lt; 250KB</td>
+                    <td>180KB</td>
+                    <td><span class="status-badge status-complete">✓</span></td>
+                  </tr>
+                  <tr>
+                    <td>New Site Setup Time</td>
+                    <td>&lt; 10 min</td>
+                    <td>8 min</td>
+                    <td><span class="status-badge status-complete">✓</span></td>
+                  </tr>
+                </tbody>
+              </table>
+
+              <h2 style="margin-top: 2rem">How to Use This Dashboard</h2>
+              <div
+                style="
+                  background: #f0f9ff;
+                  border-left: 4px solid #0ea5e9;
+                  padding: 1.5rem;
+                  margin-top: 1rem;
+                  border-radius: 0.5rem;
+                "
+              >
+                <h3 style="margin-top: 0; color: #0c4a6e">Recommended Setup</h3>
+                <p style="margin: 0.5rem 0">
+                  For the best experience with interactive document loading and access to all AI
+                  agent documentation:
+                </p>
+                <ol style="margin: 1rem 0; padding-left: 1.5rem">
+                  <li><strong>Open Terminal</strong> in the project root folder</li>
+                  <li>
+                    <strong>Run:</strong>
+                    <code style="background: white; padding: 0.25rem 0.5rem; border-radius: 4px"
+                      >cd /Users/jagpalkooner/Desktop/Local\ Business\ CMS && python3 -m http.server
+                      8080</code
+                    >
+                  </li>
+                  <li>
+                    <strong>Visit:</strong>
+                    <a href="http://localhost:8080/docs/audit-report.html" style="color: #0ea5e9"
+                      >http://localhost:8080/docs/audit-report.html</a
+                    >
+                  </li>
+                </ol>
+                <p style="margin: 0.5rem 0; font-size: 0.9rem; color: #475569">
+                  <strong>Why serve from project root?</strong> This allows the dashboard to access
+                  agent files in the
+                  <code style="background: white; padding: 0.25rem 0.5rem; border-radius: 4px"
+                    >.claude/</code
+                  >
+                  directory.
+                </p>
+                <p style="margin: 0.5rem 0; font-size: 0.9rem; color: #475569">
+                  <strong>Alternative options:</strong> Use VS Code Live Server extension or
+                  <code style="background: white; padding: 0.25rem 0.5rem; border-radius: 4px"
+                    >npx serve</code
+                  >
+                </p>
+              </div>
             </div>
+          </div>
 
-            <div class="sidebar-section">
-                <div class="sidebar-section-title">Planning & Roadmaps</div>
-                <div class="sidebar-item" data-file="md-files/prd-framework.md">
-                    <span class="sidebar-item-icon">📋</span>
-                    PRD Framework
+          <!-- Document View (Hidden by default) -->
+          <div id="document-view" class="hidden">
+            <div class="document-header">
+              <h2 class="document-title" id="doc-title">Loading...</h2>
+              <div class="document-meta">
+                <div class="document-meta-item">
+                  <svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor">
+                    <path
+                      fill-rule="evenodd"
+                      d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z"
+                      clip-rule="evenodd"
+                    />
+                  </svg>
+                  <span id="doc-date">-</span>
                 </div>
-                <div class="sidebar-item" data-file="md-files/roadmap-cms-modernization.md">
-                    <span class="sidebar-item-icon">🗺️</span>
-                    CMS Modernization
+                <div class="document-meta-item">
+                  <svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor">
+                    <path
+                      fill-rule="evenodd"
+                      d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4z"
+                      clip-rule="evenodd"
+                    />
+                  </svg>
+                  <span id="doc-category">-</span>
                 </div>
+                <div class="document-meta-item">
+                  <svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor">
+                    <path
+                      fill-rule="evenodd"
+                      d="M3 5a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 10a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 15a1 1 0 011-1h6a1 1 0 110 2H4a1 1 0 01-1-1z"
+                      clip-rule="evenodd"
+                    />
+                  </svg>
+                  <span id="doc-size">-</span>
+                </div>
+              </div>
             </div>
-
-            <div class="sidebar-section">
-                <div class="sidebar-section-title">Architecture</div>
-                <div class="sidebar-item" data-file="md-files/schema-multi-tenant-summary.md">
-                    <span class="sidebar-item-icon">🏗️</span>
-                    Multi-Tenant Summary
-                </div>
-                <div class="sidebar-item" data-file="md-files/seo-groq-optimization.md">
-                    <span class="sidebar-item-icon">🔎</span>
-                    SEO & GROQ
-                </div>
-                <div class="sidebar-item" data-file="md-files/studio-ux-placeholder-urls.md">
-                    <span class="sidebar-item-icon">🎨</span>
-                    Studio UX
-                </div>
+            <div class="document-content">
+              <div id="doc-content" class="markdown-body"></div>
             </div>
+          </div>
 
-            <div class="sidebar-section">
-                <div class="sidebar-section-title">AI Agents (17)</div>
-                <div class="sidebar-item" data-file="../.claude/agents/ui-designer.md">
-                    <span class="sidebar-item-icon">🎨</span>
-                    UI Designer
-                </div>
-                <div class="sidebar-item" data-file="../.claude/agents/ux-researcher.md">
-                    <span class="sidebar-item-icon">🔬</span>
-                    UX Researcher
-                </div>
-                <div class="sidebar-item" data-file="../.claude/agents/backend-architect.md">
-                    <span class="sidebar-item-icon">⚙️</span>
-                    Backend Architect
-                </div>
-                <div class="sidebar-item" data-file="../.claude/agents/devops-automator.md">
-                    <span class="sidebar-item-icon">🚀</span>
-                    DevOps Automator
-                </div>
-                <div class="sidebar-item" data-file="../.claude/agents/test-writer-fixer.md">
-                    <span class="sidebar-item-icon">🧪</span>
-                    Test Writer/Fixer
-                </div>
-                <div class="sidebar-item" data-file="../.claude/agents/performance-benchmarker.md">
-                    <span class="sidebar-item-icon">📊</span>
-                    Performance Benchmarker
-                </div>
-                <div class="sidebar-item" data-file="../.claude/agents/api-tester.md">
-                    <span class="sidebar-item-icon">🔌</span>
-                    API Tester
-                </div>
-                <div class="sidebar-item" data-file="../.claude/agents/experiment-tracker.md">
-                    <span class="sidebar-item-icon">🧬</span>
-                    Experiment Tracker
-                </div>
-                <div class="sidebar-item" data-file="../.claude/agents/studio-producer.md">
-                    <span class="sidebar-item-icon">🎬</span>
-                    Studio Producer
-                </div>
-                <div class="sidebar-item" data-file="../.claude/agents/studio-coach.md">
-                    <span class="sidebar-item-icon">🎓</span>
-                    Studio Coach
-                </div>
-                <div class="sidebar-item" data-file="../.claude/agents/project-shipper.md">
-                    <span class="sidebar-item-icon">🚢</span>
-                    Project Shipper
-                </div>
-                <div class="sidebar-item" data-file="../.claude/agents/tool-evaluator.md">
-                    <span class="sidebar-item-icon">🔧</span>
-                    Tool Evaluator
-                </div>
-                <div class="sidebar-item" data-file="../.claude/agents/workflow-optimizer.md">
-                    <span class="sidebar-item-icon">⚡</span>
-                    Workflow Optimizer
-                </div>
-                <div class="sidebar-item" data-file="../.claude/agents/test-results-analyzer.md">
-                    <span class="sidebar-item-icon">📈</span>
-                    Test Results Analyzer
-                </div>
-                <div class="sidebar-item" data-file="../.claude/agents/auto-router.md">
-                    <span class="sidebar-item-icon">🔀</span>
-                    Auto Router
-                </div>
-            </div>
-
-            <div class="sidebar-section">
-                <div class="sidebar-section-title">Reference Docs</div>
-                <div class="sidebar-item" data-file="./authoring-guide.md">
-                    <span class="sidebar-item-icon">📝</span>
-                    Authoring Guide
-                </div>
-                <div class="sidebar-item" data-file="./multi-tenant-shared-vs-isolated.md">
-                    <span class="sidebar-item-icon">🏢</span>
-                    Multi-Tenant Architecture
-                </div>
-                <div class="sidebar-item" data-file="./monitoring-guide.md">
-                    <span class="sidebar-item-icon">📡</span>
-                    Monitoring Guide
-                </div>
-                <div class="sidebar-item" data-file="./TESTING-GUIDE.md">
-                    <span class="sidebar-item-icon">🧪</span>
-                    Testing Guide
-                </div>
-            </div>
-        </aside>
-
-        <!-- Main Content -->
-        <main class="main-content">
-            <div class="content-wrapper" id="content-wrapper">
-                <!-- Dashboard Home (Default View) -->
-                <div id="dashboard-home">
-                    <h2 class="document-title" style="margin-bottom: 1.5rem;">Project Status Dashboard</h2>
-
-                    <div class="dashboard-home">
-                        <div class="stat-card">
-                            <div class="stat-label">Total Audits</div>
-                            <div class="stat-value text-success">5</div>
-                            <div class="stat-meta">All verification complete</div>
-                        </div>
-
-                        <div class="stat-card">
-                            <div class="stat-label">AI Agents</div>
-                            <div class="stat-value">17</div>
-                            <div class="stat-meta">Specialized capabilities</div>
-                        </div>
-
-                        <div class="stat-card">
-                            <div class="stat-label">Project Progress</div>
-                            <div class="stat-value text-success">87.5%</div>
-                            <div class="stat-meta">7 of 8 phases complete</div>
-                            <div class="progress-bar">
-                                <div class="progress-fill" style="width: 87.5%"></div>
-                            </div>
-                        </div>
-
-                        <div class="stat-card">
-                            <div class="stat-label">Last Updated</div>
-                            <div class="stat-value" style="font-size: 1.5rem;">Oct 23, 2025</div>
-                            <div class="stat-meta">Phase 7 Complete</div>
-                        </div>
-                    </div>
-
-                    <div class="document-content">
-                        <h2>Phase Completion Status</h2>
-                        <div style="margin-top: 1.5rem;">
-                            <div style="margin-bottom: 1rem;">
-                                <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
-                                    <span style="font-weight: 600;">Phase 0: Production Hardening</span>
-                                    <span class="status-badge status-complete">✓ Complete</span>
-                                </div>
-                                <div class="progress-bar">
-                                    <div class="progress-fill" style="width: 100%"></div>
-                                </div>
-                            </div>
-
-                            <div style="margin-bottom: 1rem;">
-                                <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
-                                    <span style="font-weight: 600;">Phase 1: Multi-Location SEO</span>
-                                    <span class="status-badge status-complete">✓ Complete</span>
-                                </div>
-                                <div class="progress-bar">
-                                    <div class="progress-fill" style="width: 100%"></div>
-                                </div>
-                            </div>
-
-                            <div style="margin-bottom: 1rem;">
-                                <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
-                                    <span style="font-weight: 600;">Phase 2: Type Safety</span>
-                                    <span class="status-badge status-complete">✓ Complete</span>
-                                </div>
-                                <div class="progress-bar">
-                                    <div class="progress-fill" style="width: 100%"></div>
-                                </div>
-                            </div>
-
-                            <div style="margin-bottom: 1rem;">
-                                <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
-                                    <span style="font-weight: 600;">Phase 3: Performance & Core Web Vitals</span>
-                                    <span class="status-badge status-complete">✓ Complete</span>
-                                </div>
-                                <div class="progress-bar">
-                                    <div class="progress-fill" style="width: 100%"></div>
-                                </div>
-                            </div>
-
-                            <div style="margin-bottom: 1rem;">
-                                <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
-                                    <span style="font-weight: 600;">Phase 4: Testing Infrastructure</span>
-                                    <span class="status-badge status-complete">✓ Complete</span>
-                                </div>
-                                <div class="progress-bar">
-                                    <div class="progress-fill" style="width: 100%"></div>
-                                </div>
-                            </div>
-
-                            <div style="margin-bottom: 1rem;">
-                                <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
-                                    <span style="font-weight: 600;">Phase 5: Multi-Tenant Architecture</span>
-                                    <span class="status-badge status-complete">✓ Complete</span>
-                                </div>
-                                <div class="progress-bar">
-                                    <div class="progress-fill" style="width: 100%"></div>
-                                </div>
-                            </div>
-
-                            <div style="margin-bottom: 1rem;">
-                                <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
-                                    <span style="font-weight: 600;">Phase 6: Internationalization</span>
-                                    <span class="status-badge status-pending">⏸ On Hold</span>
-                                </div>
-                                <div class="progress-bar">
-                                    <div class="progress-fill" style="width: 0%; background: var(--gray)"></div>
-                                </div>
-                            </div>
-
-                            <div style="margin-bottom: 1rem;">
-                                <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
-                                    <span style="font-weight: 600;">Phase 7: Enterprise Features</span>
-                                    <span class="status-badge status-complete">✓ Complete</span>
-                                </div>
-                                <div class="progress-bar">
-                                    <div class="progress-fill" style="width: 100%"></div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <h2 style="margin-top: 2rem;">Key Performance Metrics</h2>
-                        <table class="markdown-body" style="margin-top: 1rem;">
-                            <thead>
-                                <tr>
-                                    <th>Metric</th>
-                                    <th>Target</th>
-                                    <th>Current</th>
-                                    <th>Status</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td>Lighthouse Performance</td>
-                                    <td>≥ 95</td>
-                                    <td>97</td>
-                                    <td><span class="status-badge status-complete">✓</span></td>
-                                </tr>
-                                <tr>
-                                    <td>Lighthouse SEO</td>
-                                    <td>100</td>
-                                    <td>100</td>
-                                    <td><span class="status-badge status-complete">✓</span></td>
-                                </tr>
-                                <tr>
-                                    <td>LCP (Largest Contentful Paint)</td>
-                                    <td>&lt; 2.5s</td>
-                                    <td>2.0s</td>
-                                    <td><span class="status-badge status-complete">✓</span></td>
-                                </tr>
-                                <tr>
-                                    <td>CLS (Cumulative Layout Shift)</td>
-                                    <td>&lt; 0.1</td>
-                                    <td>0.05</td>
-                                    <td><span class="status-badge status-complete">✓</span></td>
-                                </tr>
-                                <tr>
-                                    <td>First Load JS</td>
-                                    <td>&lt; 250KB</td>
-                                    <td>180KB</td>
-                                    <td><span class="status-badge status-complete">✓</span></td>
-                                </tr>
-                                <tr>
-                                    <td>New Site Setup Time</td>
-                                    <td>&lt; 10 min</td>
-                                    <td>8 min</td>
-                                    <td><span class="status-badge status-complete">✓</span></td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-
-                <!-- Document View (Hidden by default) -->
-                <div id="document-view" class="hidden">
-                    <div class="document-header">
-                        <h2 class="document-title" id="doc-title">Loading...</h2>
-                        <div class="document-meta">
-                            <div class="document-meta-item">
-                                <svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor">
-                                    <path fill-rule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clip-rule="evenodd"/>
-                                </svg>
-                                <span id="doc-date">-</span>
-                            </div>
-                            <div class="document-meta-item">
-                                <svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor">
-                                    <path fill-rule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4z" clip-rule="evenodd"/>
-                                </svg>
-                                <span id="doc-category">-</span>
-                            </div>
-                            <div class="document-meta-item">
-                                <svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor">
-                                    <path fill-rule="evenodd" d="M3 5a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 10a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 15a1 1 0 011-1h6a1 1 0 110 2H4a1 1 0 01-1-1z" clip-rule="evenodd"/>
-                                </svg>
-                                <span id="doc-size">-</span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="document-content">
-                        <div id="doc-content" class="markdown-body"></div>
-                    </div>
-                </div>
-
-                <!-- Loading State -->
-                <div id="loading-state" class="loading hidden">
-                    <div class="spinner"></div>
-                    <span>Loading document...</span>
-                </div>
-            </div>
-        </main>
+          <!-- Loading State -->
+          <div id="loading-state" class="loading hidden">
+            <div class="spinner"></div>
+            <span>Loading document...</span>
+          </div>
+        </div>
+      </main>
     </div>
 
     <script>
-        // Configuration
-        const BASE_PATH = './';
+      // Configuration
+      const BASE_PATH = './'
 
-        // State
-        let currentTheme = localStorage.getItem('theme') || 'light';
-        let documentsCache = {};
+      // State
+      let currentTheme = localStorage.getItem('theme') || 'light'
+      let documentsCache = {}
 
-        // Initialize
-        document.addEventListener('DOMContentLoaded', () => {
-            initTheme();
-            initNavigation();
-            initSearch();
-            initMobileMenu();
-        });
+      // Initialize
+      document.addEventListener('DOMContentLoaded', () => {
+        detectFileProtocol()
+        initTheme()
+        initNavigation()
+        initSearch()
+        initMobileMenu()
+      })
 
-        // Theme Management
-        function initTheme() {
-            if (currentTheme === 'dark') {
-                document.documentElement.setAttribute('data-theme', 'dark');
-                document.getElementById('highlight-theme-dark').disabled = false;
-                document.getElementById('highlight-theme-light').disabled = true;
-            } else {
-                document.getElementById('highlight-theme-dark').disabled = true;
-                document.getElementById('highlight-theme-light').disabled = false;
+      // Detect file:// protocol and show warning
+      function detectFileProtocol() {
+        if (window.location.protocol === 'file:') {
+          document.getElementById('file-protocol-warning').style.display = 'block'
+        }
+      }
+
+      // Theme Management
+      function initTheme() {
+        if (currentTheme === 'dark') {
+          document.documentElement.setAttribute('data-theme', 'dark')
+          document.getElementById('highlight-theme-dark').disabled = false
+          document.getElementById('highlight-theme-light').disabled = true
+        } else {
+          document.getElementById('highlight-theme-dark').disabled = true
+          document.getElementById('highlight-theme-light').disabled = false
+        }
+
+        document.getElementById('theme-toggle').addEventListener('click', () => {
+          currentTheme = currentTheme === 'light' ? 'dark' : 'light'
+          localStorage.setItem('theme', currentTheme)
+          document.documentElement.setAttribute('data-theme', currentTheme)
+
+          if (currentTheme === 'dark') {
+            document.getElementById('highlight-theme-dark').disabled = false
+            document.getElementById('highlight-theme-light').disabled = true
+          } else {
+            document.getElementById('highlight-theme-dark').disabled = true
+            document.getElementById('highlight-theme-light').disabled = false
+          }
+        })
+      }
+
+      // Navigation
+      function initNavigation() {
+        const sidebarItems = document.querySelectorAll('.sidebar-item')
+
+        sidebarItems.forEach((item) => {
+          item.addEventListener('click', async () => {
+            // Update active state
+            sidebarItems.forEach((i) => i.classList.remove('active'))
+            item.classList.add('active')
+
+            // Close mobile menu
+            closeMobileMenu()
+
+            // Load content
+            const view = item.dataset.view
+            const file = item.dataset.file
+
+            if (view === 'home') {
+              showDashboard()
+            } else if (file) {
+              await loadDocument(file)
             }
+          })
+        })
+      }
 
-            document.getElementById('theme-toggle').addEventListener('click', () => {
-                currentTheme = currentTheme === 'light' ? 'dark' : 'light';
-                localStorage.setItem('theme', currentTheme);
-                document.documentElement.setAttribute('data-theme', currentTheme);
+      // Show Dashboard
+      function showDashboard() {
+        document.getElementById('dashboard-home').classList.remove('hidden')
+        document.getElementById('document-view').classList.add('hidden')
+        document.getElementById('loading-state').classList.add('hidden')
+      }
 
-                if (currentTheme === 'dark') {
-                    document.getElementById('highlight-theme-dark').disabled = false;
-                    document.getElementById('highlight-theme-light').disabled = true;
-                } else {
-                    document.getElementById('highlight-theme-dark').disabled = true;
-                    document.getElementById('highlight-theme-light').disabled = false;
-                }
-            });
-        }
+      // Error Display Helper
+      function showError(html) {
+        document.getElementById('loading-state').classList.add('hidden')
+        document.getElementById('dashboard-home').classList.add('hidden')
+        const docView = document.getElementById('document-view')
+        const docContent = document.getElementById('doc-content')
 
-        // Navigation
-        function initNavigation() {
-            const sidebarItems = document.querySelectorAll('.sidebar-item');
-
-            sidebarItems.forEach(item => {
-                item.addEventListener('click', async () => {
-                    // Update active state
-                    sidebarItems.forEach(i => i.classList.remove('active'));
-                    item.classList.add('active');
-
-                    // Close mobile menu
-                    closeMobileMenu();
-
-                    // Load content
-                    const view = item.dataset.view;
-                    const file = item.dataset.file;
-
-                    if (view === 'home') {
-                        showDashboard();
-                    } else if (file) {
-                        await loadDocument(file);
-                    }
-                });
-            });
-        }
-
-        // Show Dashboard
-        function showDashboard() {
-            document.getElementById('dashboard-home').classList.remove('hidden');
-            document.getElementById('document-view').classList.add('hidden');
-            document.getElementById('loading-state').classList.add('hidden');
-        }
-
-        // Load Document
-        async function loadDocument(filePath) {
-            // Show loading state
-            document.getElementById('dashboard-home').classList.add('hidden');
-            document.getElementById('document-view').classList.add('hidden');
-            document.getElementById('loading-state').classList.remove('hidden');
-
-            try {
-                // Check cache
-                if (documentsCache[filePath]) {
-                    renderDocument(documentsCache[filePath], filePath);
-                    return;
-                }
-
-                // Fetch document
-                const response = await fetch(BASE_PATH + filePath);
-                if (!response.ok) throw new Error('Document not found');
-
-                const markdown = await response.text();
-                documentsCache[filePath] = markdown;
-
-                renderDocument(markdown, filePath);
-            } catch (error) {
-                console.error('Error loading document:', error);
-                showError('Failed to load document. Please check the file path: ' + filePath);
-            }
-        }
-
-        // Render Document
-        function renderDocument(markdown, filePath) {
-            // Parse markdown
-            const html = marked.parse(markdown);
-
-            // Update content
-            document.getElementById('doc-content').innerHTML = html;
-
-            // Highlight code blocks
-            document.querySelectorAll('pre code').forEach((block) => {
-                hljs.highlightElement(block);
-            });
-
-            // Update metadata
-            const fileName = filePath.split('/').pop().replace('.md', '');
-            const category = filePath.includes('agents') ? 'AI Agent' :
-                           filePath.includes('audit') ? 'Audit' :
-                           filePath.includes('roadmap') || filePath.includes('prd') ? 'Planning' :
-                           filePath.includes('schema') || filePath.includes('seo') || filePath.includes('studio') ? 'Architecture' :
-                           'Reference';
-
-            document.getElementById('doc-title').textContent =
-                fileName.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
-            document.getElementById('doc-category').textContent = category;
-            document.getElementById('doc-date').textContent = 'Oct 2025';
-            document.getElementById('doc-size').textContent = (markdown.length / 1024).toFixed(1) + ' KB';
-
-            // Show document view
-            document.getElementById('loading-state').classList.add('hidden');
-            document.getElementById('document-view').classList.remove('hidden');
-
-            // Scroll to top
-            document.querySelector('.main-content').scrollTop = 0;
-        }
-
-        // Show Error
-        function showError(message) {
-            document.getElementById('loading-state').classList.add('hidden');
-            document.getElementById('doc-content').innerHTML = `
-                <div style="text-align: center; padding: 4rem; color: var(--text-secondary);">
-                    <svg width="48" height="48" viewBox="0 0 20 20" fill="currentColor" style="margin: 0 auto 1rem; opacity: 0.5;">
-                        <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
-                    </svg>
-                    <p style="font-size: 1.125rem; margin-bottom: 0.5rem;">${message}</p>
-                    <p style="font-size: 0.875rem; color: var(--text-tertiary);">Try selecting a different document from the sidebar.</p>
+        docView.classList.remove('hidden')
+        docContent.innerHTML = `
+                <div style="max-width: 800px; margin: 2rem auto; padding: 2rem; background: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: 12px;">
+                    ${html}
                 </div>
-            `;
-            document.getElementById('document-view').classList.remove('hidden');
+            `
+      }
+
+      // Load Document
+      async function loadDocument(filePath) {
+        // Show loading state
+        document.getElementById('dashboard-home').classList.add('hidden')
+        document.getElementById('document-view').classList.add('hidden')
+        document.getElementById('loading-state').classList.remove('hidden')
+
+        try {
+          // Check cache
+          if (documentsCache[filePath]) {
+            renderDocument(documentsCache[filePath], filePath)
+            return
+          }
+
+          // Fetch document
+          const response = await fetch(BASE_PATH + filePath)
+          if (!response.ok) throw new Error('Document not found')
+
+          const markdown = await response.text()
+          documentsCache[filePath] = markdown
+
+          renderDocument(markdown, filePath)
+        } catch (error) {
+          console.error('Error loading document:', error)
+
+          // Check if error is due to file:// protocol
+          if (window.location.protocol === 'file:') {
+            showError(`
+                        <h3>📁 Local File Access Restricted</h3>
+                        <p style="margin: 1rem 0;">Browsers block fetching files via file:// protocol for security reasons.</p>
+                        <h4 style="margin: 1.5rem 0 0.75rem 0;">Solution: Serve via HTTP from Project Root</h4>
+                        <pre style="background: #f1f5f9; padding: 1rem; border-radius: 8px; overflow-x: auto; color: #1e293b; margin: 0.5rem 0;">cd /Users/jagpalkooner/Desktop/Local\\ Business\\ CMS
+python3 -m http.server 8080</pre>
+                        <p style="margin: 1rem 0;">Then visit: <strong>http://localhost:8080/docs/audit-report.html</strong></p>
+                        <p style="margin: 1rem 0; font-size: 0.9rem; color: #64748b;"><em>Serving from project root allows access to agent files in the .claude/ directory.</em></p>
+                        <hr style="margin: 1.5rem 0; border: none; border-top: 1px solid var(--border-color);">
+                        <p style="font-size: 0.875rem; color: #64748b; margin: 0;">
+                            <strong>Alternative options:</strong> Use VS Code Live Server extension or run <code style="background: white; padding: 0.2rem 0.5rem; border-radius: 4px;">npx serve</code>
+                        </p>
+                    `)
+          } else {
+            showError(`
+                        <h3>Error Loading Document</h3>
+                        <p style="margin: 1rem 0;">${error.message}</p>
+                        <p style="font-size: 0.875rem; color: var(--text-secondary);">
+                            File path: <code style="background: var(--bg-tertiary); padding: 0.2rem 0.5rem; border-radius: 4px;">${filePath}</code>
+                        </p>
+                    `)
+          }
         }
+      }
 
-        // Search
-        function initSearch() {
-            const searchInput = document.getElementById('search-input');
-            const sidebarItems = document.querySelectorAll('.sidebar-item');
+      // Render Document
+      function renderDocument(markdown, filePath) {
+        // Parse markdown
+        const html = marked.parse(markdown)
 
-            searchInput.addEventListener('input', (e) => {
-                const query = e.target.value.toLowerCase();
+        // Update content
+        document.getElementById('doc-content').innerHTML = html
 
-                sidebarItems.forEach(item => {
-                    const text = item.textContent.toLowerCase();
-                    const matches = text.includes(query);
-                    item.style.display = matches || !query ? 'block' : 'none';
-                });
+        // Highlight code blocks
+        document.querySelectorAll('pre code').forEach((block) => {
+          hljs.highlightElement(block)
+        })
 
-                // Show/hide section titles if all items hidden
-                document.querySelectorAll('.sidebar-section').forEach(section => {
-                    const visibleItems = section.querySelectorAll('.sidebar-item:not([style*="display: none"])');
-                    section.style.display = visibleItems.length > 0 || !query ? 'block' : 'none';
-                });
-            });
-        }
+        // Update metadata
+        const fileName = filePath.split('/').pop().replace('.md', '')
+        const category = filePath.includes('agents')
+          ? 'AI Agent'
+          : filePath.includes('audit')
+            ? 'Audit'
+            : filePath.includes('roadmap') || filePath.includes('prd')
+              ? 'Planning'
+              : filePath.includes('schema') ||
+                  filePath.includes('seo') ||
+                  filePath.includes('studio')
+                ? 'Architecture'
+                : 'Reference'
 
-        // Mobile Menu
-        function initMobileMenu() {
-            const menuBtn = document.getElementById('mobile-menu-btn');
-            const overlay = document.getElementById('mobile-overlay');
-            const sidebar = document.getElementById('sidebar');
+        document.getElementById('doc-title').textContent = fileName
+          .split('-')
+          .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
+          .join(' ')
+        document.getElementById('doc-category').textContent = category
+        document.getElementById('doc-date').textContent = 'Oct 2025'
+        document.getElementById('doc-size').textContent =
+          (markdown.length / 1024).toFixed(1) + ' KB'
 
-            menuBtn.addEventListener('click', () => {
-                sidebar.classList.toggle('open');
-                overlay.classList.toggle('open');
-            });
+        // Show document view
+        document.getElementById('loading-state').classList.add('hidden')
+        document.getElementById('document-view').classList.remove('hidden')
 
-            overlay.addEventListener('click', closeMobileMenu);
-        }
+        // Scroll to top
+        document.querySelector('.main-content').scrollTop = 0
+      }
 
-        function closeMobileMenu() {
-            document.getElementById('sidebar').classList.remove('open');
-            document.getElementById('mobile-overlay').classList.remove('open');
-        }
+      // Search
+      function initSearch() {
+        const searchInput = document.getElementById('search-input')
+        const sidebarItems = document.querySelectorAll('.sidebar-item')
 
-        // Export PDF
-        document.getElementById('export-pdf').addEventListener('click', () => {
-            window.print();
-        });
+        searchInput.addEventListener('input', (e) => {
+          const query = e.target.value.toLowerCase()
+
+          sidebarItems.forEach((item) => {
+            const text = item.textContent.toLowerCase()
+            const matches = text.includes(query)
+            item.style.display = matches || !query ? 'block' : 'none'
+          })
+
+          // Show/hide section titles if all items hidden
+          document.querySelectorAll('.sidebar-section').forEach((section) => {
+            const visibleItems = section.querySelectorAll(
+              '.sidebar-item:not([style*="display: none"])'
+            )
+            section.style.display = visibleItems.length > 0 || !query ? 'block' : 'none'
+          })
+        })
+      }
+
+      // Mobile Menu
+      function initMobileMenu() {
+        const menuBtn = document.getElementById('mobile-menu-btn')
+        const overlay = document.getElementById('mobile-overlay')
+        const sidebar = document.getElementById('sidebar')
+
+        menuBtn.addEventListener('click', () => {
+          sidebar.classList.toggle('open')
+          overlay.classList.toggle('open')
+        })
+
+        overlay.addEventListener('click', closeMobileMenu)
+      }
+
+      function closeMobileMenu() {
+        document.getElementById('sidebar').classList.remove('open')
+        document.getElementById('mobile-overlay').classList.remove('open')
+      }
+
+      // Export PDF
+      document.getElementById('export-pdf').addEventListener('click', () => {
+        window.print()
+      })
     </script>
-</body>
+  </body>
 </html>
