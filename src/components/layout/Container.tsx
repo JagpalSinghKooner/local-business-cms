@@ -11,12 +11,13 @@ type ContainerProps = {
 }
 
 const narrowMaxWidth = '720px'
+const defaultMaxWidth = '1200px'
 
 export default function Container({ children, className, width = 'default', style: inlineStyle }: ContainerProps) {
   const style: CSSProperties = {
-    maxWidth: width === 'full' ? '100%' : width === 'narrow' ? narrowMaxWidth : 'var(--layout-container-width)',
-    paddingLeft: 'var(--space-gutter)',
-    paddingRight: 'var(--space-gutter)',
+    maxWidth: width === 'full' ? '100%' : width === 'narrow' ? narrowMaxWidth : defaultMaxWidth,
+    paddingLeft: '1.5rem',
+    paddingRight: '1.5rem',
   }
 
   return (

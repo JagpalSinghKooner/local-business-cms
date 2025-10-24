@@ -69,50 +69,6 @@ export const globalSettingsQ = groq`{
     title,
     "slug": slug.current
   },
-  "tokens": *[_type == "tokens"][0]{
-    primary,
-    onPrimary,
-    secondary,
-    onSecondary,
-    surface,
-    surfaceMuted,
-    surfaceStrong,
-    textStrong,
-    textMuted,
-    textInverted,
-    borderColor,
-    fontBody,
-    fontHeading,
-    typographyScale[]{
-      token,
-      fontSize,
-      lineHeight,
-      fontWeight
-    },
-    spacingScale[]{
-      token,
-      value
-    },
-    containerWidth,
-    radiusScale[]{
-      token,
-      value
-    },
-    shadowScale[]{
-      token,
-      value
-    },
-    buttonStyles[]{
-      token,
-      label,
-      background,
-      text,
-      border,
-      hoverBackground,
-      hoverText,
-      shadow
-    }
-  },
   "services": *[_type == "service" && defined(slug.current)] | order(title asc) [0...100]{
     title,
     "slug": slug.current,

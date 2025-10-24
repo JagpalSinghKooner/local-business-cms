@@ -1,4 +1,4 @@
-import type { CSSProperties, ReactNode } from 'react'
+import type { ReactNode } from 'react'
 import Container from '@/components/layout/Container'
 import type { PageSection } from '@/types'
 import { cn } from '@/lib/cn'
@@ -18,6 +18,19 @@ const TEXT_TONE_MAP: Record<string, string> = {
   default: '',
   dark: 'text-strong',
   light: 'text-inverted',
+}
+
+const PADDING_MAP: Record<string, string> = {
+  none: 'py-0',
+  xs: 'py-1',
+  sm: 'py-2',
+  md: 'py-3',
+  lg: 'py-5',
+  xl: 'py-7',
+  '2xl': 'py-10',
+  '3xl': 'py-16',
+  section: 'py-20',
+  gutter: 'py-6',
 }
 
 const alignmentClass = (alignment?: LayoutOptions['contentAlignment']) => {
@@ -44,13 +57,18 @@ const resolveVisibilityClass = (visibility?: VisibilityOptions) => {
   return ''
 }
 
-const resolvePaddingStyle = (layout?: LayoutOptions): CSSProperties => {
-  const top = layout?.paddingTop ?? 'section'
-  const bottom = layout?.paddingBottom ?? 'section'
-  return {
-    paddingTop: `var(--space-${top})`,
-    paddingBottom: `var(--space-${bottom})`,
-  }
+const resolvePaddingClass = (layout?: LayoutOptions): string => {
+  const topToken = layout?.paddingTop ?? 'section'
+  const bottomToken = layout?.paddingBottom ?? 'section'
+
+  const topClass = PADDING_MAP[topToken] || PADDING_MAP.section
+  const bottomClass = PADDING_MAP[bottomToken] || PADDING_MAP.section
+
+  // Extract py value and combine into pt-X pb-Y
+  const topValue = topClass.replace('py-', 'pt-')
+  const bottomValue = bottomClass.replace('py-', 'pb-')
+
+  return `${topValue} ${bottomValue}`
 }
 
 const resolveContainerWidth = (layout?: LayoutOptions) => layout?.container ?? 'default'
@@ -71,6 +89,7 @@ export function SectionShell({ section, children, disableContainer = false, cont
     resolveBackgroundClass(layout),
     resolveTextToneClass(layout),
     resolveVisibilityClass(visibility),
+    resolvePaddingClass(layout),
   )
 
   const containerAlignmentClass = alignmentClass(layout?.contentAlignment)
@@ -86,7 +105,6 @@ export function SectionShell({ section, children, disableContainer = false, cont
   return (
     <section
       className={wrapperClass}
-      style={resolvePaddingStyle(layout)}
       data-animate={animation}
       data-alignment={layout?.contentAlignment ?? 'start'}
     >

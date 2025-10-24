@@ -20,7 +20,6 @@ import BlogListSection from './BlogListSection'
 import { computeLayoutFromOptions, type LayoutOptions } from './layout'
 import Container from '@/components/layout/Container'
 import { cn } from '@/lib/cn'
-import type { CSSProperties } from 'react'
 import type {
   PageSection,
   ServiceSummary,
@@ -37,6 +36,19 @@ type SectionRendererProps = {
   offers: OfferSummary[]
   site?: SiteSettings | null
   pagePath?: string
+}
+
+const GAP_CLASS_MAP: Record<string, string> = {
+  none: 'gap-0',
+  xs: 'gap-1',
+  sm: 'gap-2',
+  md: 'gap-3',
+  lg: 'gap-5',
+  xl: 'gap-7',
+  '2xl': 'gap-10',
+  '3xl': 'gap-16',
+  section: 'gap-20',
+  gutter: 'gap-6',
 }
 
 export default function SectionRenderer({
@@ -113,10 +125,7 @@ export default function SectionRenderer({
                 baseClassName: undefined,
               })
               const gapToken = layoutSection.gap ?? 'md'
-              const gapValue = `var(--space-${gapToken})`
-              const containerStyle: CSSProperties = {
-                '--layout-stack-gap': gapValue,
-              } as CSSProperties
+              const gapClass = GAP_CLASS_MAP[gapToken] || GAP_CLASS_MAP.md
 
               return (
                 <section
@@ -129,9 +138,9 @@ export default function SectionRenderer({
                     width={layoutInfo.containerWidth}
                     className={cn(
                       layoutInfo.containerClassName,
-                      'flex flex-col gap-[var(--layout-stack-gap)]'
+                      'flex flex-col',
+                      gapClass
                     )}
-                    style={containerStyle}
                   >
                     <SectionRenderer
                       sections={nestedSections}

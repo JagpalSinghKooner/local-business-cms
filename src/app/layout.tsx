@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 import { draftMode } from 'next/headers'
 import { Geist, Geist_Mono } from 'next/font/google'
-import type { CSSProperties, ReactNode } from 'react'
+import type { ReactNode } from 'react'
 import './globals.css'
 
 import Header from '@/components/layout/Header'
@@ -11,12 +11,10 @@ import JsonLd from '@/components/seo/JsonLd'
 import WebVitalsReporter from '@/components/WebVitalsReporter'
 import PerformanceDashboard from '@/components/PerformanceDashboard'
 import { buildLocalBusinessJsonLd } from '@/lib/jsonld'
-import { resolveDesignTokens } from '@/lib/tokens'
 import { getGlobalDataset } from '@/sanity/loaders'
 import type {
   Navigation,
   SiteSettings,
-  Tokens,
   ServiceSummary,
   LocationSummary,
   PageSummary,
@@ -65,7 +63,6 @@ const FALLBACK_NAVIGATION = {
 const FALLBACK_DATA = {
   site: null as SiteSettings | null,
   navigation: FALLBACK_NAVIGATION,
-  tokens: null as Tokens | null,
   services: [] as ServiceSummary[],
   locations: [] as LocationSummary[],
   pages: [] as PageSummary[],
@@ -82,14 +79,13 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
     return FALLBACK_DATA
   })
 
-  const { site, navigation, tokens, services, locations } = {
+  const { site, navigation, services, locations } = {
     site: dataset.site ?? null,
     navigation: dataset.navigation ?? FALLBACK_DATA.navigation,
-    tokens: dataset.tokens ?? FALLBACK_DATA.tokens,
     services: dataset.services ?? FALLBACK_DATA.services,
     locations: dataset.locations ?? FALLBACK_DATA.locations,
   }
-  const { cssVariables } = resolveDesignTokens(tokens, site)
+
   const businessName = site?.name ?? FALLBACK_SITE_NAME
   const baseUrl = env.NEXT_PUBLIC_SITE_URL
   const siteRecord = (site ?? {}) as Record<string, unknown>
@@ -126,11 +122,8 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
   })
 
   return (
-    <html lang="en">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased bg-surface text-strong`}
-        style={cssVariables as CSSProperties}
-      >
+    <html lang="en" data-theme="business">
+      <body className={`${geistSans.variable} ${geistMono.variable} antialiased bg-surface text-strong`}>
         <ErrorBoundary>
           <ScriptOverridesProvider>
             <WebVitalsReporter />

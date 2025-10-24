@@ -16,7 +16,32 @@ const TEXT_TONE_CLASS_MAP: Record<string, string> = {
   light: 'text-inverted',
 }
 
-const spacingValue = (token: string | undefined) => `var(--space-${token ?? 'section'})`
+const PADDING_MAP: Record<string, string> = {
+  none: 'py-0',
+  xs: 'py-1',
+  sm: 'py-2',
+  md: 'py-3',
+  lg: 'py-5',
+  xl: 'py-7',
+  '2xl': 'py-10',
+  '3xl': 'py-16',
+  section: 'py-20',
+  gutter: 'py-6',
+}
+
+const resolvePaddingClasses = (topToken?: string, bottomToken?: string): string => {
+  const top = topToken ?? 'section'
+  const bottom = bottomToken ?? 'section'
+
+  const topClass = PADDING_MAP[top] || PADDING_MAP.section
+  const bottomClass = PADDING_MAP[bottom] || PADDING_MAP.section
+
+  // Extract py value and combine into pt-X pb-Y
+  const topValue = topClass.replace('py-', 'pt-')
+  const bottomValue = bottomClass.replace('py-', 'pb-')
+
+  return `${topValue} ${bottomValue}`
+}
 
 const resolveVisibilityClass = (section: PageSection) => {
   const visibility = 'visibility' in section ? section.visibility : undefined
@@ -61,18 +86,13 @@ export function getSectionLayout(section: PageSection, options?: SectionLayoutOp
   const backgroundClass = BACKGROUND_CLASS_MAP[background] || BACKGROUND_CLASS_MAP.surface
   const textClass = TEXT_TONE_CLASS_MAP[layout.textTone ?? 'default'] || ''
   const visibilityClass = resolveVisibilityClass(section)
-
-  const style: CSSProperties = {
-    paddingTop: spacingValue(layout.paddingTop),
-    paddingBottom: spacingValue(layout.paddingBottom),
-  }
+  const paddingClasses = resolvePaddingClasses(layout.paddingTop, layout.paddingBottom)
 
   const containerWidth = (layout.container ?? 'default') as 'default' | 'narrow' | 'full'
   const containerAlignment = layout.contentAlignment === 'center' ? 'text-center' : ''
 
   return {
-    wrapperClassName: cn(baseClassName, 'section-wrapper', backgroundClass, textClass, visibilityClass),
-    style,
+    wrapperClassName: cn(baseClassName, 'section-wrapper', backgroundClass, textClass, visibilityClass, paddingClasses),
     containerWidth,
     containerClassName: containerAlignment,
     dataAnimate: ('animation' in section ? section.animation : undefined) ?? 'none',

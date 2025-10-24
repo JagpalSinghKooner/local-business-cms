@@ -32,10 +32,6 @@ const deskStructure = (S: StructureBuilder, context: ConfigContext) => {
               .title('Navigation')
               .schemaType('navigation')
               .child(S.document().schemaType('navigation').documentId('navigation')),
-            S.listItem()
-              .title('Brand Tokens')
-              .schemaType('tokens')
-              .child(S.document().schemaType('tokens').documentId('tokens')),
           ])
       ),
     S.divider(),

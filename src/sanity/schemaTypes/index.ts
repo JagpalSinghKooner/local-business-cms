@@ -5,7 +5,6 @@ import robotsTxt from './singletons/robotsTxt'
 import cookieConsent from './singletons/cookieConsent'
 import privacyPolicy from './singletons/privacyPolicy'
 import navigation from './navigation'
-import tokens from './tokens'
 
 import service from './documents/service'
 import serviceLocation from './documents/serviceLocation'
@@ -54,7 +53,6 @@ const documentTypes: SchemaTypeDefinition[] = [
   cookieConsent,
   privacyPolicy,
   navigation,
-  tokens,
   serviceCategory,
   service,
   serviceLocation,

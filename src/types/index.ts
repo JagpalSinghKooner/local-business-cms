@@ -1,6 +1,5 @@
 export type SiteSettings = Sanity.Schema.SiteSettings
 export type Navigation = Sanity.Schema.Navigation
-export type Tokens = Sanity.Schema.Tokens
 export type Address = Sanity.Schema.Address
 export type SocialLink = Sanity.Schema.SocialLink
 export type NavLink = Sanity.Schema.NavLink

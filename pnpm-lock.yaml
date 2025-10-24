@@ -129,6 +129,9 @@ importers:
       babel-plugin-module-resolver:
         specifier: ^5.0.2
         version: 5.0.2
+      daisyui:
+        specifier: ^5.3.9
+        version: 5.3.9
       eslint:
         specifier: ^9
         version: 9.37.0(jiti@2.6.1)
@@ -3410,6 +3413,9 @@ packages:
 
   cyclist@1.0.2:
     resolution: {integrity: sha512-0sVXIohTfLqVIW3kb/0n6IiWF3Ifj5nm2XaSrLq2DI6fKIGa2fYAZdk917rUneaeLVpYfFcyXE2ft0fe3remsA==}
+
+  daisyui@5.3.9:
+    resolution: {integrity: sha512-741x1pGGSGHcrBYtdE7iKbqW1OoiijYdAZ8oJPZR9MhSKLcMBlHjKfN3YlM2/K7t5jd7O0sg4SqkVNPylalRFw==}
 
   damerau-levenshtein@1.0.8:
     resolution: {integrity: sha512-sdQSFB7+llfUcQHUQO3+B8ERRj0Oa4w9POWMI/puGtuf7gFywGmkaLCElnudfTiKZV+NvHqL0ifzdrI8Ro7ESA==}
@@ -11278,6 +11284,8 @@ snapshots:
   custom-media-element@1.4.5: {}
 
   cyclist@1.0.2: {}
+
+  daisyui@5.3.9: {}
 
   damerau-levenshtein@1.0.8: {}
 

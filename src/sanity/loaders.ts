@@ -18,7 +18,6 @@ import type {
   OfferSummary,
   PageDocument,
   SiteSettings,
-  Tokens,
   LocationSummary,
   ServiceSummary,
   ServiceDetail,
@@ -29,7 +28,6 @@ import { getSiteCachePrefix } from '@/lib/site-detection'
 type GlobalDataset = {
   site: SiteSettings | null
   navigation: Navigation | null
-  tokens: Tokens | null
   services: ServiceSummary[]
   locations: LocationSummary[]
   pages: PageSummary[]
@@ -80,7 +78,7 @@ const extendedFetchOptions = {
 }
 
 /**
- * Fetches global dataset (site settings, navigation, tokens, services, locations, pages)
+ * Fetches global dataset (site settings, navigation, services, locations, pages)
  * Uses React cache for request deduplication across components
  */
 export const getGlobalDataset = cache(async (): Promise<GlobalDataset> => {
@@ -90,7 +88,6 @@ export const getGlobalDataset = cache(async (): Promise<GlobalDataset> => {
     return {
       site: data.site ?? null,
       navigation: data.navigation ?? null,
-      tokens: data.tokens ?? null,
       services: data.services ?? [],
       locations: data.locations ?? [],
       pages: data.pages ?? [],
@@ -102,7 +99,6 @@ export const getGlobalDataset = cache(async (): Promise<GlobalDataset> => {
     return {
       site: null,
       navigation: null,
-      tokens: null,
       services: [],
       locations: [],
       pages: [],

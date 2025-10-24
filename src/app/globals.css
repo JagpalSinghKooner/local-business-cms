@@ -2,230 +2,99 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  color-scheme: light;
-
-  --color-brand-primary: #0369a1;
-  --color-brand-secondary: #f97316;
-  --color-on-primary: #ffffff;
-  --color-on-secondary: #ffffff;
-
-  --color-surface: #ffffff;
-  --color-surface-muted: #f5f5f5;
-  --color-surface-strong: #111827;
-
-  --color-text-strong: #0f172a;
-  --color-text-muted: #475569;
-  --color-text-inverted: #ffffff;
-  --color-border: #e4e4e7;
-
-  --brand-font-body: var(--font-geist-sans);
-  --brand-font-heading: var(--font-geist-sans);
-
-  --space-none: 0px;
-  --space-xs: 0.25rem;
-  --space-sm: 0.5rem;
-  --space-md: 0.75rem;
-  --space-lg: 1.25rem;
-  --space-xl: 1.75rem;
-  --space-2xl: 2.5rem;
-  --space-3xl: 4rem;
-  --space-section: 5rem;
-  --space-gutter: 1.5rem;
-
-  --radius-none: 0px;
-  --radius-sm: 0.375rem;
-  --radius-md: 0.75rem;
-  --radius-lg: 1.5rem;
-  --radius-pill: 999px;
-
-  --shadow-sm: 0 10px 20px rgba(15, 23, 42, 0.08);
-  --shadow-md: 0 18px 40px rgba(15, 23, 42, 0.14);
-  --shadow-card: 0 12px 30px rgba(15, 23, 42, 0.1);
-
-  --btn-primary-bg: var(--color-brand-primary);
-  --btn-primary-text: var(--color-on-primary);
-  --btn-primary-border: var(--color-brand-primary);
-  --btn-primary-hover-bg: #0c4a6e;
-  --btn-primary-hover-text: var(--color-on-primary);
-  --btn-primary-shadow: var(--shadow-sm);
-
-  --btn-secondary-bg: var(--color-surface-strong);
-  --btn-secondary-text: var(--color-text-inverted);
-  --btn-secondary-border: var(--color-surface-strong);
-  --btn-secondary-hover-bg: #1f2937;
-  --btn-secondary-hover-text: var(--color-text-inverted);
-  --btn-secondary-shadow: var(--shadow-sm);
-
-  --btn-outline-bg: transparent;
-  --btn-outline-text: var(--color-text-strong);
-  --btn-outline-border: var(--color-border);
-  --btn-outline-hover-bg: rgba(15, 23, 42, 0.04);
-  --btn-outline-hover-text: var(--color-text-strong);
-  --btn-outline-shadow: none;
-
-  --btn-link-bg: transparent;
-  --btn-link-text: var(--color-brand-primary);
-  --btn-link-border: transparent;
-  --btn-link-hover-bg: transparent;
-  --btn-link-hover-text: var(--color-text-strong);
-  --btn-link-shadow: none;
-
-  --layout-container-width: 1200px;
-}
-
-@media (max-width: 767px) {
-  :root {
-    --space-gutter: 1rem;
-  }
-}
-
-.prose-theme {
-  --tw-prose-body: var(--color-text-muted);
-  --tw-prose-headings: var(--color-text-strong);
-  --tw-prose-links: var(--color-brand-primary);
-  --tw-prose-bold: var(--color-text-strong);
-  --tw-prose-bullets: var(--color-border);
-  --tw-prose-hr: var(--color-border);
-  --tw-prose-quotes: var(--color-text-strong);
-  --tw-prose-quote-borders: var(--color-brand-primary);
-  --tw-prose-code: var(--color-brand-secondary);
-  --tw-prose-th-borders: var(--color-border);
-  --tw-prose-td-borders: var(--color-border);
-}
-
-body {
-  font-family: var(--brand-font-body, var(--font-geist-sans));
-  background-color: var(--color-surface);
-  color: var(--color-text-strong);
-  min-height: 100vh;
-  overflow-x: hidden;
-}
-
-h1,
-h2,
-h3,
-h4,
-h5,
-h6 {
-  font-family: var(--brand-font-heading, var(--font-geist-sans));
-}
-
+/* Typography scale using Tailwind utilities */
 [data-typography='heading-xl'] {
-  font-size: var(--font-heading-xl-size, 3.25rem);
-  line-height: var(--font-heading-xl-line, 1.1);
-  font-weight: var(--font-heading-xl-weight, 700);
+  @apply text-5xl font-bold leading-tight;
 }
 
 [data-typography='heading-lg'] {
-  font-size: var(--font-heading-lg-size, 2.5rem);
-  line-height: var(--font-heading-lg-line, 1.2);
-  font-weight: var(--font-heading-lg-weight, 600);
+  @apply text-4xl font-semibold leading-snug;
 }
 
 [data-typography='heading-md'] {
-  font-size: var(--font-heading-md-size, 2rem);
-  line-height: var(--font-heading-md-line, 1.25);
-  font-weight: var(--font-heading-md-weight, 600);
+  @apply text-3xl font-semibold leading-normal;
 }
 
 [data-typography='heading-sm'] {
-  font-size: var(--font-heading-sm-size, 1.5rem);
-  line-height: var(--font-heading-sm-line, 1.35);
-  font-weight: var(--font-heading-sm-weight, 600);
+  @apply text-2xl font-semibold leading-relaxed;
 }
 
 [data-typography='body-lg'] {
-  font-size: var(--font-body-lg-size, 1.125rem);
-  line-height: var(--font-body-lg-line, 1.7);
-  font-weight: var(--font-body-lg-weight, 400);
+  @apply text-lg leading-relaxed;
 }
 
 [data-typography='body-md'] {
-  font-size: var(--font-body-md-size, 1rem);
-  line-height: var(--font-body-md-line, 1.65);
-  font-weight: var(--font-body-md-weight, 400);
+  @apply text-base leading-normal;
 }
 
 [data-typography='body-sm'] {
-  font-size: var(--font-body-sm-size, 0.875rem);
-  line-height: var(--font-body-sm-line, 1.55);
-  font-weight: var(--font-body-sm-weight, 400);
+  @apply text-sm leading-snug;
 }
 
 [data-typography='eyebrow'] {
-  font-size: var(--font-eyebrow-size, 0.75rem);
-  line-height: var(--font-eyebrow-line, 1.6);
-  font-weight: var(--font-eyebrow-weight, 600);
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
+  @apply text-xs font-semibold uppercase tracking-widest;
 }
 
-.container {
-  max-width: var(--layout-container-width);
-}
-
+/* Semantic utility classes mapped to DaisyUI */
 .text-strong {
-  color: var(--color-text-strong);
+  @apply text-base-content;
 }
 
 .text-muted {
-  color: var(--color-text-muted);
+  color: oklch(var(--bc) / 0.7);
 }
 
 .text-inverted {
-  color: var(--color-text-inverted);
+  @apply text-white;
 }
 
 .text-accent {
-  color: var(--color-brand-primary);
+  @apply text-primary;
 }
 
 .text-secondary {
-  color: var(--color-brand-secondary);
+  color: oklch(var(--s));
 }
 
 .bg-surface {
-  background-color: var(--color-surface);
+  @apply bg-base-100;
 }
 
 .bg-surface-muted {
-  background-color: var(--color-surface-muted);
+  @apply bg-base-200;
 }
 
 .bg-surface-strong {
-  background-color: var(--color-surface-strong);
-  color: var(--color-text-inverted);
+  @apply bg-neutral text-neutral-content;
 }
 
 .bg-brand {
-  background-color: var(--color-brand-primary);
-  color: var(--color-on-primary);
+  @apply bg-primary text-primary-content;
 }
 
 .bg-secondary {
-  background-color: var(--color-brand-secondary);
-  color: var(--color-on-secondary);
+  background-color: oklch(var(--s));
+  color: oklch(var(--sc));
 }
 
 .border-divider {
-  border-color: var(--color-border);
+  @apply border-base-300;
 }
 
 .shadow-card {
-  box-shadow: var(--shadow-card);
+  @apply shadow-lg;
 }
 
 .shadow-elevated {
-  box-shadow: var(--shadow-card);
+  @apply shadow-lg;
 }
 
 .hover\:shadow-elevated:hover {
-  box-shadow: var(--shadow-md);
+  @apply shadow-2xl;
 }
 
 .hover\:border-brand:hover {
-  border-color: var(--color-brand-primary);
+  @apply border-primary;
 }
 
 .section-wrapper {
@@ -283,108 +152,63 @@ h6 {
 }
 
 .surface-glass {
-  background-color: color-mix(in srgb, var(--color-surface) 85%, transparent);
-  backdrop-filter: blur(12px);
+  background-color: oklch(var(--b1) / 0.85);
+  @apply backdrop-blur-md;
 }
 
+/* Custom button styles that extend DaisyUI .btn */
 .button {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: var(--space-xs);
-  min-height: 44px;
-  padding-block: var(--space-lg);
-  padding-inline: var(--space-xl);
-  border-radius: var(--radius-pill);
-  border-width: 1px;
-  border-style: solid;
-  font-size: var(--font-body-sm-size, 0.875rem);
-  line-height: var(--font-body-sm-line, 1.55);
-  font-weight: 600;
-  transition: all 0.2s ease;
-}
-
-.button:focus-visible {
-  outline: 2px solid var(--color-brand-primary);
-  outline-offset: 2px;
+  @apply btn gap-2 min-h-[44px] font-semibold transition-all duration-200 rounded-full;
 }
 
 .button[data-variant='primary'] {
-  background-color: var(--btn-primary-bg);
-  color: var(--btn-primary-text);
-  border-color: var(--btn-primary-border, transparent);
-  box-shadow: var(--btn-primary-shadow, none);
-}
-
-.button[data-variant='primary']:hover {
-  background-color: var(--btn-primary-hover-bg, var(--btn-primary-bg));
-  color: var(--btn-primary-hover-text, var(--btn-primary-text));
+  @apply btn-primary;
 }
 
 .button[data-variant='secondary'] {
-  background-color: var(--btn-secondary-bg);
-  color: var(--btn-secondary-text);
-  border-color: var(--btn-secondary-border, transparent);
-  box-shadow: var(--btn-secondary-shadow, none);
-}
-
-.button[data-variant='secondary']:hover {
-  background-color: var(--btn-secondary-hover-bg, var(--btn-secondary-bg));
-  color: var(--btn-secondary-hover-text, var(--btn-secondary-text));
+  @apply btn-neutral;
 }
 
 .button[data-variant='outline'] {
-  background-color: var(--btn-outline-bg);
-  color: var(--btn-outline-text);
-  border-color: var(--btn-outline-border, currentColor);
-  box-shadow: var(--btn-outline-shadow, none);
-}
-
-.button[data-variant='outline']:hover {
-  background-color: var(--btn-outline-hover-bg, rgba(15, 23, 42, 0.04));
-  color: var(--btn-outline-hover-text, var(--btn-outline-text));
+  @apply btn-outline btn-primary;
 }
 
 .button[data-variant='link'] {
-  background-color: var(--btn-link-bg);
-  color: var(--btn-link-text);
-  border-color: var(--btn-link-border, transparent);
-  box-shadow: var(--btn-link-shadow, none);
-  padding: 0;
-  min-height: auto;
+  @apply btn-link text-primary p-0 min-h-0;
 }
 
-.button[data-variant='link']:hover {
-  color: var(--btn-link-hover-text, var(--btn-link-text));
-}
-
+/* Inverted button styles for dark backgrounds */
 .button-inverted {
-  color: var(--color-text-inverted);
-  border-color: rgba(255, 255, 255, 0.35);
+  @apply text-white;
+  border-color: rgb(255 255 255 / 0.35);
 }
 
 .button-inverted[data-variant='primary'] {
-  background-color: color-mix(in srgb, var(--color-text-inverted) 15%, transparent);
-  border-color: rgba(255, 255, 255, 0.35);
+  background-color: rgb(255 255 255 / 0.15);
+  border-color: rgb(255 255 255 / 0.35);
 }
 
 .button-inverted[data-variant='primary']:hover {
-  background-color: color-mix(in srgb, var(--color-text-inverted) 25%, transparent);
-  color: var(--color-text-inverted);
+  background-color: rgb(255 255 255 / 0.25);
 }
 
 .button-inverted[data-variant='secondary'] {
-  background-color: transparent;
+  @apply bg-transparent;
 }
 
 .button-inverted[data-variant='secondary']:hover {
-  background-color: color-mix(in srgb, var(--color-text-inverted) 18%, transparent);
+  background-color: rgb(255 255 255 / 0.18);
 }
 
 .button-inverted[data-variant='outline'] {
-  color: var(--color-text-inverted);
+  @apply text-white;
+  border-color: rgb(255 255 255 / 0.35);
+}
+
+.button-inverted[data-variant='outline']:hover {
+  background-color: rgb(255 255 255 / 0.1);
 }
 
 .button-inverted[data-variant='link'] {
-  color: var(--color-text-inverted);
+  @apply text-white;
 }
