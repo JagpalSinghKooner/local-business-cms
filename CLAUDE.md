@@ -271,6 +271,29 @@ The framework is designed for multi-site deployment:
 - Services grouped by `category` field from Sanity
 - Mobile breakpoint: `md` (768px)
 
+## Markdown File Organization
+
+**IMPORTANT**: This repository has strict rules for where Markdown files belong to prevent file scatter and maintain organization.
+
+**See:** `docs/MARKDOWN-FILE-GOVERNANCE.md` for complete rules.
+
+**Quick Reference:**
+- 📋 Planning/audits/PRDs → `./docs/md-files/` (with prefixes: `audit-*`, `prd-*`, `roadmap-*`, `schema-*`, etc.)
+- 📖 Operational guides → `./docs/` (testing, monitoring, architecture references)
+- 🤖 Agent config → `./.claude/agents/`
+- ⚠️ Root level → Only `README.md` and `CLAUDE.md`
+
+**Check compliance:**
+```bash
+pnpm check:md-governance  # Validates all .md file locations
+```
+
+**When creating new Markdown files:**
+1. Is it planning/audit/PRD? → `./docs/md-files/[prefix]-[name].md`
+2. Is it an operational guide? → `./docs/[name].md`
+3. Is it agent config? → `./.claude/agents/[name].md`
+4. When in doubt → `./docs/md-files/` (safest default)
+
 ## Common Gotchas
 
 1. **Type generation**: Always run `pnpm sanitize:types` after schema changes
@@ -280,3 +303,4 @@ The framework is designed for multi-site deployment:
 5. **GROQ syntax**: Brackets `[]` are for arrays, braces `{}` for object projection
 6. **Path aliases**: Use `@/` prefix for imports from `src/` directory
 7. **Header is client component**: Uses `'use client'` for mobile menu state management
+8. **Markdown file locations**: Follow `docs/MARKDOWN-FILE-GOVERNANCE.md` rules strictly

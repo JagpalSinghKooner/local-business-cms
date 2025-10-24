@@ -57,7 +57,7 @@ test.describe('Visual Regression - Components', () => {
       await page.setViewportSize({ width: 1280, height: 720 })
       await page.goto('/')
 
-      const header = page.locator('header')
+      const header = page.locator('header[role="banner"]').first()
       await expect(header).toBeVisible()
 
       await expect(header).toHaveScreenshot('header-desktop.png')
@@ -87,7 +87,7 @@ test.describe('Visual Regression - Components', () => {
       await page.setViewportSize({ width: 375, height: 667 })
       await page.goto('/')
 
-      const header = page.locator('header')
+      const header = page.locator('header[role="banner"]').first()
       await expect(header).toBeVisible()
 
       await expect(header).toHaveScreenshot('header-mobile-collapsed.png')

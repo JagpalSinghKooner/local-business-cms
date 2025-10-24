@@ -18,10 +18,12 @@ The codebase is well-structured with good separation of concerns and TypeScript 
 ### Issues Identified
 
 #### 1.1 Missing Error Boundaries
+
 **Location**: All page components
 **Risk**: Runtime errors crash the entire application
 
 **Current State**:
+
 ```typescript
 // src/app/page.tsx - No error boundary
 export default async function Home() {
@@ -33,6 +35,7 @@ export default async function Home() {
 **Issue**: If any data fetch fails, the entire page crashes with no fallback UI.
 
 **Recommendation**:
+
 ```typescript
 // Create: src/components/ErrorBoundary.tsx
 'use client'
@@ -75,10 +78,12 @@ export class ErrorBoundary extends Component<
 ```
 
 #### 1.2 No Data Fetch Error Handling
+
 **Location**: `src/sanity/loaders.ts`
 **Risk**: Silent failures, inconsistent data states
 
 **Current State**:
+
 ```typescript
 export async function getGlobalDataset(): Promise<GlobalDataset> {
   const data = await sanity.fetch<Partial<GlobalDataset>>(globalSettingsQ, {}, fetchOptions)
@@ -88,14 +93,11 @@ export async function getGlobalDataset(): Promise<GlobalDataset> {
 ```
 
 **Recommendation**:
+
 ```typescript
 export async function getGlobalDataset(): Promise<GlobalDataset> {
   try {
-    const data = await sanity.fetch<Partial<GlobalDataset>>(
-      globalSettingsQ,
-      {},
-      fetchOptions
-    )
+    const data = await sanity.fetch<Partial<GlobalDataset>>(globalSettingsQ, {}, fetchOptions)
 
     return {
       site: data.site ?? null,
@@ -122,10 +124,12 @@ export async function getGlobalDataset(): Promise<GlobalDataset> {
 ```
 
 #### 1.3 Missing Environment Variable Validation
+
 **Location**: `src/sanity/client.ts`, route files
 **Risk**: Runtime crashes in production if env vars are missing
 
 **Current State**:
+
 ```typescript
 export const sanity = createClient({
   projectId: process.env.NEXT_PUBLIC_SANITY_PROJECT_ID!, // Dangerous!
@@ -134,6 +138,7 @@ export const sanity = createClient({
 ```
 
 **Recommendation**:
+
 ```typescript
 // Create: src/lib/env.ts
 import { z } from 'zod'
@@ -172,16 +177,19 @@ export const sanity = createClient({
 ### Issues Identified
 
 #### 2.1 Missing Runtime Validation
+
 **Location**: All Sanity data fetches
 **Risk**: Type mismatches between CMS and code
 
 **Current State**:
+
 ```typescript
 // We trust Sanity 100% to return correct types - risky!
 return sanity.fetch<ServiceDetail | null>(serviceBySlugQ, { slug }, fetchOptions)
 ```
 
 **Recommendation**:
+
 ```typescript
 // Create: src/lib/validators.ts
 import { z } from 'zod'
@@ -189,22 +197,28 @@ import { z } from 'zod'
 export const serviceDetailSchema = z.object({
   title: z.string(),
   slug: z.string(),
-  category: z.object({
-    title: z.string().optional(),
-    slug: z.string().optional(),
-  }).optional(),
+  category: z
+    .object({
+      title: z.string().optional(),
+      slug: z.string().optional(),
+    })
+    .optional(),
   intro: z.array(z.any()).optional(),
   body: z.array(z.any()).optional(),
-  heroImage: z.object({
-    asset: z.object({
-      url: z.string(),
-    }),
-  }).optional(),
-  seo: z.object({
-    title: z.string().optional(),
-    description: z.string().optional(),
-    ogImage: z.any().optional(),
-  }).optional(),
+  heroImage: z
+    .object({
+      asset: z.object({
+        url: z.string(),
+      }),
+    })
+    .optional(),
+  seo: z
+    .object({
+      title: z.string().optional(),
+      description: z.string().optional(),
+      ogImage: z.any().optional(),
+    })
+    .optional(),
 })
 
 // Update loaders.ts:
@@ -230,10 +244,12 @@ export async function getServiceBySlug(slug: string): Promise<ServiceDetail | nu
 ```
 
 #### 2.2 Loose Type Assertions
+
 **Location**: Multiple files (`as any`, type casting)
 **Risk**: TypeScript can't catch errors
 
 **Examples**:
+
 ```typescript
 // src/app/page.tsx:66
 <ApplyScriptOverrides overrides={page.scriptOverrides as any} />
@@ -251,10 +267,12 @@ const nestedSections = Array.isArray((section as any).sections) ? ...
 ### Issues Identified
 
 #### 3.1 Duplicated Page Layout Logic
+
 **Location**: Multiple page files
 **Risk**: Inconsistent patterns, harder maintenance
 
 **Current Pattern**:
+
 ```typescript
 // Repeated in page.tsx, services/[service]/page.tsx, etc.
 const draft = await draftMode()
@@ -268,6 +286,7 @@ if (!page) return notFound()
 ```
 
 **Recommendation**:
+
 ```typescript
 // Create: src/lib/page-helpers.ts
 export async function withPageData<T>(
@@ -298,10 +317,12 @@ if (!result.data) return notFound()
 ```
 
 #### 3.2 Repeated Metadata Generation
+
 **Location**: All page files
 **Risk**: Inconsistent SEO implementation
 
 **Recommendation**:
+
 ```typescript
 // Create: src/lib/metadata-helpers.ts
 export async function generatePageMetadata(
@@ -329,12 +350,14 @@ export async function generateMetadata({ params }) {
 ### Issues Identified
 
 #### 4.1 Global Data Fetched on Every Page
+
 **Location**: All pages call `getGlobalDataset()`
 **Risk**: Unnecessary Sanity requests
 
 **Current**: Each page fetches global data independently (120s cache)
 
 **Recommendation**: Use React Cache for request deduplication
+
 ```typescript
 // src/sanity/loaders.ts
 import { cache } from 'react'
@@ -346,10 +369,12 @@ export const getGlobalDataset = cache(async (): Promise<GlobalDataset> => {
 ```
 
 #### 4.2 No Loading States
+
 **Location**: All pages
 **Risk**: Poor UX during slow data fetches
 
 **Recommendation**:
+
 ```typescript
 // Create loading.tsx files for Suspense boundaries
 // src/app/loading.tsx
@@ -364,10 +389,12 @@ export default function ServiceLoading() {
 ```
 
 #### 4.3 Missing Static Generation Hints
+
 **Location**: Page routes
 **Risk**: Slower performance, higher costs
 
 **Recommendation**:
+
 ```typescript
 // Add generateStaticParams for frequently accessed pages
 export async function generateStaticParams() {
@@ -386,10 +413,12 @@ export async function generateStaticParams() {
 ### Issues Identified
 
 #### 5.1 No Null Safety in Sanity Client
+
 **Location**: `src/sanity/client.ts`
 **Risk**: Missing CDN fallback
 
 **Recommendation**:
+
 ```typescript
 // Add retry logic and fallback
 import { createClient } from 'next-sanity'
@@ -419,15 +448,18 @@ export async function fetchWithFallback(query: string, params?: any, options?: a
 ```
 
 #### 5.2 Middleware Error Handling
+
 **Location**: `middleware.ts`
 **Risk**: Middleware crash blocks all requests
 
 **Current**:
+
 ```typescript
 const redirects = await getRedirects() // Could fail
 ```
 
 **Recommendation**:
+
 ```typescript
 async function getRedirects(): Promise<Array<...>> {
   // ... existing cache check ...
@@ -456,10 +488,12 @@ async function getRedirects(): Promise<Array<...>> {
 ### Issues Identified
 
 #### 6.1 Client Components for Static Content
+
 **Location**: `Header.tsx`, navigation components
 **Risk**: Unnecessary JavaScript bundle size
 
 **Recommendation**: Split into server/client components
+
 ```typescript
 // src/components/layout/Header.tsx (Server Component)
 export default async function Header(props) {
@@ -481,10 +515,12 @@ export default function MobileNav() {
 ```
 
 #### 6.2 Missing Rate Limiting
+
 **Location**: Form submissions
 **Risk**: Spam, abuse
 
 **Recommendation**: Add rate limiting to API routes
+
 ```typescript
 // src/lib/rate-limit.ts
 import { LRUCache } from 'lru-cache'
@@ -519,11 +555,13 @@ if (!checkRateLimit(ip)) {
 ### Recommendations
 
 #### 7.1 Add Development Tools
+
 ```bash
 pnpm add -D @typescript-eslint/eslint-plugin eslint-plugin-react-hooks
 ```
 
 Create `.eslintrc.json`:
+
 ```json
 {
   "extends": ["next/core-web-vitals", "plugin:@typescript-eslint/recommended"],
@@ -536,17 +574,20 @@ Create `.eslintrc.json`:
 ```
 
 #### 7.2 Add Pre-commit Hooks
+
 ```bash
 pnpm add -D husky lint-staged
 npx husky init
 ```
 
 `.husky/pre-commit`:
+
 ```bash
 pnpm lint-staged
 ```
 
 `package.json`:
+
 ```json
 {
   "lint-staged": {
@@ -557,6 +598,7 @@ pnpm lint-staged
 ```
 
 #### 7.3 Add Logging Infrastructure
+
 ```typescript
 // src/lib/logger.ts
 export const logger = {
@@ -588,18 +630,21 @@ try {
 ## Priority Action Items
 
 ### Immediate (Next Sprint) 🔴
+
 1. **Add environment variable validation** (2 hours)
 2. **Implement error boundaries** (3 hours)
 3. **Add try/catch to all data fetches** (4 hours)
 4. **Fix middleware error handling** (1 hour)
 
 ### Short Term (This Month) 🟡
+
 5. **Add Zod validation for Sanity data** (8 hours)
 6. **Create reusable page helpers** (6 hours)
 7. **Add loading states** (4 hours)
 8. **Implement rate limiting** (3 hours)
 
 ### Long Term (Next Quarter) 🟢
+
 9. **Split server/client components** (12 hours)
 10. **Add comprehensive logging** (6 hours)
 11. **Set up error tracking (Sentry)** (4 hours)
@@ -609,14 +654,14 @@ try {
 
 ## Estimated Impact
 
-| Improvement | Risk Reduction | Effort | Priority |
-|-------------|----------------|--------|----------|
-| Error boundaries | High | Low | 🔴 |
-| Env validation | High | Low | 🔴 |
-| Data fetch error handling | High | Medium | 🔴 |
-| Runtime validation | Medium | High | 🟡 |
-| Component reusability | Low | Medium | 🟢 |
-| Logging infrastructure | Medium | Low | 🟡 |
+| Improvement               | Risk Reduction | Effort | Priority |
+| ------------------------- | -------------- | ------ | -------- |
+| Error boundaries          | High           | Low    | 🔴       |
+| Env validation            | High           | Low    | 🔴       |
+| Data fetch error handling | High           | Medium | 🔴       |
+| Runtime validation        | Medium         | High   | 🟡       |
+| Component reusability     | Low            | Medium | 🟢       |
+| Logging infrastructure    | Medium         | Low    | 🟡       |
 
 ---
 

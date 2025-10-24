@@ -285,7 +285,7 @@ export default function MegaMenu({
               {/* Categories dropdown */}
               <div
                 ref={categoriesDropdownRef}
-                className="absolute left-1/2 top-full z-30 w-[280px] -translate-x-1/2 translate-y-3 rounded-2xl border border-divider bg-surface p-2 shadow-elevated"
+                className="absolute left-1/2 top-full z-30 w-56 max-w-[calc(100vw-2rem)] -translate-x-1/2 translate-y-3 rounded-2xl border border-divider bg-surface p-2 shadow-elevated"
                 onPointerEnter={keepSubmenuOpen}
                 onPointerLeave={scheduleClose}
               >
@@ -310,9 +310,9 @@ export default function MegaMenu({
               {/* Services submenu - positioned to the right of categories dropdown */}
               {hoveredCategory && categoryRect && (
                 <div
-                  className="absolute z-40 w-[280px] rounded-2xl border border-divider bg-surface p-2 shadow-elevated"
+                  className="absolute z-40 w-56 max-w-[calc(100vw-2rem)] rounded-2xl border border-divider bg-surface p-2 shadow-elevated"
                   style={{
-                    left: `calc(50% - 140px + ${categoryRect.left}px + 8px)`,
+                    left: `calc(50% - 7rem + ${categoryRect.left}px + 8px)`,
                     top: `calc(100% + 12px + ${categoryRect.top}px)`,
                   }}
                   onPointerEnter={keepSubmenuOpen}
@@ -370,7 +370,7 @@ export default function MegaMenu({
 
           {open === 'locations' && (
             <div
-              className="absolute left-1/2 top-full z-30 w-[280px] -translate-x-1/2 translate-y-3 rounded-2xl border border-divider bg-surface p-2 shadow-elevated"
+              className="absolute left-1/2 top-full z-30 w-56 max-w-[calc(100vw-2rem)] -translate-x-1/2 translate-y-3 rounded-2xl border border-divider bg-surface p-2 shadow-elevated"
               onPointerEnter={() => openMenu('locations')}
               onPointerLeave={scheduleClose}
             >

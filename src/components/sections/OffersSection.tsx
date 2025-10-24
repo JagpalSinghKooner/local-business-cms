@@ -47,7 +47,7 @@ export default function OffersSection({ section, allOffers }: OffersSectionProps
     >
       <Container width={layout.containerWidth} className={cn(layout.containerClassName, 'space-y-8')}>
         <header className="space-y-3 md:max-w-3xl">
-          <p className="text-sm uppercase tracking-[0.2em] text-amber-600">Offers</p>
+          <p className="text-sm uppercase tracking-[0.2em] text-amber-700">Offers</p>
           {section.title ? <h2 className="text-3xl font-semibold text-strong">{section.title}</h2> : null}
           {section.description ? <p className="text-base text-muted">{section.description}</p> : null}
         </header>
@@ -66,8 +66,8 @@ export default function OffersSection({ section, allOffers }: OffersSectionProps
                       </div>
                     ) : null}
                   </div>
-                  {validity ? <p className="text-xs font-semibold uppercase tracking-[0.2em] text-amber-600">{validity}</p> : null}
-                  <Link href={`/offers/${offer.slug}`} className="mt-auto text-sm font-semibold text-amber-600 hover:text-amber-500">
+                  {validity ? <p className="text-xs font-semibold uppercase tracking-[0.2em] text-amber-700">{validity}</p> : null}
+                  <Link href={`/offers/${offer.slug}`} className="mt-auto text-sm font-semibold text-amber-700 hover:text-amber-600">
                     View details →
                   </Link>
                 </article>

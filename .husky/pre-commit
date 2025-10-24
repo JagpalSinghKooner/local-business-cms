@@ -1,5 +1,19 @@
 #!/usr/bin/env sh
 . "$(dirname -- "$0")/_/husky.sh"
 
+# Check Markdown file governance
+echo "🔍 Checking Markdown file governance..."
+FORBIDDEN_MD=$(git diff --cached --name-only --diff-filter=ACM | grep -E '\.md$' | grep -v -E '^(README\.md|CLAUDE\.md|\.claude/|docs/|test-results/|playwright-report/)' || true)
+
+if [ ! -z "$FORBIDDEN_MD" ]; then
+  echo ""
+  echo "❌ ERROR: Markdown files in forbidden locations:"
+  echo "$FORBIDDEN_MD"
+  echo ""
+  echo "See docs/MARKDOWN-FILE-GOVERNANCE.md for approved locations"
+  echo "Run: pnpm check:md-governance for validation"
+  exit 1
+fi
+
 # Run lint-staged
 pnpm lint-staged

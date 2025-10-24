@@ -7,6 +7,19 @@ const nextConfig: NextConfig = {
     ignoreDuringBuilds: true,
   },
 
+  // Performance: Optimize package imports to reduce bundle size
+  // These packages are tree-shakeable and can be optimized by Next.js
+  experimental: {
+    optimizePackageImports: [
+      '@sanity/client',
+      '@portabletext/react',
+      '@sanity/icons',
+      '@sanity/ui',
+      'next-sanity',
+      'sanity',
+    ],
+  },
+
   images: {
     remotePatterns: [
       {

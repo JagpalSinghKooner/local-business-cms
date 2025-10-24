@@ -57,7 +57,7 @@ test.describe('Responsive Design', () => {
       test('navigation is functional', async ({ page }) => {
         await page.goto('/')
 
-        const header = page.locator('header')
+        const header = page.locator('header[role="banner"]').first()
         await expect(header).toBeVisible()
 
         if (viewport.width < 768) {
@@ -148,7 +148,7 @@ test.describe('Responsive Design', () => {
         if (box) {
           // Touch targets should be at least 44x44px (WCAG recommendation)
           expect(box.width).toBeGreaterThanOrEqual(40) // Slightly relaxed
-          expect(box.height).toBeGreaterThanOrEqual(40)
+          expect(box.height).toBeGreaterThanOrEqual(44)
         }
       }
     })

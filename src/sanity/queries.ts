@@ -359,10 +359,12 @@ export const locationBySlugQ = groq`*[_type=="location" && slug.current==$slug][
   seo
 }`
 
-export const locationsListQ = groq`*[_type == "location" && defined(slug.current)]|order(city asc)[0...100]{
+// Optimized query for locations list page - only fetch essential fields
+export const locationsListQ = groq`*[_type == "location" && defined(slug.current)] | order(city asc) [0...100]{
+  _id,
   city,
   "slug": slug.current,
-  "intro": coalesce(intro, [])
+  "intro": intro[0..1]
 }`
 
 export const pageBySlugQ = groq`*[_type == "page" && slug.current == $slug][0]{
@@ -489,4 +491,5 @@ export const pageBySlugQ = groq`*[_type == "page" && slug.current == $slug][0]{
     }
   },
   seo
-}`
+}
+`

@@ -63,7 +63,7 @@ export default function Header({
 
   return (
     <>
-      <header className="sticky top-0 z-40 surface-glass border-b border-divider">
+      <header role="banner" className="sticky top-0 z-40 surface-glass border-b border-divider">
         <Container className="flex h-16 items-center justify-between gap-6">
           <Link href="/" className="text-base font-semibold tracking-tight text-strong">
             {businessName}
@@ -91,7 +91,7 @@ export default function Header({
                 href={primaryCta.resolved.href}
                 target={primaryCta.resolved.target}
                 rel={primaryCta.resolved.rel}
-                className="bg-brand hidden rounded-full px-4 py-2 text-sm font-medium transition sm:block"
+                className="bg-brand hidden rounded-full px-3 py-2 text-sm font-medium transition sm:block md:px-4"
               >
                 {ctaLabel || primaryCta.label}
               </Link>

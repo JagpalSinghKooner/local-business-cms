@@ -57,7 +57,9 @@
     "e2e:update": "playwright test e2e/ --update-snapshots",
     "a11y": "playwright test tests/a11y/",
     "bundle": "node scripts/check-bundle-size.mjs",
+    "bundle:verify": "bash scripts/verify-bundle-fix.sh",
     "analyze": "ANALYZE=true pnpm build",
+    "check:md-governance": "bash scripts/check-md-governance.sh",
     "prepare": "husky"
   },
   "dependencies": {

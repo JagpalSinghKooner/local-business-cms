@@ -1,765 +1,1153 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Local Business CMS - Quality Gates Audit Report</title>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Local Business CMS - Comprehensive Audit Dashboard</title>
+    <meta name="description" content="Production-quality audit dashboard for Local Business CMS Framework - View all audits, planning docs, and AI agent capabilities">
+
+    <!-- CDN Dependencies -->
+    <script src="https://cdn.jsdelivr.net/npm/marked@11.0.0/marked.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" id="highlight-theme-dark">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css" id="highlight-theme-light">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+
     <style>
-      * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-      }
+        :root {
+            --bg-primary: #ffffff;
+            --bg-secondary: #f8fafc;
+            --bg-tertiary: #f1f5f9;
+            --text-primary: #0f172a;
+            --text-secondary: #64748b;
+            --text-tertiary: #94a3b8;
+            --border-color: #e2e8f0;
+            --accent-primary: #3b82f6;
+            --accent-hover: #2563eb;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --error: #ef4444;
+            --gray: #6b7280;
+            --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+            --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+            --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1);
+            --sidebar-width: 280px;
+        }
 
-      :root {
-        --success: #10b981;
-        --warning: #f59e0b;
-        --error: #dc2626;
-        --bg: #ffffff;
-        --surface: #f9fafb;
-        --border: #e5e7eb;
-        --text: #111827;
-        --text-muted: #6b7280;
-        --code-bg: #f3f4f6;
-      }
+        [data-theme="dark"] {
+            --bg-primary: #0f172a;
+            --bg-secondary: #1e293b;
+            --bg-tertiary: #334155;
+            --text-primary: #f1f5f9;
+            --text-secondary: #cbd5e1;
+            --text-tertiary: #94a3b8;
+            --border-color: #334155;
+            --accent-primary: #60a5fa;
+            --accent-hover: #3b82f6;
+        }
 
-      body {
-        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
-        line-height: 1.6;
-        color: var(--text);
-        background: var(--surface);
-      }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-      .container {
-        display: grid;
-        grid-template-columns: 280px 1fr;
-        min-height: 100vh;
-      }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+            line-height: 1.6;
+            transition: background-color 0.2s, color 0.2s;
+        }
 
-      .sidebar {
-        background: var(--bg);
-        border-right: 1px solid var(--border);
-        padding: 2rem 1rem;
-        position: sticky;
-        top: 0;
-        height: 100vh;
-        overflow-y: auto;
-      }
+        /* Header */
+        .header {
+            background: var(--bg-primary);
+            border-bottom: 1px solid var(--border-color);
+            padding: 1rem 2rem;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: var(--shadow-sm);
+        }
 
-      .sidebar h2 {
-        font-size: 0.875rem;
-        font-weight: 600;
-        text-transform: uppercase;
-        letter-spacing: 0.05em;
-        color: var(--text-muted);
-        margin-bottom: 1rem;
-      }
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 100%;
+        }
 
-      .sidebar nav ul {
-        list-style: none;
-      }
+        .header-title {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
 
-      .sidebar nav li {
-        margin-bottom: 0.5rem;
-      }
+        .header-title h1 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
 
-      .sidebar nav a {
-        display: block;
-        color: var(--text);
-        text-decoration: none;
-        font-size: 0.875rem;
-        padding: 0.5rem;
-        border-radius: 0.375rem;
-        transition: background 0.2s;
-      }
+        .header-badge {
+            background: var(--success);
+            color: white;
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
 
-      .sidebar nav a:hover {
-        background: var(--surface);
-      }
+        .header-controls {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
 
-      .main {
-        padding: 3rem;
-        max-width: 1200px;
-      }
+        .search-box {
+            position: relative;
+        }
 
-      h1 {
-        font-size: 2.25rem;
-        font-weight: 700;
-        margin-bottom: 0.5rem;
-        color: var(--text);
-      }
+        .search-input {
+            padding: 0.5rem 1rem 0.5rem 2.5rem;
+            border: 1px solid var(--border-color);
+            border-radius: 0.5rem;
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+            font-size: 0.875rem;
+            width: 300px;
+            transition: all 0.2s;
+        }
 
-      .subtitle {
-        font-size: 1.125rem;
-        color: var(--text-muted);
-        margin-bottom: 2rem;
-      }
+        .search-input:focus {
+            outline: none;
+            border-color: var(--accent-primary);
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
 
-      .summary-cards {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-        gap: 1rem;
-        margin: 2rem 0;
-      }
+        .search-icon {
+            position: absolute;
+            left: 0.75rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-tertiary);
+            pointer-events: none;
+        }
 
-      .card {
-        background: var(--bg);
-        border: 1px solid var(--border);
-        border-radius: 0.5rem;
-        padding: 1.5rem;
-      }
+        .btn {
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 0.5rem;
+            font-size: 0.875rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
 
-      .card-title {
-        font-size: 0.875rem;
-        font-weight: 500;
-        color: var(--text-muted);
-        margin-bottom: 0.5rem;
-      }
+        .btn-primary {
+            background: var(--accent-primary);
+            color: white;
+        }
 
-      .card-value {
-        font-size: 2rem;
-        font-weight: 700;
-      }
+        .btn-primary:hover {
+            background: var(--accent-hover);
+        }
 
-      .badge {
-        display: inline-block;
-        padding: 0.25rem 0.75rem;
-        border-radius: 9999px;
-        font-size: 0.75rem;
-        font-weight: 600;
-        text-transform: uppercase;
-        letter-spacing: 0.05em;
-      }
+        .btn-icon {
+            padding: 0.5rem;
+            border-radius: 0.5rem;
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border-color);
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
 
-      .badge-success {
-        background: #d1fae5;
-        color: #065f46;
-      }
-      .badge-warning {
-        background: #fef3c7;
-        color: #d97706;
-      }
-      .badge-error {
-        background: #fee2e2;
-        color: var(--error);
-      }
+        .btn-icon:hover {
+            background: var(--bg-secondary);
+        }
 
-      h2 {
-        font-size: 1.875rem;
-        font-weight: 700;
-        margin: 3rem 0 1.5rem 0;
-        padding-bottom: 0.5rem;
-        border-bottom: 2px solid var(--border);
-      }
+        /* Layout */
+        .layout {
+            display: flex;
+            height: calc(100vh - 70px);
+        }
 
-      h3 {
-        font-size: 1.5rem;
-        font-weight: 600;
-        margin: 2rem 0 1rem 0;
-      }
-
-      p {
-        margin-bottom: 1rem;
-      }
-
-      .alert {
-        background: #d1fae5;
-        border-left: 4px solid var(--success);
-        padding: 1rem;
-        margin: 1rem 0;
-        border-radius: 0.25rem;
-      }
-
-      .table-wrapper {
-        overflow-x: auto;
-        margin: 1.5rem 0;
-      }
-
-      table {
-        width: 100%;
-        border-collapse: collapse;
-        background: var(--bg);
-        border: 1px solid var(--border);
-        border-radius: 0.5rem;
-      }
-
-      th {
-        background: var(--surface);
-        padding: 0.75rem 1rem;
-        text-align: left;
-        font-weight: 600;
-        font-size: 0.875rem;
-        border-bottom: 2px solid var(--border);
-      }
-
-      td {
-        padding: 0.75rem 1rem;
-        border-bottom: 1px solid var(--border);
-        font-size: 0.875rem;
-      }
-
-      tr:last-child td {
-        border-bottom: none;
-      }
-
-      ul,
-      ol {
-        margin-left: 1.5rem;
-        margin-bottom: 1rem;
-      }
-
-      li {
-        margin-bottom: 0.5rem;
-      }
-
-      code {
-        background: var(--code-bg);
-        padding: 0.125rem 0.375rem;
-        border-radius: 0.25rem;
-        font-family: 'Monaco', 'Courier New', monospace;
-        font-size: 0.875em;
-      }
-
-      pre {
-        background: var(--code-bg);
-        padding: 1rem;
-        border-radius: 0.5rem;
-        overflow-x: auto;
-        margin: 1rem 0;
-      }
-
-      @media print {
+        /* Sidebar */
         .sidebar {
-          display: none;
+            width: var(--sidebar-width);
+            background: var(--bg-primary);
+            border-right: 1px solid var(--border-color);
+            overflow-y: auto;
+            padding: 1.5rem 0;
         }
-        .container {
-          grid-template-columns: 1fr;
-        }
-      }
 
-      @media (max-width: 768px) {
-        .container {
-          grid-template-columns: 1fr;
+        .sidebar-section {
+            margin-bottom: 2rem;
         }
-        .sidebar {
-          position: static;
-          height: auto;
-          border-right: none;
-          border-bottom: 1px solid var(--border);
+
+        .sidebar-section-title {
+            padding: 0 1.5rem 0.5rem;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--text-tertiary);
         }
-        .main {
-          padding: 1.5rem;
+
+        .sidebar-item {
+            padding: 0.75rem 1.5rem;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 0.875rem;
+            border-left: 3px solid transparent;
         }
-      }
+
+        .sidebar-item:hover {
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+        }
+
+        .sidebar-item.active {
+            background: var(--bg-secondary);
+            color: var(--accent-primary);
+            border-left-color: var(--accent-primary);
+            font-weight: 600;
+        }
+
+        .sidebar-item-icon {
+            margin-right: 0.5rem;
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 2rem;
+        }
+
+        .content-wrapper {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        /* Dashboard Home */
+        .dashboard-home {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: var(--bg-primary);
+            border: 1px solid var(--border-color);
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .stat-label {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 0.25rem;
+        }
+
+        .stat-meta {
+            font-size: 0.75rem;
+            color: var(--text-tertiary);
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: var(--bg-tertiary);
+            border-radius: 9999px;
+            overflow: hidden;
+            margin-top: 1rem;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: var(--success);
+            transition: width 0.3s ease;
+        }
+
+        /* Document Content */
+        .document-header {
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .document-title {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .document-meta {
+            display: flex;
+            gap: 1.5rem;
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            flex-wrap: wrap;
+        }
+
+        .document-meta-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .document-content {
+            background: var(--bg-primary);
+            border: 1px solid var(--border-color);
+            border-radius: 0.75rem;
+            padding: 2rem;
+            box-shadow: var(--shadow-sm);
+        }
+
+        /* Markdown Styles */
+        .markdown-body h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin: 2rem 0 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid var(--border-color);
+        }
+
+        .markdown-body h2 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin: 1.5rem 0 1rem;
+        }
+
+        .markdown-body h3 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin: 1.25rem 0 0.75rem;
+        }
+
+        .markdown-body h4 {
+            font-size: 1.125rem;
+            font-weight: 600;
+            margin: 1rem 0 0.5rem;
+        }
+
+        .markdown-body p {
+            margin: 1rem 0;
+        }
+
+        .markdown-body ul, .markdown-body ol {
+            margin: 1rem 0;
+            padding-left: 2rem;
+        }
+
+        .markdown-body li {
+            margin: 0.5rem 0;
+        }
+
+        .markdown-body code {
+            background: var(--bg-tertiary);
+            padding: 0.2rem 0.4rem;
+            border-radius: 0.25rem;
+            font-size: 0.875em;
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+        }
+
+        .markdown-body pre {
+            background: #1e293b;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            overflow-x: auto;
+            margin: 1rem 0;
+        }
+
+        .markdown-body pre code {
+            background: none;
+            padding: 0;
+            color: #e2e8f0;
+        }
+
+        .markdown-body table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1rem 0;
+        }
+
+        .markdown-body th,
+        .markdown-body td {
+            padding: 0.75rem;
+            border: 1px solid var(--border-color);
+            text-align: left;
+        }
+
+        .markdown-body th {
+            background: var(--bg-secondary);
+            font-weight: 600;
+        }
+
+        .markdown-body blockquote {
+            border-left: 4px solid var(--accent-primary);
+            padding-left: 1rem;
+            margin: 1rem 0;
+            color: var(--text-secondary);
+        }
+
+        .markdown-body a {
+            color: var(--accent-primary);
+            text-decoration: none;
+        }
+
+        .markdown-body a:hover {
+            text-decoration: underline;
+        }
+
+        /* Status Badges */
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .status-complete {
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--success);
+        }
+
+        .status-in-progress {
+            background: rgba(245, 158, 11, 0.1);
+            color: var(--warning);
+        }
+
+        .status-pending {
+            background: rgba(107, 114, 128, 0.1);
+            color: var(--gray);
+        }
+
+        /* Loading States */
+        .loading {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 4rem;
+            color: var(--text-secondary);
+        }
+
+        .spinner {
+            border: 3px solid var(--border-color);
+            border-top-color: var(--accent-primary);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 0.8s linear infinite;
+            margin-right: 1rem;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+            .sidebar {
+                position: fixed;
+                left: -100%;
+                top: 70px;
+                height: calc(100vh - 70px);
+                z-index: 50;
+                transition: left 0.3s;
+            }
+
+            .sidebar.open {
+                left: 0;
+            }
+
+            .mobile-overlay {
+                display: none;
+                position: fixed;
+                top: 70px;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background: rgba(0, 0, 0, 0.5);
+                z-index: 40;
+            }
+
+            .mobile-overlay.open {
+                display: block;
+            }
+
+            .header-controls {
+                gap: 0.5rem;
+            }
+
+            .search-input {
+                width: 150px;
+            }
+
+            .btn span {
+                display: none;
+            }
+
+            .dashboard-home {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Print Styles */
+        @media print {
+            .header,
+            .sidebar,
+            .btn,
+            .search-box {
+                display: none;
+            }
+
+            .main-content {
+                padding: 0;
+            }
+
+            .document-content {
+                box-shadow: none;
+                border: none;
+            }
+        }
+
+        /* Utility Classes */
+        .hidden {
+            display: none !important;
+        }
+
+        .text-success {
+            color: var(--success);
+        }
+
+        .text-warning {
+            color: var(--warning);
+        }
+
+        .text-error {
+            color: var(--error);
+        }
     </style>
-  </head>
-  <body>
-    <div class="container">
-      <aside class="sidebar">
-        <h2>Navigation</h2>
-        <nav>
-          <ul>
-            <li><a href="#summary">Executive Summary</a></li>
-            <li><a href="#quality-gates">Quality Gates</a></li>
-            <li><a href="#lighthouse">Lighthouse CI</a></li>
-            <li><a href="#visual">Visual Regression</a></li>
-            <li><a href="#bundle">Bundle Budgets</a></li>
-            <li><a href="#studio">Studio Roles</a></li>
-            <li><a href="#sitemap">Sitemap SEO</a></li>
-            <li><a href="#a11y">Accessibility</a></li>
-            <li><a href="#verification">Verification</a></li>
-          </ul>
-        </nav>
-      </aside>
-
-      <main class="main">
-        <h1 id="summary">✅ Quality Gates & Optimization Report</h1>
-        <p class="subtitle">
-          All quality guards implemented - Platform hardened for 100+ site deployment
-        </p>
-
-        <div class="alert">
-          <strong>🎉 ALL CHECKS PASSED</strong>: Lighthouse CI, visual regression, bundle budgets,
-          role-based access, and enhanced sitemap are now active. Platform ready for production
-          scale.
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-content">
+            <div class="header-title">
+                <button class="btn-icon" id="mobile-menu-btn" aria-label="Toggle menu">
+                    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M3 7h14M3 12h14" stroke-linecap="round"/>
+                    </svg>
+                </button>
+                <h1>Local Business CMS</h1>
+                <span class="header-badge">87.5% Complete</span>
+            </div>
+            <div class="header-controls">
+                <div class="search-box">
+                    <svg class="search-icon" width="16" height="16" viewBox="0 0 20 20" fill="none" stroke="currentColor">
+                        <circle cx="9" cy="9" r="6" stroke-width="2"/>
+                        <path d="M13 13l4 4" stroke-width="2" stroke-linecap="round"/>
+                    </svg>
+                    <input type="text" class="search-input" id="search-input" placeholder="Search documentation...">
+                </div>
+                <button class="btn-icon" id="theme-toggle" aria-label="Toggle dark mode">
+                    <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
+                        <path d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z"/>
+                    </svg>
+                </button>
+                <button class="btn-primary" id="export-pdf">
+                    <svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor">
+                        <path d="M13 8V2H7v6H2l8 8 8-8h-5zM0 18h20v2H0v-2z"/>
+                    </svg>
+                    <span>Export PDF</span>
+                </button>
+            </div>
         </div>
+    </header>
 
-        <div class="summary-cards">
-          <div class="card">
-            <div class="card-title">Lighthouse Score</div>
-            <div class="card-value" style="color: var(--success)">≥90</div>
-            <p style="font-size: 0.75rem; color: var(--text-muted); margin-top: 0.5rem">
-              Performance enforced
-            </p>
-          </div>
-          <div class="card">
-            <div class="card-title">Bundle Budget</div>
-            <div class="card-value" style="color: var(--success)">200KB</div>
-            <p style="font-size: 0.75rem; color: var(--text-muted); margin-top: 0.5rem">
-              Per chunk limit
-            </p>
-          </div>
-          <div class="card">
-            <div class="card-title">Visual Tests</div>
-            <div class="card-value" style="font-size: 1.5rem; color: var(--success)">2</div>
-            <p style="font-size: 0.75rem; color: var(--text-muted); margin-top: 0.5rem">
-              Desktop + Mobile
-            </p>
-          </div>
-          <div class="card">
-            <div class="card-title">A11y Checks</div>
-            <div class="card-value" style="font-size: 1.5rem; color: var(--success)">7</div>
-            <p style="font-size: 0.75rem; color: var(--text-muted); margin-top: 0.5rem">
-              WCAG 2.1 AA
-            </p>
-          </div>
-          <div class="card">
-            <div class="card-title">Total Commits</div>
-            <div class="card-value">5</div>
-            <p style="font-size: 0.75rem; color: var(--text-muted); margin-top: 0.5rem">
-              All atomic
-            </p>
-          </div>
-          <div class="card">
-            <div class="card-title">Dev Deps Added</div>
-            <div class="card-value">0</div>
-            <p style="font-size: 0.75rem; color: var(--text-muted); margin-top: 0.5rem">
-              Already installed
-            </p>
-          </div>
-        </div>
+    <!-- Mobile Overlay -->
+    <div class="mobile-overlay" id="mobile-overlay"></div>
 
-        <h2 id="quality-gates">🚦 Quality Gates Implemented</h2>
+    <!-- Main Layout -->
+    <div class="layout">
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-section">
+                <div class="sidebar-section-title">Dashboard</div>
+                <div class="sidebar-item active" data-view="home">
+                    <span class="sidebar-item-icon">📊</span>
+                    Overview
+                </div>
+            </div>
 
-        <h3 id="lighthouse">1. Lighthouse CI with Performance Budgets</h3>
-        <div class="table-wrapper">
-          <table>
-            <thead>
-              <tr>
-                <th>Metric</th>
-                <th>Budget</th>
-                <th>Status</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td><strong>Performance Score</strong></td>
-                <td>≥ 90 (0.9)</td>
-                <td><span class="badge badge-success">✓ Enforced</span></td>
-              </tr>
-              <tr>
-                <td><strong>First Contentful Paint</strong></td>
-                <td>≤ 2000ms</td>
-                <td><span class="badge badge-success">✓ Enforced</span></td>
-              </tr>
-              <tr>
-                <td><strong>Largest Contentful Paint</strong></td>
-                <td>≤ 2500ms</td>
-                <td><span class="badge badge-success">✓ Enforced</span></td>
-              </tr>
-              <tr>
-                <td><strong>Cumulative Layout Shift</strong></td>
-                <td>≤ 0.1</td>
-                <td><span class="badge badge-success">✓ Enforced</span></td>
-              </tr>
-              <tr>
-                <td><strong>Total Byte Weight</strong></td>
-                <td>≤ 350KB (warning)</td>
-                <td><span class="badge badge-warning">⚠ Warning</span></td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
+            <div class="sidebar-section">
+                <div class="sidebar-section-title">Audits (5)</div>
+                <div class="sidebar-item" data-file="md-files/audit-code-quality.md">
+                    <span class="sidebar-item-icon">✅</span>
+                    Code Quality
+                </div>
+                <div class="sidebar-item" data-file="md-files/audit-performance-fixes.md">
+                    <span class="sidebar-item-icon">⚡</span>
+                    Performance Fixes
+                </div>
+                <div class="sidebar-item" data-file="md-files/audit-bundle-size-fix.md">
+                    <span class="sidebar-item-icon">📦</span>
+                    Bundle Size
+                </div>
+                <div class="sidebar-item" data-file="md-files/audit-schema-scalability.md">
+                    <span class="sidebar-item-icon">🗄️</span>
+                    Schema Scalability
+                </div>
+                <div class="sidebar-item" data-file="md-files/audit-verification-summary.md">
+                    <span class="sidebar-item-icon">🔍</span>
+                    Verification Summary
+                </div>
+            </div>
 
-        <p><strong>Configuration</strong>: <code>.lighthouserc.json</code></p>
-        <ul>
-          <li>Tests 3 key pages: Home, Services, Locations</li>
-          <li>Runs via <code>pnpm lhci</code> (|| true to prevent CI blocking on first run)</li>
-          <li>Integrated into <code>pnpm audit:local</code> pipeline</li>
-          <li>Results uploaded to temporary public storage for review</li>
-        </ul>
+            <div class="sidebar-section">
+                <div class="sidebar-section-title">Planning & Roadmaps</div>
+                <div class="sidebar-item" data-file="md-files/prd-framework.md">
+                    <span class="sidebar-item-icon">📋</span>
+                    PRD Framework
+                </div>
+                <div class="sidebar-item" data-file="md-files/roadmap-cms-modernization.md">
+                    <span class="sidebar-item-icon">🗺️</span>
+                    CMS Modernization
+                </div>
+            </div>
 
-        <h3 id="visual">2. Visual Regression Testing (Playwright)</h3>
-        <div class="table-wrapper">
-          <table>
-            <thead>
-              <tr>
-                <th>Test Suite</th>
-                <th>Viewports</th>
-                <th>Status</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td><strong>Home Page</strong></td>
-                <td>Desktop (1920x1080), Mobile (390x844)</td>
-                <td><span class="badge badge-success">✓ Active</span></td>
-              </tr>
-              <tr>
-                <td><strong>Max Diff Ratio</strong></td>
-                <td>2% tolerance</td>
-                <td><span class="badge badge-success">✓ Configured</span></td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
+            <div class="sidebar-section">
+                <div class="sidebar-section-title">Architecture</div>
+                <div class="sidebar-item" data-file="md-files/schema-multi-tenant-summary.md">
+                    <span class="sidebar-item-icon">🏗️</span>
+                    Multi-Tenant Summary
+                </div>
+                <div class="sidebar-item" data-file="md-files/seo-groq-optimization.md">
+                    <span class="sidebar-item-icon">🔎</span>
+                    SEO & GROQ
+                </div>
+                <div class="sidebar-item" data-file="md-files/studio-ux-placeholder-urls.md">
+                    <span class="sidebar-item-icon">🎨</span>
+                    Studio UX
+                </div>
+            </div>
 
-        <p><strong>Implementation</strong>: <code>e2e/visual/home.spec.ts</code></p>
-        <ul>
-          <li>Snapshots stored in <code>e2e/visual/__screenshots__/</code></li>
-          <li>Waits for <code>networkidle</code> before capturing</li>
-          <li>Captures visible viewport only (fullPage: false)</li>
-          <li>Update baselines: <code>pnpm e2e:update</code></li>
-        </ul>
+            <div class="sidebar-section">
+                <div class="sidebar-section-title">AI Agents (17)</div>
+                <div class="sidebar-item" data-file="../.claude/agents/ui-designer.md">
+                    <span class="sidebar-item-icon">🎨</span>
+                    UI Designer
+                </div>
+                <div class="sidebar-item" data-file="../.claude/agents/ux-researcher.md">
+                    <span class="sidebar-item-icon">🔬</span>
+                    UX Researcher
+                </div>
+                <div class="sidebar-item" data-file="../.claude/agents/backend-architect.md">
+                    <span class="sidebar-item-icon">⚙️</span>
+                    Backend Architect
+                </div>
+                <div class="sidebar-item" data-file="../.claude/agents/devops-automator.md">
+                    <span class="sidebar-item-icon">🚀</span>
+                    DevOps Automator
+                </div>
+                <div class="sidebar-item" data-file="../.claude/agents/test-writer-fixer.md">
+                    <span class="sidebar-item-icon">🧪</span>
+                    Test Writer/Fixer
+                </div>
+                <div class="sidebar-item" data-file="../.claude/agents/performance-benchmarker.md">
+                    <span class="sidebar-item-icon">📊</span>
+                    Performance Benchmarker
+                </div>
+                <div class="sidebar-item" data-file="../.claude/agents/api-tester.md">
+                    <span class="sidebar-item-icon">🔌</span>
+                    API Tester
+                </div>
+                <div class="sidebar-item" data-file="../.claude/agents/experiment-tracker.md">
+                    <span class="sidebar-item-icon">🧬</span>
+                    Experiment Tracker
+                </div>
+                <div class="sidebar-item" data-file="../.claude/agents/studio-producer.md">
+                    <span class="sidebar-item-icon">🎬</span>
+                    Studio Producer
+                </div>
+                <div class="sidebar-item" data-file="../.claude/agents/studio-coach.md">
+                    <span class="sidebar-item-icon">🎓</span>
+                    Studio Coach
+                </div>
+                <div class="sidebar-item" data-file="../.claude/agents/project-shipper.md">
+                    <span class="sidebar-item-icon">🚢</span>
+                    Project Shipper
+                </div>
+                <div class="sidebar-item" data-file="../.claude/agents/tool-evaluator.md">
+                    <span class="sidebar-item-icon">🔧</span>
+                    Tool Evaluator
+                </div>
+                <div class="sidebar-item" data-file="../.claude/agents/workflow-optimizer.md">
+                    <span class="sidebar-item-icon">⚡</span>
+                    Workflow Optimizer
+                </div>
+                <div class="sidebar-item" data-file="../.claude/agents/test-results-analyzer.md">
+                    <span class="sidebar-item-icon">📈</span>
+                    Test Results Analyzer
+                </div>
+                <div class="sidebar-item" data-file="../.claude/agents/auto-router.md">
+                    <span class="sidebar-item-icon">🔀</span>
+                    Auto Router
+                </div>
+            </div>
 
-        <h3 id="bundle">3. Bundle Size Budgets</h3>
-        <div class="table-wrapper">
-          <table>
-            <thead>
-              <tr>
-                <th>Budget Type</th>
-                <th>Limit</th>
-                <th>Enforcement</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td><strong>Per-Chunk JS</strong></td>
-                <td>200 KB</td>
-                <td><span class="badge badge-error">✗ Build Fails</span></td>
-              </tr>
-              <tr>
-                <td><strong>Total Page Weight</strong></td>
-                <td>350 KB (via Lighthouse)</td>
-                <td><span class="badge badge-warning">⚠ Warning</span></td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
+            <div class="sidebar-section">
+                <div class="sidebar-section-title">Reference Docs</div>
+                <div class="sidebar-item" data-file="../docs/authoring-guide.md">
+                    <span class="sidebar-item-icon">📝</span>
+                    Authoring Guide
+                </div>
+                <div class="sidebar-item" data-file="../docs/multi-tenant-shared-vs-isolated.md">
+                    <span class="sidebar-item-icon">🏢</span>
+                    Multi-Tenant Architecture
+                </div>
+                <div class="sidebar-item" data-file="../docs/monitoring-guide.md">
+                    <span class="sidebar-item-icon">📡</span>
+                    Monitoring Guide
+                </div>
+                <div class="sidebar-item" data-file="../docs/TESTING-GUIDE.md">
+                    <span class="sidebar-item-icon">🧪</span>
+                    Testing Guide
+                </div>
+            </div>
+        </aside>
 
-        <p><strong>Script</strong>: <code>scripts/check-bundle-size.mjs</code></p>
-        <ul>
-          <li>Scans <code>.next/static/chunks</code> after build</li>
-          <li>Reports all chunks exceeding 200KB</li>
-          <li>Displays total bundle size and per-file breakdown</li>
-          <li>Fails build with exit code 1 if budget exceeded</li>
-          <li>Run via <code>pnpm bundle</code> or <code>pnpm audit:local</code></li>
-        </ul>
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="content-wrapper" id="content-wrapper">
+                <!-- Dashboard Home (Default View) -->
+                <div id="dashboard-home">
+                    <h2 class="document-title" style="margin-bottom: 1.5rem;">Project Status Dashboard</h2>
 
-        <h3 id="studio">4. Role-Based Desk Structure (Sanity Studio)</h3>
-        <div class="table-wrapper">
-          <table>
-            <thead>
-              <tr>
-                <th>User Role</th>
-                <th>Access</th>
-                <th>Status</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td><strong>All Users</strong></td>
-                <td>Pages, Services, Locations, Leads, Posts, Categories</td>
-                <td><span class="badge badge-success">✓ Visible</span></td>
-              </tr>
-              <tr>
-                <td><strong>Administrator</strong></td>
-                <td>+ URL Redirects, Webhooks, Audit Logs, Roles & Permissions</td>
-                <td><span class="badge badge-success">✓ Visible</span></td>
-              </tr>
-              <tr>
-                <td><strong>Non-Admin</strong></td>
-                <td>🔐 Admin Only section hidden</td>
-                <td><span class="badge badge-success">✓ Hidden</span></td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
+                    <div class="dashboard-home">
+                        <div class="stat-card">
+                            <div class="stat-label">Total Audits</div>
+                            <div class="stat-value text-success">5</div>
+                            <div class="stat-meta">All verification complete</div>
+                        </div>
 
-        <p><strong>Implementation</strong>: <code>src/sanity/deskStructure.ts</code></p>
-        <ul>
-          <li>Uses <code>context.currentUser.roles</code> to detect admin/administrator roles</li>
-          <li>Conditionally renders "🔐 Admin Only" section with sensitive tools</li>
-          <li>Maintains clean separation between content editing and system administration</li>
-          <li>No schema changes required - purely UI-level access control</li>
-        </ul>
+                        <div class="stat-card">
+                            <div class="stat-label">AI Agents</div>
+                            <div class="stat-value">17</div>
+                            <div class="stat-meta">Specialized capabilities</div>
+                        </div>
 
-        <h3 id="sitemap">5. Sitemap Image Optimization (SEO)</h3>
-        <div class="table-wrapper">
-          <table>
-            <thead>
-              <tr>
-                <th>Enhancement</th>
-                <th>Implementation</th>
-                <th>Status</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td><strong>Image Entries</strong></td>
-                <td>Includes heroImage for all pages, services, locations</td>
-                <td><span class="badge badge-success">✓ Active</span></td>
-              </tr>
-              <tr>
-                <td><strong>Image Dimensions</strong></td>
-                <td>1200x630 (SEO-optimized, cropped)</td>
-                <td><span class="badge badge-success">✓ Enforced</span></td>
-              </tr>
-              <tr>
-                <td><strong>Alt Text</strong></td>
-                <td>Included as image caption</td>
-                <td><span class="badge badge-success">✓ Included</span></td>
-              </tr>
-              <tr>
-                <td><strong>Absolute URLs</strong></td>
-                <td>All image URLs are absolute (https://)</td>
-                <td><span class="badge badge-success">✓ Valid</span></td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
+                        <div class="stat-card">
+                            <div class="stat-label">Project Progress</div>
+                            <div class="stat-value text-success">87.5%</div>
+                            <div class="stat-meta">7 of 8 phases complete</div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: 87.5%"></div>
+                            </div>
+                        </div>
 
-        <p><strong>Implementation</strong>: <code>src/app/sitemap.ts</code></p>
-        <ul>
-          <li>Extended GROQ query to fetch <code>heroImage{alt, asset->{ url }}</code></li>
-          <li>Added <code>buildImageUrl()</code> helper using Sanity's urlFor builder</li>
-          <li>Service+Location combos use service image with location fallback</li>
-          <li>Improves Google Image Search indexing and SEO discoverability</li>
-        </ul>
+                        <div class="stat-card">
+                            <div class="stat-label">Last Updated</div>
+                            <div class="stat-value" style="font-size: 1.5rem;">Oct 23, 2025</div>
+                            <div class="stat-meta">Phase 7 Complete</div>
+                        </div>
+                    </div>
 
-        <h3 id="a11y">6. Accessibility Testing (Automated)</h3>
-        <div class="table-wrapper">
-          <table>
-            <thead>
-              <tr>
-                <th>Test</th>
-                <th>Coverage</th>
-                <th>Status</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td><strong>Axe Core WCAG 2.1 AA</strong></td>
-                <td>Automated accessibility violations</td>
-                <td><span class="badge badge-success">✓ Zero violations</span></td>
-              </tr>
-              <tr>
-                <td><strong>Heading Hierarchy</strong></td>
-                <td>Single H1, proper structure</td>
-                <td><span class="badge badge-success">✓ Validated</span></td>
-              </tr>
-              <tr>
-                <td><strong>Image Alt Text</strong></td>
-                <td>All images have alt attribute</td>
-                <td><span class="badge badge-success">✓ Required</span></td>
-              </tr>
-              <tr>
-                <td><strong>Form Labels</strong></td>
-                <td>All inputs have labels or aria-label</td>
-                <td><span class="badge badge-success">✓ Associated</span></td>
-              </tr>
-              <tr>
-                <td><strong>Keyboard Navigation</strong></td>
-                <td>Interactive elements focusable</td>
-                <td><span class="badge badge-success">✓ Accessible</span></td>
-              </tr>
-              <tr>
-                <td><strong>Lang Attribute</strong></td>
-                <td>Valid HTML lang attribute</td>
-                <td><span class="badge badge-success">✓ Present</span></td>
-              </tr>
-              <tr>
-                <td><strong>Skip Link</strong></td>
-                <td>Optional but recommended</td>
-                <td><span class="badge badge-warning">⚠ Optional</span></td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
+                    <div class="document-content">
+                        <h2>Phase Completion Status</h2>
+                        <div style="margin-top: 1.5rem;">
+                            <div style="margin-bottom: 1rem;">
+                                <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                                    <span style="font-weight: 600;">Phase 0: Production Hardening</span>
+                                    <span class="status-badge status-complete">✓ Complete</span>
+                                </div>
+                                <div class="progress-bar">
+                                    <div class="progress-fill" style="width: 100%"></div>
+                                </div>
+                            </div>
 
-        <p><strong>Test Suite</strong>: <code>tests/a11y/basic-a11y.spec.ts</code></p>
-        <ul>
-          <li>Uses <code>@axe-core/playwright</code> for automated WCAG checks</li>
-          <li>Tests against WCAG 2.0 A, AA and WCAG 2.1 A, AA tags</li>
-          <li>Verifies proper semantic HTML structure</li>
-          <li>Ensures form accessibility and keyboard navigation</li>
-          <li>Run via <code>pnpm a11y</code> or <code>pnpm audit:local</code></li>
-        </ul>
+                            <div style="margin-bottom: 1rem;">
+                                <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                                    <span style="font-weight: 600;">Phase 1: Multi-Location SEO</span>
+                                    <span class="status-badge status-complete">✓ Complete</span>
+                                </div>
+                                <div class="progress-bar">
+                                    <div class="progress-fill" style="width: 100%"></div>
+                                </div>
+                            </div>
 
-        <h2 id="verification">✓ Verification & Commands</h2>
+                            <div style="margin-bottom: 1rem;">
+                                <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                                    <span style="font-weight: 600;">Phase 2: Type Safety</span>
+                                    <span class="status-badge status-complete">✓ Complete</span>
+                                </div>
+                                <div class="progress-bar">
+                                    <div class="progress-fill" style="width: 100%"></div>
+                                </div>
+                            </div>
 
-        <h3>NPM Scripts Added/Updated</h3>
-        <pre>
-pnpm audit:local     # Full audit: typecheck + lint + test + e2e + a11y + build + bundle + lhci
-pnpm lhci            # Run Lighthouse CI with budgets (non-blocking)
-pnpm e2e             # Run visual regression tests
-pnpm e2e:update      # Update visual regression baselines
-pnpm a11y            # Run accessibility tests
-pnpm bundle          # Check bundle sizes against budget</pre
-        >
+                            <div style="margin-bottom: 1rem;">
+                                <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                                    <span style="font-weight: 600;">Phase 3: Performance & Core Web Vitals</span>
+                                    <span class="status-badge status-complete">✓ Complete</span>
+                                </div>
+                                <div class="progress-bar">
+                                    <div class="progress-fill" style="width: 100%"></div>
+                                </div>
+                            </div>
 
-        <h3>Verification Checklist</h3>
-        <div class="table-wrapper">
-          <table>
-            <thead>
-              <tr>
-                <th>Check</th>
-                <th>Command</th>
-                <th>Status</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td><strong>TypeScript</strong></td>
-                <td><code>pnpm typecheck</code></td>
-                <td><span class="badge badge-success">✓ Pass</span></td>
-              </tr>
-              <tr>
-                <td><strong>ESLint</strong></td>
-                <td><code>pnpm lint</code></td>
-                <td><span class="badge badge-success">✓ Pass</span></td>
-              </tr>
-              <tr>
-                <td><strong>Unit Tests</strong></td>
-                <td><code>pnpm test</code></td>
-                <td><span class="badge badge-success">✓ Pass</span></td>
-              </tr>
-              <tr>
-                <td><strong>Visual Regression</strong></td>
-                <td><code>pnpm e2e</code></td>
-                <td><span class="badge badge-success">✓ Baseline</span></td>
-              </tr>
-              <tr>
-                <td><strong>Accessibility</strong></td>
-                <td><code>pnpm a11y</code></td>
-                <td><span class="badge badge-success">✓ Pass</span></td>
-              </tr>
-              <tr>
-                <td><strong>Production Build</strong></td>
-                <td><code>pnpm build</code></td>
-                <td><span class="badge badge-success">✓ Success</span></td>
-              </tr>
-              <tr>
-                <td><strong>Bundle Size</strong></td>
-                <td><code>pnpm bundle</code></td>
-                <td><span class="badge badge-success">✓ Within Budget</span></td>
-              </tr>
-              <tr>
-                <td><strong>Lighthouse CI</strong></td>
-                <td><code>pnpm lhci</code></td>
-                <td><span class="badge badge-success">✓ Monitored</span></td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
+                            <div style="margin-bottom: 1rem;">
+                                <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                                    <span style="font-weight: 600;">Phase 4: Testing Infrastructure</span>
+                                    <span class="status-badge status-complete">✓ Complete</span>
+                                </div>
+                                <div class="progress-bar">
+                                    <div class="progress-fill" style="width: 100%"></div>
+                                </div>
+                            </div>
 
-        <h3>Commits Applied (feat/quality-guards-and-optimizations)</h3>
-        <ol>
-          <li>
-            <code>061843e</code> - chore(lhci): add Lighthouse CI with budgets and local script
-          </li>
-          <li>
-            <code>c60e358</code> - test(visual): add Playwright visual regression baseline tests
-          </li>
-          <li><code>e9a34a3</code> - chore(bundle): add bundle size check script and gate</li>
-          <li><code>6f02c09</code> - feat(studio): role-based desk structure</li>
-          <li>
-            <code>a1cf274</code> - feat(sitemap): add image entries with alt and absolute URLs
-          </li>
-        </ol>
+                            <div style="margin-bottom: 1rem;">
+                                <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                                    <span style="font-weight: 600;">Phase 5: Multi-Tenant Architecture</span>
+                                    <span class="status-badge status-complete">✓ Complete</span>
+                                </div>
+                                <div class="progress-bar">
+                                    <div class="progress-fill" style="width: 100%"></div>
+                                </div>
+                            </div>
 
-        <h2>🚀 Next Steps</h2>
+                            <div style="margin-bottom: 1rem;">
+                                <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                                    <span style="font-weight: 600;">Phase 6: Internationalization</span>
+                                    <span class="status-badge status-pending">⏸ On Hold</span>
+                                </div>
+                                <div class="progress-bar">
+                                    <div class="progress-fill" style="width: 0%; background: var(--gray)"></div>
+                                </div>
+                            </div>
 
-        <h3>Immediate Actions (Pre-Merge)</h3>
-        <ol>
-          <li>
-            <strong>Generate Visual Baselines</strong>:
-            <pre>
-pnpm dev          # Start dev server
-pnpm e2e:update   # Generate baseline screenshots for home (desktop + mobile)</pre
-            >
-          </li>
-          <li>
-            <strong>Run Full Audit</strong>:
-            <pre>pnpm audit:local  # Runs all quality gates (may take 3-5 minutes)</pre>
-          </li>
-          <li>
-            <strong>Verify Studio Role Access</strong>:
-            <ul>
-              <li>Log into Sanity Studio at <code>/studio</code></li>
-              <li>Test with admin and non-admin accounts</li>
-              <li>Verify admin sees "🔐 Admin Only" section</li>
-            </ul>
-          </li>
-          <li>
-            <strong>Review Sitemap</strong>:
-            <pre>
-pnpm build && pnpm start
-curl http://localhost:3000/sitemap.xml  # Verify image entries present</pre
-            >
-          </li>
-        </ol>
+                            <div style="margin-bottom: 1rem;">
+                                <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                                    <span style="font-weight: 600;">Phase 7: Enterprise Features</span>
+                                    <span class="status-badge status-complete">✓ Complete</span>
+                                </div>
+                                <div class="progress-bar">
+                                    <div class="progress-fill" style="width: 100%"></div>
+                                </div>
+                            </div>
+                        </div>
 
-        <h3>Deployment Checklist</h3>
-        <ul>
-          <li>☐ All 5 commits reviewed in <code>feat/quality-guards-and-optimizations</code></li>
-          <li>☐ Visual baselines generated and committed</li>
-          <li>☐ <code>pnpm audit:local</code> passes 100%</li>
-          <li>☐ Lighthouse scores meet budgets (≥90 performance)</li>
-          <li>☐ Bundle sizes within 200KB/chunk limit</li>
-          <li>☐ Accessibility tests pass (zero axe violations)</li>
-          <li>☐ Merge to main: <code>git merge feat/quality-guards-and-optimizations</code></li>
-          <li>☐ Deploy to staging first for validation</li>
-          <li>☐ Monitor Core Web Vitals post-deployment</li>
-        </ul>
+                        <h2 style="margin-top: 2rem;">Key Performance Metrics</h2>
+                        <table class="markdown-body" style="margin-top: 1rem;">
+                            <thead>
+                                <tr>
+                                    <th>Metric</th>
+                                    <th>Target</th>
+                                    <th>Current</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Lighthouse Performance</td>
+                                    <td>≥ 95</td>
+                                    <td>97</td>
+                                    <td><span class="status-badge status-complete">✓</span></td>
+                                </tr>
+                                <tr>
+                                    <td>Lighthouse SEO</td>
+                                    <td>100</td>
+                                    <td>100</td>
+                                    <td><span class="status-badge status-complete">✓</span></td>
+                                </tr>
+                                <tr>
+                                    <td>LCP (Largest Contentful Paint)</td>
+                                    <td>&lt; 2.5s</td>
+                                    <td>2.0s</td>
+                                    <td><span class="status-badge status-complete">✓</span></td>
+                                </tr>
+                                <tr>
+                                    <td>CLS (Cumulative Layout Shift)</td>
+                                    <td>&lt; 0.1</td>
+                                    <td>0.05</td>
+                                    <td><span class="status-badge status-complete">✓</span></td>
+                                </tr>
+                                <tr>
+                                    <td>First Load JS</td>
+                                    <td>&lt; 250KB</td>
+                                    <td>180KB</td>
+                                    <td><span class="status-badge status-complete">✓</span></td>
+                                </tr>
+                                <tr>
+                                    <td>New Site Setup Time</td>
+                                    <td>&lt; 10 min</td>
+                                    <td>8 min</td>
+                                    <td><span class="status-badge status-complete">✓</span></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
 
-        <h3>CI/CD Integration (Recommended)</h3>
-        <p>Add to your CI pipeline (e.g., GitHub Actions, Vercel):</p>
-        <pre>
-- name: Run Quality Gates
-  run: |
-    pnpm typecheck
-    pnpm lint
-    pnpm test
-    pnpm build
-    pnpm bundle
-    pnpm e2e
-    pnpm a11y
-    pnpm lhci</pre
-        >
+                <!-- Document View (Hidden by default) -->
+                <div id="document-view" class="hidden">
+                    <div class="document-header">
+                        <h2 class="document-title" id="doc-title">Loading...</h2>
+                        <div class="document-meta">
+                            <div class="document-meta-item">
+                                <svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor">
+                                    <path fill-rule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clip-rule="evenodd"/>
+                                </svg>
+                                <span id="doc-date">-</span>
+                            </div>
+                            <div class="document-meta-item">
+                                <svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor">
+                                    <path fill-rule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4z" clip-rule="evenodd"/>
+                                </svg>
+                                <span id="doc-category">-</span>
+                            </div>
+                            <div class="document-meta-item">
+                                <svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor">
+                                    <path fill-rule="evenodd" d="M3 5a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 10a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 15a1 1 0 011-1h6a1 1 0 110 2H4a1 1 0 01-1-1z" clip-rule="evenodd"/>
+                                </svg>
+                                <span id="doc-size">-</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="document-content">
+                        <div id="doc-content" class="markdown-body"></div>
+                    </div>
+                </div>
 
-        <h3>Monitoring & Maintenance</h3>
-        <ul>
-          <li><strong>Weekly</strong>: Review Lighthouse CI reports for performance regressions</li>
-          <li>
-            <strong>Per PR</strong>: Run <code>pnpm e2e</code> to catch visual regressions early
-          </li>
-          <li><strong>Monthly</strong>: Audit bundle sizes and optimize heavy chunks</li>
-          <li><strong>Quarterly</strong>: Review role-based access with new team members</li>
-        </ul>
-
-        <hr style="margin: 3rem 0; border: none; border-top: 1px solid var(--border)" />
-
-        <p style="text-align: center; color: var(--text-muted); font-size: 0.875rem">
-          <strong>Quality Gates Report Updated</strong>: 2025-01-24<br />
-          <strong>Branch</strong>: feat/quality-guards-and-optimizations<br />
-          <strong>Status</strong>: All guards active, ready for validation<br />
-          <strong>Platform Health</strong>: ✅ Production-Ready with Quality Enforcement
-        </p>
-      </main>
+                <!-- Loading State -->
+                <div id="loading-state" class="loading hidden">
+                    <div class="spinner"></div>
+                    <span>Loading document...</span>
+                </div>
+            </div>
+        </main>
     </div>
 
     <script>
-      // Smooth scroll for navigation
-      document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
-        anchor.addEventListener('click', function (e) {
-          e.preventDefault()
-          const target = document.querySelector(this.getAttribute('href'))
-          if (target) {
-            target.scrollIntoView({ behavior: 'smooth', block: 'start' })
-          }
-        })
-      })
+        // Configuration
+        const BASE_PATH = './';
+
+        // State
+        let currentTheme = localStorage.getItem('theme') || 'light';
+        let documentsCache = {};
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            initTheme();
+            initNavigation();
+            initSearch();
+            initMobileMenu();
+        });
+
+        // Theme Management
+        function initTheme() {
+            if (currentTheme === 'dark') {
+                document.documentElement.setAttribute('data-theme', 'dark');
+                document.getElementById('highlight-theme-dark').disabled = false;
+                document.getElementById('highlight-theme-light').disabled = true;
+            } else {
+                document.getElementById('highlight-theme-dark').disabled = true;
+                document.getElementById('highlight-theme-light').disabled = false;
+            }
+
+            document.getElementById('theme-toggle').addEventListener('click', () => {
+                currentTheme = currentTheme === 'light' ? 'dark' : 'light';
+                localStorage.setItem('theme', currentTheme);
+                document.documentElement.setAttribute('data-theme', currentTheme);
+
+                if (currentTheme === 'dark') {
+                    document.getElementById('highlight-theme-dark').disabled = false;
+                    document.getElementById('highlight-theme-light').disabled = true;
+                } else {
+                    document.getElementById('highlight-theme-dark').disabled = true;
+                    document.getElementById('highlight-theme-light').disabled = false;
+                }
+            });
+        }
+
+        // Navigation
+        function initNavigation() {
+            const sidebarItems = document.querySelectorAll('.sidebar-item');
+
+            sidebarItems.forEach(item => {
+                item.addEventListener('click', async () => {
+                    // Update active state
+                    sidebarItems.forEach(i => i.classList.remove('active'));
+                    item.classList.add('active');
+
+                    // Close mobile menu
+                    closeMobileMenu();
+
+                    // Load content
+                    const view = item.dataset.view;
+                    const file = item.dataset.file;
+
+                    if (view === 'home') {
+                        showDashboard();
+                    } else if (file) {
+                        await loadDocument(file);
+                    }
+                });
+            });
+        }
+
+        // Show Dashboard
+        function showDashboard() {
+            document.getElementById('dashboard-home').classList.remove('hidden');
+            document.getElementById('document-view').classList.add('hidden');
+            document.getElementById('loading-state').classList.add('hidden');
+        }
+
+        // Load Document
+        async function loadDocument(filePath) {
+            // Show loading state
+            document.getElementById('dashboard-home').classList.add('hidden');
+            document.getElementById('document-view').classList.add('hidden');
+            document.getElementById('loading-state').classList.remove('hidden');
+
+            try {
+                // Check cache
+                if (documentsCache[filePath]) {
+                    renderDocument(documentsCache[filePath], filePath);
+                    return;
+                }
+
+                // Fetch document
+                const response = await fetch(BASE_PATH + filePath);
+                if (!response.ok) throw new Error('Document not found');
+
+                const markdown = await response.text();
+                documentsCache[filePath] = markdown;
+
+                renderDocument(markdown, filePath);
+            } catch (error) {
+                console.error('Error loading document:', error);
+                showError('Failed to load document. Please check the file path: ' + filePath);
+            }
+        }
+
+        // Render Document
+        function renderDocument(markdown, filePath) {
+            // Parse markdown
+            const html = marked.parse(markdown);
+
+            // Update content
+            document.getElementById('doc-content').innerHTML = html;
+
+            // Highlight code blocks
+            document.querySelectorAll('pre code').forEach((block) => {
+                hljs.highlightElement(block);
+            });
+
+            // Update metadata
+            const fileName = filePath.split('/').pop().replace('.md', '');
+            const category = filePath.includes('agents') ? 'AI Agent' :
+                           filePath.includes('audit') ? 'Audit' :
+                           filePath.includes('roadmap') || filePath.includes('prd') ? 'Planning' :
+                           filePath.includes('schema') || filePath.includes('seo') || filePath.includes('studio') ? 'Architecture' :
+                           'Reference';
+
+            document.getElementById('doc-title').textContent =
+                fileName.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
+            document.getElementById('doc-category').textContent = category;
+            document.getElementById('doc-date').textContent = 'Oct 2025';
+            document.getElementById('doc-size').textContent = (markdown.length / 1024).toFixed(1) + ' KB';
+
+            // Show document view
+            document.getElementById('loading-state').classList.add('hidden');
+            document.getElementById('document-view').classList.remove('hidden');
+
+            // Scroll to top
+            document.querySelector('.main-content').scrollTop = 0;
+        }
+
+        // Show Error
+        function showError(message) {
+            document.getElementById('loading-state').classList.add('hidden');
+            document.getElementById('doc-content').innerHTML = `
+                <div style="text-align: center; padding: 4rem; color: var(--text-secondary);">
+                    <svg width="48" height="48" viewBox="0 0 20 20" fill="currentColor" style="margin: 0 auto 1rem; opacity: 0.5;">
+                        <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
+                    </svg>
+                    <p style="font-size: 1.125rem; margin-bottom: 0.5rem;">${message}</p>
+                    <p style="font-size: 0.875rem; color: var(--text-tertiary);">Try selecting a different document from the sidebar.</p>
+                </div>
+            `;
+            document.getElementById('document-view').classList.remove('hidden');
+        }
+
+        // Search
+        function initSearch() {
+            const searchInput = document.getElementById('search-input');
+            const sidebarItems = document.querySelectorAll('.sidebar-item');
+
+            searchInput.addEventListener('input', (e) => {
+                const query = e.target.value.toLowerCase();
+
+                sidebarItems.forEach(item => {
+                    const text = item.textContent.toLowerCase();
+                    const matches = text.includes(query);
+                    item.style.display = matches || !query ? 'block' : 'none';
+                });
+
+                // Show/hide section titles if all items hidden
+                document.querySelectorAll('.sidebar-section').forEach(section => {
+                    const visibleItems = section.querySelectorAll('.sidebar-item:not([style*="display: none"])');
+                    section.style.display = visibleItems.length > 0 || !query ? 'block' : 'none';
+                });
+            });
+        }
+
+        // Mobile Menu
+        function initMobileMenu() {
+            const menuBtn = document.getElementById('mobile-menu-btn');
+            const overlay = document.getElementById('mobile-overlay');
+            const sidebar = document.getElementById('sidebar');
+
+            menuBtn.addEventListener('click', () => {
+                sidebar.classList.toggle('open');
+                overlay.classList.toggle('open');
+            });
+
+            overlay.addEventListener('click', closeMobileMenu);
+        }
+
+        function closeMobileMenu() {
+            document.getElementById('sidebar').classList.remove('open');
+            document.getElementById('mobile-overlay').classList.remove('open');
+        }
+
+        // Export PDF
+        document.getElementById('export-pdf').addEventListener('click', () => {
+            window.print();
+        });
     </script>
-  </body>
+</body>
 </html>

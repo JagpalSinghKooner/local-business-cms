@@ -8,12 +8,14 @@
 ## Current Architecture Analysis
 
 ### Current Setup
+
 - **Services**: ~12 HVAC services (furnace-repair, ductless-hvac-systems, etc.)
 - **Locations**: ~28 NJ shore towns (avalon-nj, stone-harbor-nj, etc.)
 - **Current Pages**: 336 auto-generated service+location combinations
 - **Target**: Scale to 1000+ combinations (50+ services × 50+ locations)
 
 ### Current Schema Files
+
 1. `src/sanity/schemaTypes/documents/service.ts`
 2. `src/sanity/schemaTypes/documents/location.ts`
 3. `src/sanity/schemaTypes/fields/localSEO.ts`
@@ -28,6 +30,7 @@
 **Current**: Basic service document with manual content creation
 
 **Issues**:
+
 - ❌ No service category/taxonomy system
 - ❌ No service inheritance (parent-child relationships)
 - ❌ No shared content templates
@@ -43,6 +46,7 @@
 **Current**: Individual location documents with `localSEO` fields
 
 **Issues**:
+
 - ❌ No location hierarchy (state → county → city)
 - ❌ No regional grouping (South Jersey, North Jersey)
 - ❌ No shared regional content
@@ -58,6 +62,7 @@
 **Current**: Static params generate URLs, but content is generic
 
 **Issues**:
+
 - ❌ No location-specific service descriptions
 - ❌ No service-specific location details
 - ❌ No dynamic content templates
@@ -73,6 +78,7 @@
 **Current**: Manual SEO fields per service/location
 
 **Issues**:
+
 - ❌ No meta template inheritance
 - ❌ No dynamic variable substitution
 - ❌ No schema.org markup templates
@@ -88,6 +94,7 @@
 **Current**: Services and locations are independent
 
 **Issues**:
+
 - ❌ No service availability by location
 - ❌ No location-specific pricing
 - ❌ No service restrictions/requirements by area
@@ -194,6 +201,7 @@
 ```
 
 **Benefits**:
+
 - ✅ Organize services into heating, cooling, plumbing, etc.
 - ✅ Inherit meta templates from category
 - ✅ Filter services by tags (emergency, seasonal)
@@ -291,6 +299,7 @@
 ```
 
 **Benefits**:
+
 - ✅ Group locations by region (South Jersey, North Jersey)
 - ✅ Share testimonials/images across regional cities
 - ✅ Automatic service area calculation
@@ -360,6 +369,7 @@
 ```
 
 **Benefits**:
+
 - ✅ Control which services are available in which locations
 - ✅ Custom pricing per service+location
 - ✅ Location-specific service descriptions
@@ -452,6 +462,7 @@ A: Yes! We provide {{service.name}} throughout {{location.name}} and all of {{lo
 ```
 
 **Benefits**:
+
 - ✅ Generate 1000+ unique page variations from templates
 - ✅ A/B test different messaging patterns
 - ✅ Automatic FAQ generation per service+location
@@ -463,18 +474,21 @@ A: Yes! We provide {{service.name}} throughout {{location.name}} and all of {{lo
 ## 🚀 Implementation Priority
 
 ### **Immediate (Phase 3 - Weeks 1-2)**
+
 1. ✅ Add service category taxonomy
 2. ✅ Add service tags (emergency, seasonal, etc.)
 3. ✅ Create region grouping for locations
 4. ✅ Add zip code coverage mapping
 
 ### **High Priority (Phase 3 - Weeks 3-4)**
+
 5. ✅ Create service-location availability matrix
 6. ✅ Build content template system
 7. ✅ Add custom pricing per location
 8. ✅ Implement location-specific content overrides
 
 ### **Medium Priority (Phase 5)**
+
 9. ⏳ Dynamic FAQ generation
 10. ⏳ A/B testing framework for templates
 11. ⏳ Seasonal content variations
@@ -484,15 +498,15 @@ A: Yes! We provide {{service.name}} throughout {{location.name}} and all of {{lo
 
 ## 📊 Expected Scalability Improvements
 
-| Metric | Current | After Enhancements | Improvement |
-|--------|---------|-------------------|-------------|
-| **Page Generation Time** | Manual (30 min/page) | Automatic (instant) | 100x faster |
-| **Content Uniqueness** | 10% unique | 80% unique | 8x better SEO |
-| **Management Overhead** | High (manual edits) | Low (template-based) | 90% reduction |
-| **SEO Quality** | Generic | Hyper-local | 5x better ranking |
-| **Scalability** | 336 pages (hard limit) | 1000+ pages (easy) | 3x capacity |
-| **Time to Add New Service** | 2-3 hours | 15 minutes | 12x faster |
-| **Time to Add New Location** | 1-2 hours | 10 minutes | 10x faster |
+| Metric                       | Current                | After Enhancements   | Improvement       |
+| ---------------------------- | ---------------------- | -------------------- | ----------------- |
+| **Page Generation Time**     | Manual (30 min/page)   | Automatic (instant)  | 100x faster       |
+| **Content Uniqueness**       | 10% unique             | 80% unique           | 8x better SEO     |
+| **Management Overhead**      | High (manual edits)    | Low (template-based) | 90% reduction     |
+| **SEO Quality**              | Generic                | Hyper-local          | 5x better ranking |
+| **Scalability**              | 336 pages (hard limit) | 1000+ pages (easy)   | 3x capacity       |
+| **Time to Add New Service**  | 2-3 hours              | 15 minutes           | 12x faster        |
+| **Time to Add New Location** | 1-2 hours              | 10 minutes           | 10x faster        |
 
 ---
 
@@ -514,22 +528,26 @@ After implementing these enhancements:
 ## 📋 Implementation Checklist
 
 ### Schema Files to Create
+
 - [ ] `src/sanity/schemaTypes/documents/serviceCategory.ts`
 - [ ] `src/sanity/schemaTypes/documents/region.ts`
 - [ ] `src/sanity/schemaTypes/documents/serviceLocationAvailability.ts`
 - [ ] `src/sanity/schemaTypes/documents/contentTemplate.ts`
 
 ### Schema Files to Enhance
+
 - [ ] `src/sanity/schemaTypes/documents/service.ts` (add category, tags, availability)
 - [ ] `src/sanity/schemaTypes/documents/location.ts` (add region, zipCodes, demographics)
 
 ### Supporting Utilities to Build
+
 - [ ] `src/lib/template-engine.ts` (variable substitution)
 - [ ] `src/lib/service-location-matcher.ts` (availability checking)
 - [ ] `src/lib/content-generator.ts` (dynamic content from templates)
 - [ ] `src/lib/seo-template-builder.ts` (meta tag generation)
 
 ### Data Migration Scripts
+
 - [ ] `scripts/migrate-services-to-categories.ts`
 - [ ] `scripts/migrate-locations-to-regions.ts`
 - [ ] `scripts/generate-availability-matrix.ts`

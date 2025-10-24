@@ -59,6 +59,23 @@ const fetchOptions = {
 }
 
 /**
+ * Extended cache options for infrequently-changing data (locations, settings)
+ * Locations and site settings rarely change, so we can cache them longer
+ */
+const extendedFetchOptions = {
+  perspective: 'published' as const,
+  next: {
+    revalidate: 3600, // 1 hour cache for locations
+    tags: [
+      'sanity',
+      `dataset-${process.env.NEXT_PUBLIC_SANITY_DATASET}`,
+      `project-${process.env.NEXT_PUBLIC_SANITY_PROJECT_ID}`,
+      getSiteCachePrefix(),
+    ],
+  },
+}
+
+/**
  * Fetches global dataset (site settings, navigation, tokens, services, locations, pages)
  * Uses React cache for request deduplication across components
  */
@@ -144,10 +161,11 @@ export const listServices = cache(async (): Promise<ServiceSummary[]> => {
 /**
  * Fetches list of all locations
  * Returns empty array if fetch fails
+ * Uses extended cache (1 hour) as locations rarely change
  */
 export const listLocations = cache(async (): Promise<LocationSummary[]> => {
   try {
-    return await sanity.fetch<LocationSummary[]>(locationsListQ, {}, fetchOptions)
+    return await sanity.fetch<LocationSummary[]>(locationsListQ, {}, extendedFetchOptions)
   } catch (error) {
     console.error('Failed to fetch locations list:', error)
     return []

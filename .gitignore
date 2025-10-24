@@ -51,3 +51,6 @@ next-env.d.ts
 test-results/
 playwright-report/
 playwright/.cache/
+
+# personal notes (use notes-* prefix for temporary/private markdown)
+docs/md-files/notes-*.md

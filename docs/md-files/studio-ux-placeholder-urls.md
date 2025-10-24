@@ -9,31 +9,37 @@ This document explains the placeholder URLs used throughout the codebase and whi
 The following files have been updated to use your actual HVAC service and location URLs:
 
 ### 1. **package.json** ✅
+
 - **Updated**: `"dev": "next dev -p 3001"` - Forces dev server to always use port 3001
 - **Reason**: Prevents port conflicts and ensures consistent development environment
 
 ### 2. **lighthouserc.json** ✅
+
 - **Updated**: Replaced generic `/services/plumbing-toronto` with actual URLs:
   - `/services/ductless-hvac-systems` (your actual HVAC service)
   - `/locations/avalon-nj` (your actual NJ shore location)
 - **Port**: Uses port 3001 (consistent with dev server)
 
 ### 3. **playwright.config.ts** ✅
+
 - **Status**: Properly configured for port 3001
 - **baseURL**: `http://localhost:3001`
 - **webServer url**: `http://localhost:3001`
 
 ### 4. **.env.local** ✅
+
 - **Status**: Configured with correct environment variables
 - **NEXT_PUBLIC_SITE_URL**: `http://localhost:3001` (development)
 - **SANITY_STUDIO_PREVIEW_URL**: `http://localhost:3001`
 - **Note**: Update these for production deployment
 
 ### 5. **src/sanity/components/IframePreview.tsx** ✅
+
 - **Status**: Uses environment variables with proper fallback
 - **Fallback**: `http://localhost:3001` (matches dev server)
 
 ### 6. **tests/seo/technical-seo.spec.ts** ✅
+
 - **Status**: Configured to match dev server port
 - **Port**: Uses `http://localhost:3001`
 
@@ -105,6 +111,7 @@ These files contain examples and should be kept as-is for reference:
 Based on your Sanity CMS, here are your **actual** services and locations:
 
 ### Services (Examples from sitemap):
+
 - `furnace-repair`
 - `ductless-hvac-systems`
 - `air-conditioning-repair`
@@ -112,6 +119,7 @@ Based on your Sanity CMS, here are your **actual** services and locations:
 - (and more HVAC-related services)
 
 ### Locations (Examples from sitemap):
+
 - `avalon-nj`
 - `stone-harbor-nj`
 - `cape-may-nj`
@@ -120,7 +128,9 @@ Based on your Sanity CMS, here are your **actual** services and locations:
 - (and more New Jersey shore towns)
 
 ### Service+Location Combinations:
+
 Your framework automatically generates URLs like:
+
 - `/services/furnace-repair-avalon-nj`
 - `/services/ductless-hvac-systems-stone-harbor-nj`
 - `/services/air-conditioning-repair-cape-may-nj`
@@ -132,11 +142,14 @@ Your framework automatically generates URLs like:
 You should update test URLs in these scenarios:
 
 ### Scenario 1: Visual Regression Baselines
+
 If you want accurate visual regression screenshots, update the URLs in:
+
 - `tests/visual/components.spec.ts`
 - `tests/visual/responsive.spec.ts`
 
 **Example**:
+
 ```typescript
 // Change from:
 await page.goto('/services/plumbing-toronto')
@@ -146,11 +159,14 @@ await page.goto('/services/furnace-repair-avalon-nj')
 ```
 
 ### Scenario 2: Performance Testing
+
 Your Lighthouse configuration is already updated to use actual URLs:
+
 - ✅ `/services/ductless-hvac-systems`
 - ✅ `/locations/avalon-nj`
 
 ### Scenario 3: Integration Tests
+
 Most integration tests are dynamic and will work with any Sanity data. However, if you want to test specific pages, you can update:
 
 ```typescript

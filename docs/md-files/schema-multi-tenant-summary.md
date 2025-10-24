@@ -45,6 +45,7 @@
 ```
 
 **Example Workflow**:
+
 ```bash
 # Developer fixes a bug in header component
 git commit -m "fix: navigation dropdown bug"
@@ -76,6 +77,7 @@ git push origin main
 ```
 
 **Isolation Guarantee**:
+
 - Site A queries: `*[_type == "service"]` → ONLY Site A services
 - Site B queries: `*[_type == "service"]` → ONLY Site B services
 - Zero possibility of cross-contamination
@@ -157,15 +159,15 @@ Each deployment points to ONE dataset:
 
 ```typescript
 // Site 1 deployment (.env)
-NEXT_PUBLIC_SANITY_DATASET=site-budds
+NEXT_PUBLIC_SANITY_DATASET = site - budds
 
 // Site 2 deployment (.env)
-NEXT_PUBLIC_SANITY_DATASET=site-hvac
+NEXT_PUBLIC_SANITY_DATASET = site - hvac
 
 // Sanity client reads env var
 const client = createClient({
-  projectId: 'abc123',        // SHARED
-  dataset: env.NEXT_PUBLIC_SANITY_DATASET  // UNIQUE
+  projectId: 'abc123', // SHARED
+  dataset: env.NEXT_PUBLIC_SANITY_DATASET, // UNIQUE
 })
 
 // Queries are automatically isolated
@@ -186,15 +188,15 @@ const services = await client.fetch(`*[_type == "service"]`)
 
 ## 📊 Key Numbers
 
-| Metric | Value | Notes |
-|--------|-------|-------|
-| **Codebases** | 1 | Single Next.js app |
-| **Schema Definitions** | 1 | Shared across all sites |
-| **Datasets** | 100+ | One per site |
-| **Content Isolation** | 100% | Zero cross-contamination |
-| **Sites Updated Per Deploy** | ALL | Automatic |
-| **New Site Deployment Time** | < 10 min | Via clone script |
-| **Schema Update Time** | < 5 min | Deploy to all datasets |
+| Metric                       | Value    | Notes                    |
+| ---------------------------- | -------- | ------------------------ |
+| **Codebases**                | 1        | Single Next.js app       |
+| **Schema Definitions**       | 1        | Shared across all sites  |
+| **Datasets**                 | 100+     | One per site             |
+| **Content Isolation**        | 100%     | Zero cross-contamination |
+| **Sites Updated Per Deploy** | ALL      | Automatic                |
+| **New Site Deployment Time** | < 10 min | Via clone script         |
+| **Schema Update Time**       | < 5 min  | Deploy to all datasets   |
 
 ---
 
@@ -267,6 +269,7 @@ NEXT_PUBLIC_SITE_URL=https://new-client.com
 ## ✅ What's Complete
 
 ### Infrastructure (Week 1) ✅
+
 - ✅ Multi-tenant architecture implemented
 - ✅ Domain-based site detection middleware
 - ✅ Site-specific navigation configuration
@@ -276,12 +279,14 @@ NEXT_PUBLIC_SITE_URL=https://new-client.com
 - ✅ Cache isolation
 
 ### Data Layer ✅
+
 - ✅ Multiple Datasets approach
 - ✅ Zero cross-contamination guarantee
 - ✅ Asset CDN isolation
 - ✅ Dataset cloning utility
 
 ### Automation ✅
+
 - ✅ Schema deployment script (`pnpm deploy-schema-all`)
 - ✅ Site cloning script (`pnpm clone-site`)
 - ✅ Comprehensive documentation
@@ -291,6 +296,7 @@ NEXT_PUBLIC_SITE_URL=https://new-client.com
 ## 🎯 Benefits Achieved
 
 ### For Developers
+
 1. **Fix Once, Deploy Everywhere**
    - Bug fix → all sites fixed
    - New feature → all sites get it
@@ -307,6 +313,7 @@ NEXT_PUBLIC_SITE_URL=https://new-client.com
    - Total: < 10 minutes
 
 ### For Site Owners
+
 1. **Always Up-to-Date**
    - Automatic bug fixes
    - New features deployed automatically
@@ -323,6 +330,7 @@ NEXT_PUBLIC_SITE_URL=https://new-client.com
    - Professional quality
 
 ### For End Users
+
 1. **Consistent UX**
    - Familiar interface
    - High-quality components
@@ -385,12 +393,14 @@ NEXT_PUBLIC_SITE_URL=https://new-client.com
 ## 📈 Scalability
 
 ### Current Capacity
+
 - **Sites Supported**: 100+ (tested architecture)
 - **Deployment Model**: Separate Vercel projects OR single project with domain routing
 - **Schema Updates**: Parallel deployment to all datasets
 - **Performance**: No degradation as sites increase (isolated deployments)
 
 ### Future Capacity
+
 - **Sites Supported**: 1000+ (with optimizations)
 - **Automated Provisioning**: API endpoint for programmatic site creation
 - **Centralized Dashboard**: Manage all sites from single interface
@@ -400,14 +410,14 @@ NEXT_PUBLIC_SITE_URL=https://new-client.com
 
 ## 🎉 Success Metrics
 
-| Metric | Before | After | Improvement |
-|--------|--------|-------|-------------|
-| Sites Supported | 1 | 100+ | 100x |
-| Bug Fix Deployment | Manual per site | Automatic all sites | 100x faster |
-| New Site Deployment | Days | < 10 minutes | 1000x faster |
-| Schema Update Time | Hours | < 5 minutes | 10x faster |
-| Data Leak Risk | Possible | Impossible | 100% safer |
-| Code Duplication | High | Zero | 100% reduction |
+| Metric              | Before          | After               | Improvement    |
+| ------------------- | --------------- | ------------------- | -------------- |
+| Sites Supported     | 1               | 100+                | 100x           |
+| Bug Fix Deployment  | Manual per site | Automatic all sites | 100x faster    |
+| New Site Deployment | Days            | < 10 minutes        | 1000x faster   |
+| Schema Update Time  | Hours           | < 5 minutes         | 10x faster     |
+| Data Leak Risk      | Possible        | Impossible          | 100% safer     |
+| Code Duplication    | High            | Zero                | 100% reduction |
 
 ---
 
@@ -416,16 +426,19 @@ NEXT_PUBLIC_SITE_URL=https://new-client.com
 ### Remaining Tasks (40%)
 
 **High Priority**:
+
 - Studio validation rules
 - Data migration utilities (beyond cloning)
 - Automated smoke tests
 
 **Medium Priority**:
+
 - Deployment checklist generator
 - Bulk content import CLI
 - Schema diff tool
 
 **Optional**:
+
 - Rollback mechanism
 - Deployment monitoring dashboard
 - Shared component library docs

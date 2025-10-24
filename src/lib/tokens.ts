@@ -38,7 +38,7 @@ export type ResolvedTokens = {
 }
 
 const DEFAULT_COLORS: ResolvedTokens['colors'] = {
-  primary: '#0ea5e9',
+  primary: '#0369a1', // sky-700 (5.63:1 contrast - WCAG AA compliant)
   onPrimary: '#ffffff',
   secondary: '#f97316',
   onSecondary: '#ffffff',
@@ -94,7 +94,7 @@ const DEFAULT_BUTTONS: Record<string, ButtonToken> = {
     background: DEFAULT_COLORS.primary,
     text: DEFAULT_COLORS.onPrimary,
     border: DEFAULT_COLORS.primary,
-    hoverBackground: '#0284c7',
+    hoverBackground: '#0c4a6e', // sky-900 (even darker for hover feedback)
     hoverText: DEFAULT_COLORS.onPrimary,
     shadow: DEFAULT_SHADOWS.sm,
   },
