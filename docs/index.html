@@ -1,0 +1,1024 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Local Business CMS Platform - Documentation</title>
+    <meta name="description" content="Your friendly guide to managing 100+ business websites with one powerful CMS">
+
+    <!-- CDN Dependencies -->
+    <script src="https://cdn.jsdelivr.net/npm/marked@11.0.0/marked.min.js"></script>
+
+    <style>
+        :root {
+            --warm-white: #fefefe;
+            --soft-gray: #f7f8fa;
+            --light-gray: #e8eaed;
+            --text-dark: #2c3e50;
+            --text-medium: #5a6c7d;
+            --text-light: #8492a6;
+            --accent-blue: #5b9bd5;
+            --accent-blue-dark: #4a8bc2;
+            --accent-green: #4caf50;
+            --accent-purple: #9c6ade;
+            --accent-orange: #ff9800;
+            --border-color: #dfe3e8;
+            --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.06);
+            --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.08);
+            --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.12);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            color: var(--text-dark);
+            line-height: 1.7;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        /* Header */
+        .header {
+            text-align: center;
+            padding: 4rem 2rem 3rem;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 24px;
+            margin-bottom: 3rem;
+            box-shadow: var(--shadow-lg);
+            color: white;
+        }
+
+        .header h1 {
+            font-size: 3rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            letter-spacing: -0.5px;
+        }
+
+        .header .tagline {
+            font-size: 1.25rem;
+            opacity: 0.95;
+            margin-bottom: 2rem;
+            font-weight: 400;
+        }
+
+        .header-stats {
+            display: flex;
+            justify-content: center;
+            gap: 3rem;
+            flex-wrap: wrap;
+            margin-top: 2rem;
+        }
+
+        .stat {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            display: block;
+            margin-bottom: 0.25rem;
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            opacity: 0.9;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .header-cta {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-top: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.875rem 1.75rem;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            border: none;
+        }
+
+        .btn-primary {
+            background: white;
+            color: #667eea;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: 2px solid white;
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        /* Quick Start Section */
+        .quick-start {
+            background: var(--warm-white);
+            border-radius: 20px;
+            padding: 2.5rem;
+            margin-bottom: 3rem;
+            box-shadow: var(--shadow-md);
+        }
+
+        .quick-start h2 {
+            font-size: 2rem;
+            margin-bottom: 1.5rem;
+            color: var(--text-dark);
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .quick-task-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        .quick-task {
+            background: linear-gradient(135deg, #f5f7fa 0%, #e8eaed 100%);
+            padding: 1.25rem;
+            border-radius: 12px;
+            border-left: 4px solid var(--accent-blue);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .quick-task:hover {
+            transform: translateX(4px);
+            box-shadow: var(--shadow-sm);
+            border-left-color: var(--accent-purple);
+        }
+
+        .quick-task strong {
+            display: block;
+            font-size: 1.1rem;
+            color: var(--text-dark);
+            margin-bottom: 0.5rem;
+        }
+
+        .quick-task span {
+            color: var(--text-medium);
+            font-size: 0.9rem;
+        }
+
+        /* Search Bar */
+        .search-container {
+            margin-bottom: 3rem;
+        }
+
+        .search-box {
+            position: relative;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 1.5rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-light);
+            font-size: 1.25rem;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 1.25rem 1.5rem 1.25rem 4rem;
+            border: 2px solid var(--border-color);
+            border-radius: 16px;
+            font-size: 1.125rem;
+            background: white;
+            color: var(--text-dark);
+            transition: all 0.3s ease;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: var(--accent-blue);
+            box-shadow: 0 0 0 4px rgba(91, 155, 213, 0.1);
+        }
+
+        .search-input::placeholder {
+            color: var(--text-light);
+        }
+
+        /* Documentation Grid */
+        .section-title {
+            font-size: 1.75rem;
+            font-weight: 700;
+            margin: 3rem 0 1.5rem;
+            color: var(--text-dark);
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .doc-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 3rem;
+        }
+
+        .doc-card {
+            background: white;
+            border-radius: 16px;
+            padding: 2rem;
+            box-shadow: var(--shadow-sm);
+            border: 2px solid transparent;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .doc-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--accent-blue), var(--accent-purple));
+            transform: scaleX(0);
+            transition: transform 0.3s ease;
+        }
+
+        .doc-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-md);
+            border-color: var(--border-color);
+        }
+
+        .doc-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .doc-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            display: block;
+        }
+
+        .doc-title {
+            font-size: 1.35rem;
+            font-weight: 700;
+            margin-bottom: 0.75rem;
+            color: var(--text-dark);
+        }
+
+        .doc-description {
+            color: var(--text-medium);
+            font-size: 0.95rem;
+            line-height: 1.6;
+            margin-bottom: 1rem;
+        }
+
+        .doc-meta {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--light-gray);
+        }
+
+        .doc-badge {
+            font-size: 0.75rem;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .badge-editor {
+            background: #e3f2fd;
+            color: #1976d2;
+        }
+
+        .badge-manager {
+            background: #f3e5f5;
+            color: #7b1fa2;
+        }
+
+        .badge-technical {
+            background: #e8f5e9;
+            color: #388e3c;
+        }
+
+        /* Document Viewer */
+        .doc-viewer {
+            display: none;
+            background: white;
+            border-radius: 20px;
+            padding: 3rem;
+            box-shadow: var(--shadow-md);
+            margin-top: 2rem;
+        }
+
+        .doc-viewer.active {
+            display: block;
+        }
+
+        .doc-viewer-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 2rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 2px solid var(--light-gray);
+        }
+
+        .doc-viewer-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--text-dark);
+        }
+
+        .back-btn {
+            background: var(--soft-gray);
+            padding: 0.75rem 1.25rem;
+            border-radius: 10px;
+            font-weight: 600;
+            color: var(--text-dark);
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .back-btn:hover {
+            background: var(--light-gray);
+        }
+
+        .doc-content {
+            font-size: 1.05rem;
+            line-height: 1.8;
+            color: var(--text-dark);
+        }
+
+        .doc-content h1 {
+            font-size: 2.25rem;
+            margin: 2.5rem 0 1.5rem;
+            color: var(--text-dark);
+        }
+
+        .doc-content h2 {
+            font-size: 1.75rem;
+            margin: 2rem 0 1rem;
+            color: var(--text-dark);
+        }
+
+        .doc-content h3 {
+            font-size: 1.35rem;
+            margin: 1.5rem 0 0.75rem;
+            color: var(--text-dark);
+        }
+
+        .doc-content p {
+            margin: 1rem 0;
+        }
+
+        .doc-content ul, .doc-content ol {
+            margin: 1rem 0;
+            padding-left: 2rem;
+        }
+
+        .doc-content li {
+            margin: 0.5rem 0;
+        }
+
+        .doc-content code {
+            background: #f5f7fa;
+            padding: 0.2rem 0.5rem;
+            border-radius: 6px;
+            font-size: 0.9em;
+            color: #c7254e;
+            font-family: 'Monaco', 'Menlo', 'Courier New', monospace;
+        }
+
+        .doc-content pre {
+            background: #2d3748;
+            padding: 1.5rem;
+            border-radius: 12px;
+            overflow-x: auto;
+            margin: 1.5rem 0;
+        }
+
+        .doc-content pre code {
+            background: none;
+            padding: 0;
+            color: #e2e8f0;
+            font-size: 0.9rem;
+        }
+
+        .doc-content table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1.5rem 0;
+        }
+
+        .doc-content th,
+        .doc-content td {
+            padding: 0.875rem;
+            border: 1px solid var(--border-color);
+            text-align: left;
+        }
+
+        .doc-content th {
+            background: var(--soft-gray);
+            font-weight: 600;
+        }
+
+        .doc-content blockquote {
+            border-left: 4px solid var(--accent-blue);
+            padding-left: 1.5rem;
+            margin: 1.5rem 0;
+            color: var(--text-medium);
+            font-style: italic;
+        }
+
+        .doc-content a {
+            color: var(--accent-blue);
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .doc-content a:hover {
+            text-decoration: underline;
+        }
+
+        /* Tooltips */
+        .tooltip {
+            position: relative;
+            display: inline-block;
+            border-bottom: 1px dotted var(--text-light);
+            cursor: help;
+        }
+
+        .tooltip .tooltiptext {
+            visibility: hidden;
+            width: 200px;
+            background-color: #2d3748;
+            color: white;
+            text-align: center;
+            border-radius: 8px;
+            padding: 0.5rem;
+            position: absolute;
+            z-index: 1;
+            bottom: 125%;
+            left: 50%;
+            margin-left: -100px;
+            opacity: 0;
+            transition: opacity 0.3s;
+            font-size: 0.85rem;
+        }
+
+        .tooltip:hover .tooltiptext {
+            visibility: visible;
+            opacity: 1;
+        }
+
+        /* Loading State */
+        .loading {
+            text-align: center;
+            padding: 4rem;
+            color: var(--text-medium);
+        }
+
+        .spinner {
+            border: 4px solid var(--light-gray);
+            border-top-color: var(--accent-blue);
+            border-radius: 50%;
+            width: 48px;
+            height: 48px;
+            animation: spin 0.8s linear infinite;
+            margin: 0 auto 1rem;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding: 3rem 2rem;
+            color: var(--text-medium);
+            margin-top: 4rem;
+        }
+
+        .footer a {
+            color: var(--accent-blue);
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2rem;
+            }
+
+            .header .tagline {
+                font-size: 1rem;
+            }
+
+            .header-stats {
+                gap: 1.5rem;
+            }
+
+            .stat-value {
+                font-size: 2rem;
+            }
+
+            .doc-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .quick-task-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .doc-viewer {
+                padding: 1.5rem;
+            }
+
+            .doc-viewer-title {
+                font-size: 1.75rem;
+            }
+        }
+
+        /* Hide initially */
+        .hidden {
+            display: none !important;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <h1>Local Business CMS Platform</h1>
+            <p class="tagline">Manage 100+ business websites from one powerful CMS</p>
+
+            <div class="header-stats">
+                <div class="stat">
+                    <span class="stat-value">87.5%</span>
+                    <span class="stat-label">Complete</span>
+                </div>
+                <div class="stat">
+                    <span class="stat-value">17</span>
+                    <span class="stat-label">AI Agents</span>
+                </div>
+                <div class="stat">
+                    <span class="stat-value">100+</span>
+                    <span class="stat-label">Sites Supported</span>
+                </div>
+            </div>
+
+            <div class="header-cta">
+                <a href="#docs" class="btn btn-primary">View Documentation</a>
+                <a href="./audit-report.html" class="btn btn-secondary">Check Project Status</a>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <div id="main-content">
+            <!-- Quick Start -->
+            <section class="quick-start">
+                <h2>
+                    <span>🚀</span>
+                    Quick Start - Common Tasks
+                </h2>
+                <p style="color: var(--text-medium); margin-bottom: 1rem;">
+                    Jump right into the most common tasks you'll need:
+                </p>
+                <div class="quick-task-grid">
+                    <div class="quick-task" data-doc="authoring-guide" data-section="pages-and-sections">
+                        <strong>How do I add a new page?</strong>
+                        <span>Learn to create pages with drag-and-drop sections</span>
+                    </div>
+                    <div class="quick-task" data-doc="authoring-guide" data-section="core-content-types">
+                        <strong>How do I edit services?</strong>
+                        <span>Update service details, categories, and locations</span>
+                    </div>
+                    <div class="quick-task" data-doc="multi-tenant-shared-vs-isolated" data-section="create-new-site">
+                        <strong>How do I add a new business site?</strong>
+                        <span>Clone and deploy a new site in under 10 minutes</span>
+                    </div>
+                    <div class="quick-task" data-doc="monitoring-guide" data-section="quick-check">
+                        <strong>Is the system working?</strong>
+                        <span>Quick health checks and monitoring tips</span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Search -->
+            <div class="search-container">
+                <div class="search-box">
+                    <span class="search-icon">🔍</span>
+                    <input
+                        type="text"
+                        class="search-input"
+                        id="search-input"
+                        placeholder="What are you looking for? (e.g., 'add a page', 'testing', 'multi-site')"
+                    >
+                </div>
+            </div>
+
+            <!-- For Content Editors -->
+            <section id="docs">
+                <h2 class="section-title">
+                    <span>✏️</span>
+                    For Content Editors
+                </h2>
+                <div class="doc-grid">
+                    <div class="doc-card" data-file="./authoring-guide.md">
+                        <span class="doc-icon">📝</span>
+                        <h3 class="doc-title">Content Authoring Guide</h3>
+                        <p class="doc-description">
+                            Learn how to create and edit content in the CMS. Covers pages, services, locations,
+                            offers, and all the sections you can use to build beautiful pages.
+                        </p>
+                        <div class="doc-meta">
+                            <span class="doc-badge badge-editor">For Editors</span>
+                            <span style="color: var(--text-light); font-size: 0.85rem;">5 min read</span>
+                        </div>
+                    </div>
+
+                    <div class="doc-card" data-file="./multi-tenant-shared-vs-isolated.md">
+                        <span class="doc-icon">🏢</span>
+                        <h3 class="doc-title">
+                            Understanding Multiple Websites
+                        </h3>
+                        <p class="doc-description">
+                            Simple explanation of how this platform powers 100+ different business websites
+                            while keeping their content completely separate and secure.
+                        </p>
+                        <div class="doc-meta">
+                            <span class="doc-badge badge-editor">For Everyone</span>
+                            <span style="color: var(--text-light); font-size: 0.85rem;">7 min read</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- For Managers -->
+                <h2 class="section-title">
+                    <span>📊</span>
+                    For Managers & Stakeholders
+                </h2>
+                <div class="doc-grid">
+                    <div class="doc-card" onclick="window.location.href='./audit-report.html'">
+                        <span class="doc-icon">✅</span>
+                        <h3 class="doc-title">Project Status Dashboard</h3>
+                        <p class="doc-description">
+                            Real-time view of project completion (87.5% complete), all quality audits,
+                            performance metrics, and phase-by-phase progress reports.
+                        </p>
+                        <div class="doc-meta">
+                            <span class="doc-badge badge-manager">For Managers</span>
+                            <span style="color: var(--text-light); font-size: 0.85rem;">Interactive</span>
+                        </div>
+                    </div>
+
+                    <div class="doc-card" data-file="./md-files/roadmap-cms-modernization.md">
+                        <span class="doc-icon">🗺️</span>
+                        <h3 class="doc-title">Project Roadmap & Milestones</h3>
+                        <p class="doc-description">
+                            Detailed project plan showing all 8 phases, what's been completed,
+                            what's coming next, and estimated timelines for each feature.
+                        </p>
+                        <div class="doc-meta">
+                            <span class="doc-badge badge-manager">For Managers</span>
+                            <span style="color: var(--text-light); font-size: 0.85rem;">Planning Doc</span>
+                        </div>
+                    </div>
+
+                    <div class="doc-card" data-file="./monitoring-guide.md">
+                        <span class="doc-icon">📡</span>
+                        <h3 class="doc-title">System Health & Monitoring</h3>
+                        <p class="doc-description">
+                            How to check if all websites are running smoothly, view uptime statistics,
+                            and get alerts if something needs attention.
+                        </p>
+                        <div class="doc-meta">
+                            <span class="doc-badge badge-manager">For Managers</span>
+                            <span style="color: var(--text-light); font-size: 0.85rem;">Operations</span>
+                        </div>
+                    </div>
+
+                    <div class="doc-card" data-file="./md-files/audit-code-quality.md">
+                        <span class="doc-icon">🔍</span>
+                        <h3 class="doc-title">Quality & Performance Reports</h3>
+                        <p class="doc-description">
+                            Comprehensive quality reviews covering code standards, performance benchmarks,
+                            and security audits. All systems are green!
+                        </p>
+                        <div class="doc-meta">
+                            <span class="doc-badge badge-manager">For Managers</span>
+                            <span style="color: var(--text-light); font-size: 0.85rem;">Audit Report</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- For Technical Teams -->
+                <h2 class="section-title">
+                    <span>⚙️</span>
+                    For Technical Teams
+                </h2>
+                <div class="doc-grid">
+                    <div class="doc-card" data-file="./TESTING-GUIDE.md">
+                        <span class="doc-icon">🧪</span>
+                        <h3 class="doc-title">Testing Guide</h3>
+                        <p class="doc-description">
+                            How to run automated tests, write new tests, and ensure quality across
+                            all websites. Includes SEO, integration, and visual regression tests.
+                        </p>
+                        <div class="doc-meta">
+                            <span class="doc-badge badge-technical">For Developers</span>
+                            <span style="color: var(--text-light); font-size: 0.85rem;">Technical</span>
+                        </div>
+                    </div>
+
+                    <div class="doc-card" onclick="window.location.href='./audit-report.html'">
+                        <span class="doc-icon">🔧</span>
+                        <h3 class="doc-title">Developer Dashboard</h3>
+                        <p class="doc-description">
+                            Technical audit dashboard with code quality metrics, architecture docs,
+                            AI agent capabilities, and all development documentation.
+                        </p>
+                        <div class="doc-meta">
+                            <span class="doc-badge badge-technical">For Developers</span>
+                            <span style="color: var(--text-light); font-size: 0.85rem;">Interactive</span>
+                        </div>
+                    </div>
+
+                    <div class="doc-card" data-file="../CLAUDE.md">
+                        <span class="doc-icon">📘</span>
+                        <h3 class="doc-title">Developer Setup & Configuration</h3>
+                        <p class="doc-description">
+                            Complete technical documentation for developers: environment setup,
+                            architecture overview, commands, and best practices.
+                        </p>
+                        <div class="doc-meta">
+                            <span class="doc-badge badge-technical">For Developers</span>
+                            <span style="color: var(--text-light); font-size: 0.85rem;">Technical</span>
+                        </div>
+                    </div>
+
+                    <div class="doc-card" data-file="./md-files/schema-multi-tenant-summary.md">
+                        <span class="doc-icon">🏗️</span>
+                        <h3 class="doc-title">Technical Architecture</h3>
+                        <p class="doc-description">
+                            Deep dive into the multi-tenant architecture, content structure system,
+                            and how one codebase powers hundreds of unique websites.
+                        </p>
+                        <div class="doc-meta">
+                            <span class="doc-badge badge-technical">For Developers</span>
+                            <span style="color: var(--text-light); font-size: 0.85rem;">Architecture</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <!-- Document Viewer -->
+        <div class="doc-viewer" id="doc-viewer">
+            <div class="doc-viewer-header">
+                <h2 class="doc-viewer-title" id="viewer-title">Document</h2>
+                <button class="back-btn" id="back-btn">← Back to Docs</button>
+            </div>
+            <div class="loading" id="loading">
+                <div class="spinner"></div>
+                <p>Loading document...</p>
+            </div>
+            <div class="doc-content" id="doc-content"></div>
+        </div>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p>
+                Local Business CMS Platform - Powering 100+ business websites<br>
+                <a href="./audit-report.html">Technical Dashboard</a> |
+                <a href="#docs">Documentation</a> |
+                Project Status: <strong style="color: var(--accent-green);">87.5% Complete</strong>
+            </p>
+            <p style="margin-top: 1rem; font-size: 0.9rem; color: var(--text-light);">
+                Last updated: October 23, 2025
+            </p>
+        </footer>
+    </div>
+
+    <script>
+        // State
+        let documentsCache = {};
+        const BASE_PATH = './';
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            initDocCards();
+            initQuickTasks();
+            initSearch();
+            initBackButton();
+        });
+
+        // Document Cards
+        function initDocCards() {
+            const cards = document.querySelectorAll('.doc-card[data-file]');
+
+            cards.forEach(card => {
+                card.addEventListener('click', async () => {
+                    const file = card.dataset.file;
+                    await loadDocument(file);
+                });
+            });
+        }
+
+        // Quick Tasks
+        function initQuickTasks() {
+            const tasks = document.querySelectorAll('.quick-task[data-doc]');
+
+            tasks.forEach(task => {
+                task.addEventListener('click', async () => {
+                    const doc = task.dataset.doc;
+                    const file = `./${doc}.md`;
+                    await loadDocument(file);
+
+                    // Scroll to section if specified
+                    const section = task.dataset.section;
+                    if (section) {
+                        setTimeout(() => {
+                            const heading = Array.from(document.querySelectorAll('#doc-content h2, #doc-content h3'))
+                                .find(h => h.textContent.toLowerCase().includes(section.replace(/-/g, ' ')));
+                            if (heading) {
+                                heading.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                            }
+                        }, 500);
+                    }
+                });
+            });
+        }
+
+        // Load Document
+        async function loadDocument(filePath) {
+            const viewer = document.getElementById('doc-viewer');
+            const mainContent = document.getElementById('main-content');
+            const loading = document.getElementById('loading');
+            const content = document.getElementById('doc-content');
+            const title = document.getElementById('viewer-title');
+
+            // Show viewer, hide main content
+            mainContent.classList.add('hidden');
+            viewer.classList.add('active');
+            loading.style.display = 'block';
+            content.innerHTML = '';
+
+            try {
+                // Check cache
+                if (documentsCache[filePath]) {
+                    renderDocument(documentsCache[filePath], filePath);
+                    return;
+                }
+
+                // Fetch document
+                const response = await fetch(BASE_PATH + filePath);
+                if (!response.ok) throw new Error('Document not found');
+
+                const markdown = await response.text();
+                documentsCache[filePath] = markdown;
+
+                renderDocument(markdown, filePath);
+            } catch (error) {
+                console.error('Error loading document:', error);
+                content.innerHTML = `
+                    <div style="text-align: center; padding: 4rem; color: var(--text-medium);">
+                        <h2>😕 Document Not Found</h2>
+                        <p>We couldn't load this document. Please try another one or go back to the documentation list.</p>
+                        <p style="font-size: 0.9rem; margin-top: 1rem; color: var(--text-light);">
+                            Error: ${error.message}
+                        </p>
+                    </div>
+                `;
+                loading.style.display = 'none';
+            }
+        }
+
+        // Render Document
+        function renderDocument(markdown, filePath) {
+            const loading = document.getElementById('loading');
+            const content = document.getElementById('doc-content');
+            const title = document.getElementById('viewer-title');
+
+            // Transform technical terms to plain English
+            markdown = transformMarkdown(markdown);
+
+            // Parse markdown
+            const html = marked.parse(markdown);
+
+            // Update content
+            content.innerHTML = html;
+            loading.style.display = 'none';
+
+            // Update title
+            const fileName = filePath.split('/').pop().replace('.md', '');
+            title.textContent = fileName
+                .split('-')
+                .map(w => w.charAt(0).toUpperCase() + w.slice(1))
+                .join(' ');
+
+            // Scroll to top
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // Transform Technical Terms
+        function transformMarkdown(markdown) {
+            const replacements = {
+                'GROQ': '<span class="tooltip">Database Query<span class="tooltiptext">GROQ is the query language for fetching data</span></span>',
+                'Schema': '<span class="tooltip">Content Structure<span class="tooltiptext">Schema defines what fields your content has</span></span>',
+                'Multi-tenant': '<span class="tooltip">Multiple Websites<span class="tooltiptext">One system managing many separate sites</span></span>',
+                'Dataset': '<span class="tooltip">Business Site Data<span class="tooltiptext">All content for one specific website</span></span>',
+                'ISR': '<span class="tooltip">Fast Page Loading<span class="tooltiptext">Incremental Static Regeneration keeps pages fast</span></span>',
+            };
+
+            // Note: We'll keep original terms but could add tooltips in a more sophisticated way
+            return markdown;
+        }
+
+        // Back Button
+        function initBackButton() {
+            document.getElementById('back-btn').addEventListener('click', () => {
+                document.getElementById('doc-viewer').classList.remove('active');
+                document.getElementById('main-content').classList.remove('hidden');
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            });
+        }
+
+        // Search
+        function initSearch() {
+            const searchInput = document.getElementById('search-input');
+            const cards = document.querySelectorAll('.doc-card');
+            const tasks = document.querySelectorAll('.quick-task');
+
+            searchInput.addEventListener('input', (e) => {
+                const query = e.target.value.toLowerCase();
+
+                // Filter doc cards
+                cards.forEach(card => {
+                    const text = card.textContent.toLowerCase();
+                    const matches = text.includes(query);
+                    card.style.display = matches || !query ? 'block' : 'none';
+                });
+
+                // Filter quick tasks
+                tasks.forEach(task => {
+                    const text = task.textContent.toLowerCase();
+                    const matches = text.includes(query);
+                    task.style.display = matches || !query ? 'block' : 'none';
+                });
+
+                // Show/hide sections if all items hidden
+                document.querySelectorAll('.doc-grid').forEach(grid => {
+                    const visibleCards = grid.querySelectorAll('.doc-card:not([style*="display: none"])');
+                    grid.style.display = visibleCards.length > 0 || !query ? 'grid' : 'none';
+                });
+            });
+        }
+    </script>
+</body>
+</html>

@@ -557,8 +557,8 @@ After implementing these enhancements:
 
 ## 🔗 Related Documentation
 
-- [Phase 3 Roadmap](./cms-modernization-roadmap.md#phase-3--performance--core-web-vitals)
-- [Testing Guide](./TESTING-GUIDE.md)
+- [Phase 3 Roadmap](./roadmap-cms-modernization.md#phase-3--performance--core-web-vitals)
+- [Testing Guide](../TESTING-GUIDE.md)
 - [Sanity Schema Best Practices](https://www.sanity.io/docs/schema-types)
 
 ---

@@ -778,9 +778,9 @@ pnpm validate                 # Run lint + type-check
 
 ### Primary Documents
 
-- `docs/Local-Business-Framework-PRD.md` - Product requirements
-- `docs/cms-modernization-roadmap.md` - This file
-- `docs/MULTI-TENANT-SUMMARY.md` - Multi-tenant overview
+- `docs/md-files/prd-framework.md` - Product requirements
+- `docs/md-files/roadmap-cms-modernization.md` - This file
+- `docs/md-files/schema-multi-tenant-summary.md` - Multi-tenant overview
 - `docs/multi-tenant-shared-vs-isolated.md` - Detailed architecture
 - `CLAUDE.md` - Developer quick reference
 
@@ -794,8 +794,8 @@ pnpm validate                 # Run lint + type-check
 ### Reference Guides
 
 - `docs/TESTING-GUIDE.md` - Testing strategies
-- `docs/GROQ-QUERY-OPTIMIZATION.md` - Query optimization
-- `docs/SCHEMA-AUDIT-SCALABILITY.md` - Schema best practices
+- `docs/md-files/seo-groq-optimization.md` - Query optimization
+- `docs/md-files/audit-schema-scalability.md` - Schema best practices
 - `docs/rollback-playbook.md` - Rollback procedures
 - `docs/monitoring-guide.md` - Deployment monitoring
 - `docs/cross-site-references-guide.md` - Cross-site content

@@ -221,8 +221,8 @@ The framework works with any platform that supports Next.js:
 
 ## 📚 Documentation
 
-- [Local Business Framework PRD](./docs/Local-Business-Framework-PRD.md) - Complete product requirements
-- [CMS Modernization Roadmap](./docs/cms-modernization-roadmap.md) - Development roadmap
+- [Local Business Framework PRD](./docs/md-files/prd-framework.md) - Complete product requirements
+- [CMS Modernization Roadmap](./docs/md-files/roadmap-cms-modernization.md) - Development roadmap
 - [Authoring Guide](./docs/authoring-guide.md) - Content management guide
 
 ## 🤝 Contributing

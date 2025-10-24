@@ -214,7 +214,7 @@ npx sanity cors add http://localhost:3001 --credentials
 ## Related Documentation
 
 - [Testing Guide](./TESTING-GUIDE.md) - Running tests on port 3001
-- [Placeholder URLs](./PLACEHOLDER-URLS.md) - URL configuration details
+- [Placeholder URLs](./md-files/studio-ux-placeholder-urls.md) - URL configuration details
 - [Phase 4 Progress](./phase-4-progress.md) - Testing infrastructure setup
 
 ---

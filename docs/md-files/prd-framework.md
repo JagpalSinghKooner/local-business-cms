@@ -660,9 +660,9 @@ pnpm sanitize:types           # Regenerate types from schema
 
 ### B. Documentation
 
-- `docs/MULTI-TENANT-SUMMARY.md` - Multi-tenant architecture overview
+- `docs/md-files/schema-multi-tenant-summary.md` - Multi-tenant architecture overview
 - `docs/multi-tenant-shared-vs-isolated.md` - Detailed shared vs isolated guide
-- `docs/cms-modernization-roadmap.md` - Implementation roadmap
+- `docs/md-files/roadmap-cms-modernization.md` - Implementation roadmap
 - `CLAUDE.md` - Developer quick reference
 
 ### C. Support
