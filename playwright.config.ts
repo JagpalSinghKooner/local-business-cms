@@ -1,4 +1,4 @@
-import { defineConfig, devices } from '@playwright/test';
+import { defineConfig, devices } from '@playwright/test'
 
 /**
  * @see https://playwright.dev/docs/test-configuration
@@ -22,7 +22,14 @@ export default defineConfig({
 
     /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
     trace: 'on-first-retry',
+
+    /* Screenshot configuration for visual regression tests */
+    screenshot: 'only-on-failure',
   },
+
+  /* Screenshot settings for visual regression tests */
+  snapshotDir: './e2e/visual/__screenshots__',
+  snapshotPathTemplate: '{snapshotDir}/{testFilePath}/{arg}{ext}',
 
   /* Configure projects for major browsers */
   projects: [
@@ -61,4 +68,4 @@ export default defineConfig({
     stdout: 'pipe',
     stderr: 'pipe',
   },
-});
+})
