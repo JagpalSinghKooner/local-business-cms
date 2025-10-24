@@ -117,7 +117,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       lastModified: page.updatedAt ? new Date(page.updatedAt) : now,
       changeFrequency: 'monthly',
       priority: 0.6,
-      images: imageUrl ? [{ url: imageUrl, caption: page.heroImage?.alt || '' }] : undefined,
+      images: imageUrl ? [imageUrl] : undefined,
     })
   }
 
@@ -131,7 +131,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       lastModified,
       changeFrequency: 'weekly',
       priority: 0.8,
-      images: imageUrl ? [{ url: imageUrl, caption: service.heroImage?.alt || '' }] : undefined,
+      images: imageUrl ? [imageUrl] : undefined,
     })
 
     // Service + Location combinations - HIGHEST PRIORITY for local SEO
@@ -147,14 +147,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
           lastModified: locationUpdated > lastModified ? locationUpdated : lastModified,
           changeFrequency: 'weekly',
           priority: 0.85, // Higher than single pages for local SEO
-          images: combinedImageUrl
-            ? [
-                {
-                  url: combinedImageUrl,
-                  caption: service.heroImage?.alt || location.heroImage?.alt || '',
-                },
-              ]
-            : undefined,
+          images: combinedImageUrl ? [combinedImageUrl] : undefined,
         })
       }
     }
@@ -169,7 +162,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       lastModified: location.updatedAt ? new Date(location.updatedAt) : now,
       changeFrequency: 'weekly',
       priority: 0.8,
-      images: imageUrl ? [{ url: imageUrl, caption: location.heroImage?.alt || '' }] : undefined,
+      images: imageUrl ? [imageUrl] : undefined,
     })
   }
 
