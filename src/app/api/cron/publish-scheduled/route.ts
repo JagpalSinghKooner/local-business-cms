@@ -17,7 +17,7 @@ import { WORKFLOW_STATES } from '@/sanity/schemaTypes/objects/workflowState'
 
 const projectId = process.env.NEXT_PUBLIC_SANITY_PROJECT_ID!
 const dataset = process.env.NEXT_PUBLIC_SANITY_DATASET!
-const token = process.env.SANITY_API_TOKEN
+const token = process.env.SANITY_API_WRITE_TOKEN || process.env.SANITY_API_TOKEN
 
 // Security: Require cron secret to prevent unauthorized access
 const CRON_SECRET = process.env.CRON_SECRET || 'your-secret-key-here'

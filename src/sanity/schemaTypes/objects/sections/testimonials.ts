@@ -1,10 +1,13 @@
 import { defineArrayMember, defineField, defineType } from 'sanity'
 import { sectionBaseFields } from './shared'
+import { Quote } from 'lucide-react'
+import TestimonialPreviewCard from '../../../components/previews/TestimonialPreviewCard'
 
 export default defineType({
   name: 'section.testimonials',
   title: 'Testimonials',
   type: 'object',
+  icon: Quote,
   fields: [
     defineField({ name: 'title', title: 'Title', type: 'string' }),
     defineField({
@@ -36,12 +39,13 @@ export default defineType({
     ...sectionBaseFields,
   ],
   preview: {
-    select: { title: 'title', count: 'testimonials.length' },
-    prepare({ title, count }) {
-      return {
-        title: title || 'Testimonials',
-        subtitle: count ? `${count} testimonial${count === 1 ? '' : 's'}` : 'Testimonials',
-      }
-    },
+    select: {
+      title: 'title',
+      description: 'description',
+      testimonials: 'testimonials',
+      layout: 'style',
+    },  },
+  components: {
+    preview: TestimonialPreviewCard as any,
   },
 })

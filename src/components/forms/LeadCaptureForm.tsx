@@ -1,8 +1,9 @@
 'use client'
 
-import { useFormStatus } from 'react-dom'
-import { useActionState, useEffect, useState } from 'react'
-import { submitLead, initialLeadState, type LeadFormState } from '@/app/actions/createLead'
+import { useFormStatus, useFormState } from 'react-dom'
+import { useEffect, useState } from 'react'
+import { submitLead } from '@/app/actions/createLead'
+import { initialLeadState, type LeadFormState } from '@/app/actions/leadFormTypes'
 
 type LeadCaptureFormProps = {
   defaultService?: string
@@ -28,7 +29,7 @@ export default function LeadCaptureForm({
   pagePath,
   businessName,
 }: LeadCaptureFormProps) {
-  const [state, formAction] = useActionState<LeadFormState, FormData>(submitLead, initialLeadState)
+  const [state, formAction] = useFormState<LeadFormState, FormData>(submitLead, initialLeadState)
   const [formReady, setFormReady] = useState(false)
 
   useEffect(() => {

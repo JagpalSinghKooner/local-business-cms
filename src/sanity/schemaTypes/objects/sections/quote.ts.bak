@@ -1,0 +1,73 @@
+import { defineField, defineType } from 'sanity'
+import { sectionBaseFields } from './shared'
+import { MessageSquareQuote } from 'lucide-react'
+import QuotePreviewCard from '../../../components/previews/QuotePreviewCard'
+
+export default defineType({
+  name: 'section.quote',
+  title: 'Quote',
+  type: 'object',
+  icon: MessageSquareQuote,
+  fields: [
+    defineField({ name: 'eyebrow', title: 'Eyebrow', type: 'string' }),
+    defineField({
+      name: 'quote',
+      title: 'Quote',
+      type: 'text',
+      rows: 4,
+      validation: (rule) => rule.required(),
+    }),
+    defineField({
+      name: 'author',
+      title: 'Author',
+      type: 'string',
+      validation: (rule) => rule.required(),
+    }),
+    defineField({ name: 'role', title: 'Author Title / Role', type: 'string' }),
+    defineField({
+      name: 'company',
+      title: 'Company',
+      type: 'string',
+    }),
+    defineField({
+      name: 'avatar',
+      title: 'Author Photo',
+      type: 'image',
+      options: { hotspot: true },
+    }),
+    defineField({
+      name: 'logo',
+      title: 'Company Logo',
+      type: 'image',
+      options: { hotspot: true },
+    }),
+    defineField({
+      name: 'alignment',
+      title: 'Layout',
+      type: 'string',
+      initialValue: 'center',
+      options: {
+        list: [
+          { title: 'Center', value: 'center' },
+          { title: 'Left', value: 'left' },
+        ],
+        layout: 'radio',
+      },
+    }),
+    defineField({
+      name: 'cta',
+      title: 'Optional CTA',
+      type: 'cta',
+    }),
+    ...sectionBaseFields,
+  ],
+  preview: {
+    select: {
+      quote: 'quote',
+      author: 'author',
+      role: 'role',
+    },
+    // @ts-ignore
+    component: QuotePreviewCard,
+  },
+})

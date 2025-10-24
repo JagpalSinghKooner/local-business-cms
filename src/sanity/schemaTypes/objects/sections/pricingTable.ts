@@ -1,10 +1,13 @@
 import { defineArrayMember, defineField, defineType } from 'sanity'
 import { sectionBaseFields } from './shared'
+import { DollarSign } from 'lucide-react'
+import PricingTablePreviewCard from '../../../components/previews/PricingTablePreviewCard'
 
 export default defineType({
   name: 'section.pricingTable',
   title: 'Pricing Table',
   type: 'object',
+  icon: DollarSign,
   fields: [
     defineField({ name: 'eyebrow', title: 'Eyebrow', type: 'string' }),
     defineField({
@@ -88,11 +91,14 @@ export default defineType({
             }),
           ],
           preview: {
-            select: { title: 'title', subtitle: 'price' },
-            prepare({ title, subtitle }) {
-              return { title: title || 'Pricing plan', subtitle: subtitle || 'Plan' }
-            },
-          },
+    select: {
+      title: 'title',
+      description: 'description',
+      plans: 'plans',
+    },  },
+  components: {
+    preview: PricingTablePreviewCard as any,
+  },
         }),
       ],
     }),

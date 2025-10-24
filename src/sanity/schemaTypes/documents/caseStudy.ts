@@ -55,7 +55,7 @@ export default defineType({
       type: 'array',
       of: [{ type: 'reference', to: [{ type: 'service' }] }],
     }),
-    defineField({ name: 'seo', type: 'seo' }),
+    defineField({ name: 'seo', type: 'seoUnified' }),
     defineField({
       name: 'schemaVersion',
       type: 'string',

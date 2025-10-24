@@ -1,10 +1,13 @@
 import { defineField, defineType } from 'sanity'
 import { sectionBaseFields } from './shared'
+import { MessageSquareQuote } from 'lucide-react'
+import QuotePreviewCard from '../../../components/previews/QuotePreviewCard'
 
 export default defineType({
   name: 'section.quote',
   title: 'Quote',
   type: 'object',
+  icon: MessageSquareQuote,
   fields: [
     defineField({ name: 'eyebrow', title: 'Eyebrow', type: 'string' }),
     defineField({
@@ -59,12 +62,12 @@ export default defineType({
     ...sectionBaseFields,
   ],
   preview: {
-    select: { title: 'author', subtitle: 'company' },
-    prepare({ title, subtitle }) {
-      return {
-        title: title || 'Quote',
-        subtitle: subtitle || 'Testimonial quote',
-      }
-    },
+    select: {
+      quote: 'quote',
+      author: 'author',
+      role: 'role',
+    },  },
+  components: {
+    preview: QuotePreviewCard as any,
   },
 })

@@ -3,6 +3,7 @@
 import { cookies } from 'next/headers'
 import { z } from 'zod'
 import { writeClient } from '@/sanity/writeClient'
+import type { LeadFormState } from './leadFormTypes'
 
 const RATE_LIMIT_COOKIE = 'lead-last-submission'
 const RATE_LIMIT_WINDOW_MS = 60 * 1000
@@ -15,14 +16,6 @@ const leadSchema = z.object({
   message: z.string().optional(),
   page: z.string().optional(),
 })
-
-export type LeadFormState = {
-  status: 'idle' | 'success' | 'error' | 'validation-error' | 'disabled'
-  message?: string
-  fieldErrors?: Record<string, string>
-}
-
-export const initialLeadState: LeadFormState = { status: 'idle' }
 
 export async function submitLead(_: LeadFormState, formData: FormData): Promise<LeadFormState> {
   const honeypot = formData.get('company')?.toString() ?? ''

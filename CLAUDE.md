@@ -62,6 +62,13 @@ pnpm deploy-schema-all                # Deploy schema to ALL datasets
 pnpm deploy-schema-all --dry-run      # Preview schema deployment
 ```
 
+### ServiceLocation Auto-Generation
+```bash
+pnpm generate:service-locations           # Generate ALL service×location combinations
+pnpm generate:service-locations:dry-run   # Preview what will be created (no changes)
+```
+**Note**: You can also trigger generation from Sanity Studio by clicking the "Generate Service+Location Pages" button (🔄 icon) in any Service or Location document.
+
 ### Testing
 ```bash
 pnpm test:seo              # Run all SEO tests
@@ -238,19 +245,47 @@ The system supports gradual migration:
 3. Legacy combinations remain as fallbacks
 4. No breaking changes to existing URLs
 
-**Example Workflow**:
+**Auto-Generation Workflow** (RECOMMENDED):
+ServiceLocation documents are automatically generated, eliminating manual mapping:
+
+**Option 1: From Studio (Per Service/Location)**
+1. Open any Service or Location document in Studio
+2. Click "Generate Service+Location Pages" button (🔄 icon in actions menu)
+3. System auto-generates all combinations for that service/location
+4. Shows summary: "✅ Created X new serviceLocation pages!"
+
+**Option 2: Bulk Generation Script (All Combinations)**
+```bash
+# Preview what will be created (dry run)
+pnpm generate:service-locations:dry-run
+
+# Generate all service×location combinations
+pnpm generate:service-locations
+```
+
+**What Gets Auto-Generated**:
+- Title: `{Service} in {City}`
+- Slug: `{service-slug}-{location-slug}` (auto-combined)
+- References: Links to parent service and location documents
+- Content Source: `inherit` (uses parent service sections by default)
+- Published Date: Current timestamp
+
+**After Auto-Generation**:
+1. Navigate to Services → Service + Location Pages in Studio
+2. Find the auto-generated document
+3. Customize intro text (first 155 chars become meta description)
+4. Switch contentSource to "custom" and add unique sections
+5. Override SEO fields if needed
+
+Result: `/services/{service}-{city}` is live immediately with inherited content, ready for customization.
+
+**Manual Creation Workflow** (Edge Cases):
+Use manual creation only for non-standard combinations:
 1. Navigate to Services → Service + Location Pages in Studio
 2. Click "Create" button
-3. Select service (e.g., "Plumbing")
-4. Select location (e.g., "Toronto")
-5. Slug auto-generates as "plumbing-toronto"
-6. Write custom intro (first 155 chars become meta description)
-7. Add modular sections (testimonials, FAQs, offers, etc.)
-8. Set contentSource to "custom" or "inherit"
-9. Override SEO fields if needed
-10. Publish
-
-Result: `/services/plumbing-toronto` now renders your custom content with elite SEO.
+3. Select service and location references
+4. Slug auto-generates (or customize if needed)
+5. Add custom content and SEO overrides
 
 ## Important File Locations
 

@@ -1,10 +1,13 @@
 import { defineArrayMember, defineField, defineType } from 'sanity'
 import { sectionBaseFields } from './shared'
+import { Sparkles } from 'lucide-react'
+import HeroPreviewCard from '../../../components/previews/HeroPreviewCard'
 
 export default defineType({
   name: 'section.hero',
   title: 'Hero Section',
   type: 'object',
+  icon: Sparkles,
   fields: [
     defineField({
       name: 'variant',
@@ -63,12 +66,16 @@ export default defineType({
     ...sectionBaseFields,
   ],
   preview: {
-    select: { title: 'heading', subtitle: 'variant' },
-    prepare({ title, subtitle }) {
-      return {
-        title: title || 'Hero Section',
-        subtitle: subtitle ? `Hero • ${subtitle}` : 'Hero Section',
-      }
+    select: {
+      eyebrow: 'eyebrow',
+      heading: 'heading',
+      subheading: 'subheading',
+      variant: 'variant',
+      media: 'media',
+      ctas: 'ctas',
     },
+  },
+  components: {
+    preview: HeroPreviewCard as any,
   },
 })

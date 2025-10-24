@@ -1,0 +1,51 @@
+import { defineArrayMember, defineField, defineType } from 'sanity'
+import { sectionBaseFields } from './shared'
+import { MapPin } from 'lucide-react'
+import LocationsPreviewCard from '../../../components/previews/LocationsPreviewCard'
+
+export default defineType({
+  name: 'section.locations',
+  title: 'Locations Grid',
+  type: 'object',
+  icon: MapPin,
+  fields: [
+    defineField({
+      name: 'title',
+      title: 'Title',
+      type: 'string',
+      validation: (rule) => rule.required(),
+    }),
+    defineField({
+      name: 'description',
+      title: 'Intro Copy',
+      type: 'text',
+      rows: 3,
+    }),
+    defineField({
+      name: 'locations',
+      title: 'Locations',
+      type: 'array',
+      of: [defineArrayMember({ type: 'reference', to: [{ type: 'location' }] })],
+      description: 'Leave empty to display all locations.',
+    }),
+    defineField({
+      name: 'columns',
+      title: 'Columns',
+      type: 'number',
+      initialValue: 3,
+      validation: (rule) => rule.min(1).max(4),
+    }),
+    ...sectionBaseFields,
+  ],
+  preview: {
+    select: {
+      title: 'title',
+      description: 'description',
+      locations: 'locations',
+      displayAll: 'displayAll',
+      showMap: 'showMap',
+    },
+    // @ts-ignore
+    component: LocationsPreviewCard,
+  },
+})

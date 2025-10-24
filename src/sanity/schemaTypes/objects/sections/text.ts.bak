@@ -1,0 +1,47 @@
+import { defineField, defineType } from 'sanity'
+import { sectionBaseFields } from './shared'
+import { FileText } from 'lucide-react'
+import TextPreviewCard from '../../../components/previews/TextPreviewCard'
+
+export default defineType({
+  name: 'section.text',
+  title: 'Text Block',
+  type: 'object',
+  icon: FileText,
+  fields: [
+    defineField({ name: 'eyebrow', title: 'Eyebrow', type: 'string' }),
+    defineField({
+      name: 'heading',
+      title: 'Heading',
+      type: 'string',
+    }),
+    defineField({
+      name: 'body',
+      title: 'Body',
+      type: 'richText',
+    }),
+    defineField({
+      name: 'alignment',
+      title: 'Alignment',
+      type: 'string',
+      options: {
+        list: [
+          { title: 'Left', value: 'left' },
+          { title: 'Center', value: 'center' },
+        ],
+        layout: 'radio',
+      },
+      initialValue: 'left',
+    }),
+    ...sectionBaseFields,
+  ],
+  preview: {
+    select: {
+      heading: 'heading',
+      body: 'body',
+      align: 'alignment',
+    },
+    // @ts-ignore
+    component: TextPreviewCard,
+  },
+})

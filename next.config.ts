@@ -40,25 +40,28 @@ const nextConfig: NextConfig = {
   },
 
   async headers() {
+    const isDevelopment = process.env.NODE_ENV === 'development'
+
     return [
       {
+        // Allow all routes to be embedded in Studio iframe for preview
         source: '/:path*',
         headers: [
           {
             key: 'Content-Security-Policy',
             value: [
               "default-src 'self'",
-              "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com https://www.google-analytics.com https://connect.facebook.net",
+              "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com https://www.google-analytics.com https://connect.facebook.net https://core.sanity-cdn.com https://sanity-cdn.com",
               "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
               "img-src 'self' data: https: blob:",
               "font-src 'self' data: https://fonts.gstatic.com",
-              "connect-src 'self' https://*.sanity.io https://api.sanity.io https://www.google-analytics.com",
-              'frame-src https://calendly.com https://app.hubspot.com https://docs.google.com',
+              "connect-src 'self' https://*.sanity.io wss://*.sanity.io https://api.sanity.io https://www.google-analytics.com https://core.sanity-cdn.com https://sanity-cdn.com",
+              "frame-src 'self' https://calendly.com https://app.hubspot.com https://docs.google.com",
+              // Allow embedding in Sanity Studio iframe for preview
+              isDevelopment
+                ? "frame-ancestors *" // Development: Allow all origins
+                : "frame-ancestors 'self' https://*.sanity.studio https://*.vercel.app", // Production: Restricted
             ].join('; '),
-          },
-          {
-            key: 'X-Frame-Options',
-            value: 'SAMEORIGIN',
           },
           {
             key: 'X-Content-Type-Options',

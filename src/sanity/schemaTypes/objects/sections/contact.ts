@@ -1,10 +1,13 @@
 import { defineField, defineType } from 'sanity'
 import { sectionBaseFields } from './shared'
+import { Mail } from 'lucide-react'
+import ContactPreviewCard from '../../../components/previews/ContactPreviewCard'
 
 export default defineType({
   name: 'section.contact',
   title: 'Contact / Lead Capture',
   type: 'object',
+  icon: Mail,
   fields: [
     defineField({
       name: 'eyebrow',
@@ -52,12 +55,13 @@ export default defineType({
     ...sectionBaseFields,
   ],
   preview: {
-    select: { title: 'title', subtitle: 'formType' },
-    prepare({ title, subtitle }) {
-      return {
-        title: title || 'Contact Section',
-        subtitle: subtitle ? `Form: ${subtitle}` : 'Contact Section',
-      }
-    },
+    select: {
+      heading: 'heading',
+      description: 'description',
+      showMap: 'showMap',
+      showContactInfo: 'showContactInfo',
+    },  },
+  components: {
+    preview: ContactPreviewCard as any,
   },
 })

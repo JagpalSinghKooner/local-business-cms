@@ -1,0 +1,46 @@
+import { defineArrayMember, defineField, defineType } from 'sanity'
+import { sectionBaseFields } from './shared'
+import { Tag } from 'lucide-react'
+import OffersPreviewCard from '../../../components/previews/OffersPreviewCard'
+
+export default defineType({
+  name: 'section.offers',
+  title: 'Offers & Coupons',
+  type: 'object',
+  icon: Tag,
+  fields: [
+    defineField({ name: 'title', title: 'Title', type: 'string' }),
+    defineField({
+      name: 'description',
+      title: 'Intro Copy',
+      type: 'text',
+      rows: 3,
+    }),
+    defineField({
+      name: 'offers',
+      title: 'Offers',
+      type: 'array',
+      of: [defineArrayMember({ type: 'reference', to: [{ type: 'offer' }] })],
+      description: 'Leave empty to show all published offers.',
+    }),
+    defineField({
+      name: 'limit',
+      title: 'Max Offers to Show',
+      type: 'number',
+      initialValue: 3,
+      validation: (rule) => rule.min(1).max(12),
+    }),
+    ...sectionBaseFields,
+  ],
+  preview: {
+    select: {
+      title: 'title',
+      description: 'description',
+      offers: 'offers',
+      displayAll: 'displayAll',
+      layout: 'layout',
+    },
+    // @ts-ignore
+    component: OffersPreviewCard,
+  },
+})

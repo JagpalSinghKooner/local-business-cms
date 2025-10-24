@@ -1,10 +1,13 @@
 import { defineArrayMember, defineField, defineType } from 'sanity'
 import { sectionBaseFields } from './shared'
+import { BookOpen } from 'lucide-react'
+import BlogListPreviewCard from '../../../components/previews/BlogListPreviewCard'
 
 export default defineType({
   name: 'section.blogList',
   title: 'Blog List',
   type: 'object',
+  icon: BookOpen,
   fields: [
     defineField({ name: 'eyebrow', title: 'Eyebrow', type: 'string' }),
     defineField({
@@ -87,13 +90,13 @@ export default defineType({
     ...sectionBaseFields,
   ],
   preview: {
-    select: { title: 'heading', mode: 'sourceMode' },
-    prepare({ title, mode }) {
-      const source = mode ? mode.charAt(0).toUpperCase() + mode.slice(1) : 'Latest'
-      return {
-        title: title || 'Blog list',
-        subtitle: `${source} posts`,
-      }
-    },
+    select: {
+      title: 'title',
+      description: 'description',
+      postsToShow: 'postsToShow',
+      showFeaturedFirst: 'showFeaturedFirst',
+    },  },
+  components: {
+    preview: BlogListPreviewCard as any,
   },
 })

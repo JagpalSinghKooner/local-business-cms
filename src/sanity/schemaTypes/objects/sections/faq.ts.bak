@@ -1,0 +1,50 @@
+import { defineArrayMember, defineField, defineType } from 'sanity'
+import { sectionBaseFields } from './shared'
+import { HelpCircle } from 'lucide-react'
+import FaqPreviewCard from '../../../components/previews/FaqPreviewCard'
+
+export default defineType({
+  name: 'section.faq',
+  title: 'FAQ Section',
+  type: 'object',
+  icon: HelpCircle,
+  fields: [
+    defineField({ name: 'title', title: 'Title', type: 'string' }),
+    defineField({
+      name: 'description',
+      title: 'Intro Copy',
+      type: 'text',
+      rows: 2,
+    }),
+    defineField({
+      name: 'faqs',
+      title: 'FAQs',
+      type: 'array',
+      of: [defineArrayMember({ type: 'reference', to: [{ type: 'faq' }] })],
+      validation: (rule) => rule.required().min(1),
+    }),
+    defineField({
+      name: 'display',
+      title: 'Display Style',
+      type: 'string',
+      initialValue: 'accordion',
+      options: {
+        list: [
+          { title: 'Accordion', value: 'accordion' },
+          { title: 'Columns', value: 'columns' },
+        ],
+      },
+    }),
+    ...sectionBaseFields,
+  ],
+  preview: {
+    select: {
+      title: 'title',
+      description: 'description',
+      faqs: 'faqs',
+      display: 'display',
+    },
+    // @ts-ignore
+    component: FaqPreviewCard,
+  },
+})

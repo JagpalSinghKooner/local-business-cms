@@ -1,10 +1,13 @@
 import { defineArrayMember, defineField, defineType } from 'sanity'
 import { sectionBaseFields } from './shared'
+import { Tag } from 'lucide-react'
+import OffersPreviewCard from '../../../components/previews/OffersPreviewCard'
 
 export default defineType({
   name: 'section.offers',
   title: 'Offers & Coupons',
   type: 'object',
+  icon: Tag,
   fields: [
     defineField({ name: 'title', title: 'Title', type: 'string' }),
     defineField({
@@ -30,9 +33,14 @@ export default defineType({
     ...sectionBaseFields,
   ],
   preview: {
-    select: { title: 'title' },
-    prepare({ title }) {
-      return { title: title || 'Offers & Coupons' }
-    },
+    select: {
+      title: 'title',
+      description: 'description',
+      offers: 'offers',
+      displayAll: 'displayAll',
+      layout: 'layout',
+    },  },
+  components: {
+    preview: OffersPreviewCard as any,
   },
 })

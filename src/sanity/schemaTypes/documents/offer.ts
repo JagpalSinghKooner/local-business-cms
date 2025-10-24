@@ -45,7 +45,7 @@ export default defineType({
       type: 'breadcrumbSettings',
       options: { collapsible: true, collapsed: true },
     }),
-    defineField({ name: 'seo', type: 'seo' }),
+    defineField({ name: 'seo', type: 'seoUnified' }),
     defineField({
       name: 'schemaVersion',
       type: 'string',

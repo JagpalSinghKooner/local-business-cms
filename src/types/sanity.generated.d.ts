@@ -820,6 +820,12 @@ Service-specific content for a particular location (e.g., "Plumbing in Toronto")
       _type: "serviceLocation";
 
       /**
+       * Title - `String`
+Auto-generated from service + location (e.g., "Plumbing in Toronto")
+       */
+      title?: string;
+
+      /**
        * Service - `Reference`
 The service being offered
        */
@@ -902,6 +908,12 @@ Display other services available in this location
 Auto-generated from service + location data if left empty. Override for custom SEO.
        */
       seo?: SeoUnified;
+
+      /**
+       * Published At - `Datetime`
+When this serviceLocation page was created
+       */
+      publishedAt?: string;
 
       /**
        * Schema Version - `String`
@@ -1076,7 +1088,7 @@ Internal: tracks schema version for safe migrations
       /**
        * Seo - `RegistryReference`
        */
-      seo?: Seo;
+      seo?: SeoUnified;
 
       /**
        * Schema Version - `String`
@@ -1136,7 +1148,7 @@ Internal: tracks schema version for safe migrations
       /**
        * Seo - `RegistryReference`
        */
-      seo?: Seo;
+      seo?: SeoUnified;
 
       /**
        * Schema Version - `String`

@@ -1,10 +1,13 @@
 import { defineArrayMember, defineField, defineType } from 'sanity'
 import { sectionBaseFields } from './shared'
+import { Zap } from 'lucide-react'
+import FeaturesPreviewCard from '../../../components/previews/FeaturesPreviewCard'
 
 export default defineType({
   name: 'section.features',
   title: 'Feature Grid',
   type: 'object',
+  icon: Zap,
   fields: [
     defineField({ name: 'eyebrow', type: 'string' }),
     defineField({ name: 'title', type: 'string', validation: (rule) => rule.required() }),
@@ -37,9 +40,13 @@ export default defineType({
     ...sectionBaseFields,
   ],
   preview: {
-    select: { title: 'title', count: 'items.length' },
-    prepare({ title, count }) {
-      return { title: title || 'Feature Grid', subtitle: count ? `${count} items` : 'Feature Grid' }
-    },
+    select: {
+      title: 'title',
+      description: 'description',
+      features: 'features',
+      layout: 'layout',
+    },  },
+  components: {
+    preview: FeaturesPreviewCard as any,
   },
 })

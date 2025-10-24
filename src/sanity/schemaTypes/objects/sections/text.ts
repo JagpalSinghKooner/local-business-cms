@@ -1,10 +1,13 @@
 import { defineField, defineType } from 'sanity'
 import { sectionBaseFields } from './shared'
+import { FileText } from 'lucide-react'
+import TextPreviewCard from '../../../components/previews/TextPreviewCard'
 
 export default defineType({
   name: 'section.text',
   title: 'Text Block',
   type: 'object',
+  icon: FileText,
   fields: [
     defineField({ name: 'eyebrow', title: 'Eyebrow', type: 'string' }),
     defineField({
@@ -33,12 +36,13 @@ export default defineType({
     ...sectionBaseFields,
   ],
   preview: {
-    select: { title: 'heading', subtitle: 'eyebrow' },
-    prepare({ title, subtitle }) {
-      return {
-        title: title || 'Text Block',
-        subtitle: subtitle || 'Rich text',
-      }
+    select: {
+      heading: 'heading',
+      body: 'body',
+      align: 'alignment',
     },
+  },
+  components: {
+    preview: TextPreviewCard as any,
   },
 })

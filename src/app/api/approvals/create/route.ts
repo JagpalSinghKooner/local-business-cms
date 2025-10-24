@@ -12,7 +12,7 @@ export const dynamic = 'force-dynamic'
 function verifyAuthorization(request: NextRequest): boolean {
   const authHeader = request.headers.get('authorization')
   const token = authHeader?.replace('Bearer ', '')
-  const apiToken = process.env.SANITY_API_TOKEN
+  const apiToken = process.env.SANITY_API_WRITE_TOKEN || process.env.SANITY_API_TOKEN
 
   if (!apiToken || token !== apiToken) {
     return false

@@ -1,10 +1,13 @@
 import { defineArrayMember, defineField, defineType } from 'sanity'
 import { sectionBaseFields } from './shared'
+import { LayoutTemplate } from 'lucide-react'
+import MediaTextPreviewCard from '../../../components/previews/MediaTextPreviewCard'
 
 export default defineType({
   name: 'section.mediaText',
   title: 'Media & Text',
   type: 'object',
+  icon: LayoutTemplate,
   fields: [
     defineField({ name: 'eyebrow', title: 'Eyebrow', type: 'string' }),
     defineField({ name: 'heading', title: 'Heading', type: 'string' }),
@@ -51,13 +54,13 @@ export default defineType({
     ...sectionBaseFields,
   ],
   preview: {
-    select: { title: 'heading', subtitle: 'eyebrow', media: 'media.image' },
-    prepare({ title, subtitle, media }) {
-      return {
-        title: title || 'Media & Text',
-        subtitle: subtitle || 'Two-column content block',
-        media,
-      }
-    },
+    select: {
+      heading: 'heading',
+      body: 'body',
+      media: 'media',
+      mediaPosition: 'mediaPosition',
+    },  },
+  components: {
+    preview: MediaTextPreviewCard as any,
   },
 })

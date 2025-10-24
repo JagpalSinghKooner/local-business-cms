@@ -13,6 +13,17 @@ export default defineType({
     { name: 'settings', title: 'Settings' },
   ],
   fields: [
+    // Auto-Generated Title
+    defineField({
+      name: 'title',
+      title: 'Title',
+      type: 'string',
+      description: 'Auto-generated from service + location (e.g., "Plumbing in Toronto")',
+      readOnly: true,
+      validation: (rule) => rule.required(),
+      group: 'content',
+    }),
+
     // Core References
     defineField({
       name: 'service',
@@ -184,6 +195,16 @@ export default defineType({
       group: 'seo',
     }),
 
+    // Published Date (for sorting/filtering)
+    defineField({
+      name: 'publishedAt',
+      type: 'datetime',
+      title: 'Published At',
+      description: 'When this serviceLocation page was created',
+      initialValue: () => new Date().toISOString(),
+      group: 'settings',
+    }),
+
     // Internal Schema Version
     defineField({
       name: 'schemaVersion',
@@ -199,18 +220,19 @@ export default defineType({
   // Preview
   preview: {
     select: {
+      title: 'title',
       serviceTitle: 'service.title',
       locationCity: 'location.city',
       slug: 'slug.current',
       contentSource: 'contentSource',
     },
-    prepare({ serviceTitle, locationCity, slug, contentSource }) {
-      const title = `${serviceTitle || '?'} in ${locationCity || '?'}`
+    prepare({ title, serviceTitle, locationCity, slug, contentSource }) {
+      const displayTitle = title || `${serviceTitle || '?'} in ${locationCity || '?'}`
       const subtitle = slug ? `/services/${slug}` : 'No slug generated'
       const sourceLabel = contentSource === 'custom' ? ' [Custom]' : contentSource === 'inherit' ? ' [Inherit]' : ''
 
       return {
-        title: title + sourceLabel,
+        title: displayTitle + sourceLabel,
         subtitle,
       }
     },

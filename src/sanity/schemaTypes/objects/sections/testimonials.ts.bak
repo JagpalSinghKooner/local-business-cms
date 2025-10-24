@@ -1,0 +1,51 @@
+import { defineArrayMember, defineField, defineType } from 'sanity'
+import { sectionBaseFields } from './shared'
+import { Quote } from 'lucide-react'
+import TestimonialPreviewCard from '../../../components/previews/TestimonialPreviewCard'
+
+export default defineType({
+  name: 'section.testimonials',
+  title: 'Testimonials',
+  type: 'object',
+  icon: Quote,
+  fields: [
+    defineField({ name: 'title', title: 'Title', type: 'string' }),
+    defineField({
+      name: 'description',
+      title: 'Intro Copy',
+      type: 'text',
+      rows: 3,
+    }),
+    defineField({
+      name: 'testimonials',
+      title: 'Testimonials',
+      type: 'array',
+      of: [defineArrayMember({ type: 'reference', to: [{ type: 'testimonial' }] })],
+      validation: (rule) => rule.required().min(1),
+    }),
+    defineField({
+      name: 'style',
+      title: 'Layout',
+      type: 'string',
+      initialValue: 'grid',
+      options: {
+        list: [
+          { title: 'Grid', value: 'grid' },
+          { title: 'Carousel', value: 'carousel' },
+        ],
+        layout: 'radio',
+      },
+    }),
+    ...sectionBaseFields,
+  ],
+  preview: {
+    select: {
+      title: 'title',
+      description: 'description',
+      testimonials: 'testimonials',
+      layout: 'style',
+    },
+    // @ts-ignore
+    component: TestimonialPreviewCard,
+  },
+})

@@ -1,10 +1,13 @@
 import { defineArrayMember, defineField, defineType } from 'sanity'
 import { sectionBaseFields } from './shared'
+import { Clock } from 'lucide-react'
+import TimelinePreviewCard from '../../../components/previews/TimelinePreviewCard'
 
 export default defineType({
   name: 'section.timeline',
   title: 'Timeline',
   type: 'object',
+  icon: Clock,
   fields: [
     defineField({ name: 'eyebrow', title: 'Eyebrow', type: 'string' }),
     defineField({
@@ -77,14 +80,14 @@ export default defineType({
             }),
           ],
           preview: {
-            select: { title: 'title', subtitle: 'date' },
-            prepare({ title, subtitle }) {
-              return {
-                title: title || 'Timeline item',
-                subtitle: subtitle || 'Milestone',
-              }
-            },
-          },
+    select: {
+      title: 'title',
+      description: 'description',
+      events: 'events',
+    },  },
+  components: {
+    preview: TimelinePreviewCard as any,
+  },
         }),
       ],
     }),

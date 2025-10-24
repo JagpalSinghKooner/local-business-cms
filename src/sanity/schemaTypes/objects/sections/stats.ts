@@ -1,10 +1,13 @@
 import { defineArrayMember, defineField, defineType } from 'sanity'
 import { sectionBaseFields } from './shared'
+import { TrendingUp } from 'lucide-react'
+import StatsPreviewCard from '../../../components/previews/StatsPreviewCard'
 
 export default defineType({
   name: 'section.stats',
   title: 'Stats Banner',
   type: 'object',
+  icon: TrendingUp,
   fields: [
     defineField({ name: 'title', type: 'string' }),
     defineField({ name: 'description', type: 'text', rows: 2 }),
@@ -33,9 +36,12 @@ export default defineType({
     ...sectionBaseFields,
   ],
   preview: {
-    select: { title: 'title', count: 'items.length' },
-    prepare({ title, count }) {
-      return { title: title || 'Stats', subtitle: count ? `${count} stat${count === 1 ? '' : 's'}` : 'Stats' }
-    },
+    select: {
+      title: 'title',
+      description: 'description',
+      stats: 'stats',
+    },  },
+  components: {
+    preview: StatsPreviewCard as any,
   },
 })

@@ -1,10 +1,13 @@
 import { defineArrayMember, defineField, defineType } from 'sanity'
 import { sectionBaseFields } from './shared'
+import { Wrench } from 'lucide-react'
+import ServicesPreviewCard from '../../../components/previews/ServicesPreviewCard'
 
 export default defineType({
   name: 'section.services',
   title: 'Services Grid',
   type: 'object',
+  icon: Wrench,
   fields: [
     defineField({
       name: 'title',
@@ -55,12 +58,14 @@ export default defineType({
     ...sectionBaseFields,
   ],
   preview: {
-    select: { title: 'title', subtitle: 'display' },
-    prepare({ title, subtitle }) {
-      return {
-        title: title || 'Services Grid',
-        subtitle: subtitle ? `Display: ${subtitle}` : 'Services Grid',
-      }
-    },
+    select: {
+      title: 'title',
+      description: 'description',
+      services: 'services',
+      displayAll: 'displayAll',
+      layout: 'layout',
+    },  },
+  components: {
+    preview: ServicesPreviewCard as any,
   },
 })

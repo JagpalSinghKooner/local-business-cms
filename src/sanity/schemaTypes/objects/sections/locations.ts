@@ -1,10 +1,13 @@
 import { defineArrayMember, defineField, defineType } from 'sanity'
 import { sectionBaseFields } from './shared'
+import { MapPin } from 'lucide-react'
+import LocationsPreviewCard from '../../../components/previews/LocationsPreviewCard'
 
 export default defineType({
   name: 'section.locations',
   title: 'Locations Grid',
   type: 'object',
+  icon: MapPin,
   fields: [
     defineField({
       name: 'title',
@@ -35,12 +38,14 @@ export default defineType({
     ...sectionBaseFields,
   ],
   preview: {
-    select: { title: 'title' },
-    prepare({ title }) {
-      return {
-        title: title || 'Locations Grid',
-        subtitle: 'Locations Section',
-      }
-    },
+    select: {
+      title: 'title',
+      description: 'description',
+      locations: 'locations',
+      displayAll: 'displayAll',
+      showMap: 'showMap',
+    },  },
+  components: {
+    preview: LocationsPreviewCard as any,
   },
 })

@@ -1,10 +1,13 @@
 import { defineArrayMember, defineField, defineType } from 'sanity'
 import { sectionBaseFields } from './shared'
+import { ListOrdered } from 'lucide-react'
+import StepsPreviewCard from '../../../components/previews/StepsPreviewCard'
 
 export default defineType({
   name: 'section.steps',
   title: 'Process Steps',
   type: 'object',
+  icon: ListOrdered,
   fields: [
     defineField({ name: 'title', type: 'string', validation: (rule) => rule.required() }),
     defineField({ name: 'description', type: 'text', rows: 3 }),
@@ -26,9 +29,12 @@ export default defineType({
     ...sectionBaseFields,
   ],
   preview: {
-    select: { title: 'title', count: 'items.length' },
-    prepare({ title, count }) {
-      return { title: title || 'Process Steps', subtitle: count ? `${count} steps` : 'Steps' }
-    },
+    select: {
+      title: 'title',
+      description: 'description',
+      steps: 'steps',
+    },  },
+  components: {
+    preview: StepsPreviewCard as any,
   },
 })

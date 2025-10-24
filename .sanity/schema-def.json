@@ -3826,6 +3826,30 @@
       "type": "Document",
       "fields": [
         {
+          "name": "title",
+          "title": "Title",
+          "description": "Auto-generated from service + location (e.g., \"Plumbing in Toronto\")",
+          "hidden": false,
+          "readOnly": true,
+          "codegen": {
+            "required": false
+          },
+          "hasValidation": true,
+          "definition": {
+            "codegen": {
+              "required": false
+            },
+            "description": "Auto-generated from service + location (e.g., \"Plumbing in Toronto\")",
+            "hidden": false,
+            "name": "title",
+            "readOnly": true,
+            "title": "Title",
+            "hasValidation": true,
+            "type": "String",
+            "list": null
+          }
+        },
+        {
           "name": "service",
           "title": "Service",
           "description": "The service being offered",
@@ -4366,6 +4390,29 @@
             "hasValidation": false,
             "type": "RegistryReference",
             "to": "seoUnified"
+          }
+        },
+        {
+          "name": "publishedAt",
+          "title": "Published At",
+          "description": "When this serviceLocation page was created",
+          "hidden": false,
+          "readOnly": false,
+          "codegen": {
+            "required": false
+          },
+          "hasValidation": false,
+          "definition": {
+            "codegen": {
+              "required": false
+            },
+            "description": "When this serviceLocation page was created",
+            "hidden": false,
+            "name": "publishedAt",
+            "readOnly": false,
+            "title": "Published At",
+            "hasValidation": false,
+            "type": "Datetime"
           }
         },
         {
@@ -5171,7 +5218,7 @@
             "title": "Seo",
             "hasValidation": false,
             "type": "RegistryReference",
-            "to": "seo"
+            "to": "seoUnified"
           }
         },
         {
@@ -5430,7 +5477,7 @@
             "title": "Seo",
             "hasValidation": false,
             "type": "RegistryReference",
-            "to": "seo"
+            "to": "seoUnified"
           }
         },
         {

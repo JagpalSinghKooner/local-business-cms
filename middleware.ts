@@ -3,7 +3,7 @@ import { NextResponse } from 'next/server'
 import { client } from '@/sanity/client'
 import { findMatchingRedirect, applyRedirectCaptureGroups, type RedirectRule } from '@/lib/redirect-validation'
 import { trackRedirect } from '@/lib/redirect-monitoring'
-import { getDatasetForDomain, isDomainRegistered } from '@/lib/site-detection'
+import { getDatasetForDomain } from '@/lib/site-detection'
 
 const FALLBACK_HOST = 'www.buddsplumbing.com'
 
@@ -74,6 +74,7 @@ async function getRedirects(): Promise<RedirectRule[]> {
 
 export async function middleware(req: NextRequest) {
   const url = req.nextUrl.clone()
+  const isDevelopment = process.env.NODE_ENV === 'development'
 
   // Multi-tenant: Domain-based site detection (optional advanced routing)
   // Note: This is for monitoring and logging. The actual dataset is determined
@@ -217,6 +218,11 @@ export async function middleware(req: NextRequest) {
     Object.entries(siteHeaders).forEach(([key, value]) => {
       response.headers.set(key, value)
     })
+  }
+
+  // Development: Remove X-Frame-Options to allow Studio iframe preview
+  if (isDevelopment) {
+    response.headers.delete('X-Frame-Options')
   }
 
   return response

@@ -31,6 +31,16 @@ export default function LocationPreview({ slug }: LocationPreviewProps) {
     )
   }
 
+  if (!global) {
+    return (
+      <main className="pb-16">
+        <Container>
+          <p>Loading global data...</p>
+        </Container>
+      </main>
+    )
+  }
+
   const locationData = location
 
   const galleryItems = Array.isArray(locationData.gallery)
@@ -39,7 +49,7 @@ export default function LocationPreview({ slug }: LocationPreviewProps) {
   const popularServices = Array.isArray(locationData.services)
     ? (locationData.services as Array<{ slug: string; title: string; intro?: unknown }>)
     : []
-  const otherLocations = (global.locations ?? []).filter((item: any) => item.slug !== slug).slice(0, 6)
+  const otherLocations = (global?.locations ?? []).filter((item: any) => item.slug !== slug).slice(0, 6)
   const coordinates =
     locationData.map && typeof locationData.map === 'object'
       ? locationData.map

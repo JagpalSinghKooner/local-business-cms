@@ -1,10 +1,13 @@
 import { defineArrayMember, defineField, defineType } from 'sanity'
 import { sectionBaseFields } from './shared'
+import { Megaphone } from 'lucide-react'
+import CtaPreviewCard from '../../../components/previews/CtaPreviewCard'
 
 export default defineType({
   name: 'section.cta',
   title: 'CTA Banner',
   type: 'object',
+  icon: Megaphone,
   fields: [
     defineField({
       name: 'background',
@@ -42,12 +45,13 @@ export default defineType({
     ...sectionBaseFields,
   ],
   preview: {
-    select: { title: 'heading' },
-    prepare({ title }) {
-      return {
-        title: title || 'CTA Banner',
-        subtitle: 'Call to action',
-      }
-    },
+    select: {
+      heading: 'heading',
+      body: 'body',
+      background: 'background',
+      ctas: 'ctas',
+    },  },
+  components: {
+    preview: CtaPreviewCard as any,
   },
 })

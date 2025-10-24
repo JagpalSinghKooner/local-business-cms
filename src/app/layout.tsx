@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import { draftMode } from 'next/headers'
 import { Geist, Geist_Mono } from 'next/font/google'
 import type { CSSProperties, ReactNode } from 'react'
 import './globals.css'
@@ -24,6 +25,8 @@ import { ScriptOverridesProvider } from '@/components/scripts/ScriptOverridesPro
 import { ErrorBoundary } from '@/components/ErrorBoundary'
 import { env } from '@/lib/env'
 import { getImageUrl } from '@/types/sanity-helpers'
+import { VisualEditing } from '@/components/VisualEditing'
+import { DisableDraftMode } from '@/components/DisableDraftMode'
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -71,6 +74,9 @@ const FALLBACK_DATA = {
 const FALLBACK_SITE_NAME = 'Local Business'
 
 export default async function RootLayout({ children }: Readonly<{ children: ReactNode }>) {
+  const draft = await draftMode()
+  const isDraftMode = draft.isEnabled
+
   const dataset = await getGlobalDataset().catch((error) => {
     console.error('Failed to load global settings from Sanity', error)
     return FALLBACK_DATA
@@ -160,6 +166,13 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
             />
           </ScriptOverridesProvider>
         </ErrorBoundary>
+        {/* Visual editing temporarily disabled due to webpack bundling issues */}
+        {/* {isDraftMode && (
+          <>
+            <VisualEditing />
+            <DisableDraftMode />
+          </>
+        )} */}
       </body>
     </html>
   )

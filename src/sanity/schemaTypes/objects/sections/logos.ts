@@ -1,10 +1,13 @@
 import { defineArrayMember, defineField, defineType } from 'sanity'
 import { sectionBaseFields } from './shared'
+import { Grid3x3 } from 'lucide-react'
+import LogosPreviewCard from '../../../components/previews/LogosPreviewCard'
 
 export default defineType({
   name: 'section.logos',
   title: 'Logo Wall',
   type: 'object',
+  icon: Grid3x3,
   fields: [
     defineField({ name: 'title', type: 'string' }),
     defineField({ name: 'description', type: 'text', rows: 2 }),
@@ -27,9 +30,11 @@ export default defineType({
     ...sectionBaseFields,
   ],
   preview: {
-    select: { title: 'title', count: 'items.length' },
-    prepare({ title, count }) {
-      return { title: title || 'Logo Wall', subtitle: count ? `${count} logos` : 'Logo Wall' }
-    },
+    select: {
+      title: 'title',
+      logos: 'logos',
+    },  },
+  components: {
+    preview: LogosPreviewCard as any,
   },
 })

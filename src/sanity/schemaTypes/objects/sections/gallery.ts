@@ -1,10 +1,13 @@
 import { defineArrayMember, defineField, defineType } from 'sanity'
 import { sectionBaseFields } from './shared'
+import { Images } from 'lucide-react'
+import GalleryPreviewCard from '../../../components/previews/GalleryPreviewCard'
 
 export default defineType({
   name: 'section.gallery',
   title: 'Media Gallery',
   type: 'object',
+  icon: Images,
   fields: [
     defineField({ name: 'eyebrow', title: 'Eyebrow', type: 'string' }),
     defineField({
@@ -53,12 +56,13 @@ export default defineType({
     ...sectionBaseFields,
   ],
   preview: {
-    select: { title: 'heading', count: 'images.length' },
-    prepare({ title, count }) {
-      return {
-        title: title || 'Gallery',
-        subtitle: count ? `${count} media item${count === 1 ? '' : 's'}` : 'Gallery',
-      }
-    },
+    select: {
+      title: 'title',
+      description: 'description',
+      images: 'images',
+      columns: 'columns',
+    },  },
+  components: {
+    preview: GalleryPreviewCard as any,
   },
 })
