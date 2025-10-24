@@ -22,7 +22,7 @@ export function generateServiceMetaDescription(data: MetaTemplateData): string {
   if (!service || !site) return ''
 
   // Use manual SEO description if provided
-  if (service.seo?.description) return service.seo.description
+  if (service.seo?.metaDescription) return service.seo.metaDescription
 
   // Auto-generate from service intro
   const introText = service.intro ? portableTextToPlainText(service.intro) : ''
@@ -105,7 +105,7 @@ export function generateMetaTitle(
 
   switch (type) {
     case 'service':
-      return service?.seo?.title || service?.title || ''
+      return service?.seo?.metaTitle || service?.title || ''
     case 'location':
       return `Services in ${location?.city || ''}${site?.name ? ` | ${site.name}` : ''}`
     case 'service-location':

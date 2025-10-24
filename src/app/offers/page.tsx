@@ -20,10 +20,10 @@ export async function generateMetadata() {
   return buildSeo({
     baseUrl,
     path: '/offers',
-    title: page?.metaTitle || page?.title || global.site?.metaTitle || 'Offers',
-    description: page?.metaDescription || global.site?.metaDescription || '',
+    title: page?.seo?.metaTitle || page?.title || global.site?.metaTitle || 'Offers',
+    description: page?.seo?.metaDescription || global.site?.metaDescription || '',
     image:
-      getOgImageUrl(page?.socialMedia) ??
+      getOgImageUrl(page?.seo?.ogImage) ??
       getOgImageUrl(global.site?.ogImage) ??
       null,
   })

@@ -8,6 +8,10 @@ import {
   servicesListQ,
   locationsListQ,
   offersListQ,
+  serviceLocationBySlugQ,
+  serviceLocationsListQ,
+  serviceLocationsByServiceQ,
+  serviceLocationsByLocationQ,
 } from './queries'
 import type {
   Navigation,
@@ -181,6 +185,61 @@ export const listOffers = cache(async (): Promise<OfferSummary[]> => {
     return await sanity.fetch<OfferSummary[]>(offersListQ, {}, fetchOptions)
   } catch (error) {
     console.error('Failed to fetch offers list:', error)
+    return []
+  }
+})
+
+/**
+ * Fetches a serviceLocation by slug (e.g., "plumbing-toronto")
+ * Returns null if not found or if fetch fails
+ */
+export const getServiceLocationBySlug = cache(async (slug: string) => {
+  try {
+    return await sanity.fetch(serviceLocationBySlugQ, { slug }, fetchOptions)
+  } catch (error) {
+    console.error(`Failed to fetch serviceLocation with slug "${slug}":`, error)
+    return null
+  }
+})
+
+/**
+ * Fetches list of all serviceLocations
+ * Returns empty array if fetch fails
+ * Used for sitemap generation and listing pages
+ */
+export const listServiceLocations = cache(async () => {
+  try {
+    return await sanity.fetch(serviceLocationsListQ, {}, fetchOptions)
+  } catch (error) {
+    console.error('Failed to fetch serviceLocations list:', error)
+    return []
+  }
+})
+
+/**
+ * Fetches all serviceLocations for a specific service
+ * Returns empty array if fetch fails
+ * Used for "Available in these locations" sections
+ */
+export const getServiceLocationsByService = cache(async (serviceId: string) => {
+  try {
+    return await sanity.fetch(serviceLocationsByServiceQ, { serviceId }, fetchOptions)
+  } catch (error) {
+    console.error(`Failed to fetch serviceLocations for service "${serviceId}":`, error)
+    return []
+  }
+})
+
+/**
+ * Fetches all serviceLocations for a specific location
+ * Returns empty array if fetch fails
+ * Used for "Available services in this location" sections
+ */
+export const getServiceLocationsByLocation = cache(async (locationId: string) => {
+  try {
+    return await sanity.fetch(serviceLocationsByLocationQ, { locationId }, fetchOptions)
+  } catch (error) {
+    console.error(`Failed to fetch serviceLocations for location "${locationId}":`, error)
     return []
   }
 })

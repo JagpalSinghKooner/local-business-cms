@@ -1,5 +1,4 @@
 import { defineArrayMember, defineField, defineType } from 'sanity'
-import { seoFields } from './fields/seo'
 
 export default defineType({
   name: 'page',
@@ -114,7 +113,7 @@ export default defineType({
       description: 'Optional fallback content. Prefer building pages with sections.',
       group: 'content',
     }),
-    ...seoFields.map((f) => ({ ...f, group: 'seo' })),
+    defineField({ name: 'seo', type: 'seoUnified', group: 'seo' }),
     defineField({
       name: 'schemaVersion',
       type: 'string',

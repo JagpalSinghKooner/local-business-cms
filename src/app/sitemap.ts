@@ -38,6 +38,19 @@ type ServiceSummaryWithLocations = {
   locations?: LocationSummary[]
 }
 
+type ServiceLocationRecord = {
+  slug?: string
+  updatedAt?: string
+  serviceTitle?: string
+  locationCity?: string
+  heroImage?: {
+    alt?: string
+    asset?: {
+      url?: string
+    }
+  }
+}
+
 const now = new Date()
 
 const sitemapQuery = groq`{
@@ -72,6 +85,19 @@ const sitemapQuery = groq`{
       alt,
       asset->{ url }
     }
+  },
+  "serviceLocations": *[_type == "serviceLocation" && defined(slug.current)]{
+    "slug": slug.current,
+    "updatedAt": coalesce(_updatedAt, _createdAt),
+    "serviceTitle": service->title,
+    "locationCity": location->city,
+    "heroImage": coalesce(
+      service->heroImage,
+      location->heroImage
+    ){
+      alt,
+      asset->{ url }
+    }
   }
 }`
 
@@ -82,10 +108,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     pages = [],
     services = [],
     locations = [],
+    serviceLocations = [],
   } = await sanity.fetch<{
     pages?: PageRecord[]
     services?: ServiceSummaryWithLocations[]
     locations?: LocationSummary[]
+    serviceLocations?: ServiceLocationRecord[]
   }>(sitemapQuery, {}, { perspective: 'published' })
 
   const urls: MetadataRoute.Sitemap = [
@@ -134,7 +162,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       images: imageUrl ? [imageUrl] : undefined,
     })
 
-    // Service + Location combinations - HIGHEST PRIORITY for local SEO
+    // Legacy: Service + Location combinations (auto-generated from service.locations references)
+    // TODO: Migrate to serviceLocation documents for custom content
     if (Array.isArray(service.locations)) {
       for (const location of service.locations) {
         if (!location?.slug) continue
@@ -151,6 +180,20 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         })
       }
     }
+  }
+
+  // ServiceLocation documents - HIGHEST PRIORITY for local SEO
+  // These are custom-created service+location pages from CMS
+  for (const serviceLocation of serviceLocations) {
+    if (!serviceLocation?.slug) continue
+    const imageUrl = buildImageUrl(serviceLocation.heroImage)
+    urls.push({
+      url: `${base}/services/${serviceLocation.slug}`,
+      lastModified: serviceLocation.updatedAt ? new Date(serviceLocation.updatedAt) : now,
+      changeFrequency: 'weekly',
+      priority: 0.9, // HIGHEST priority - these are custom landing pages
+      images: imageUrl ? [imageUrl] : undefined,
+    })
   }
 
   // Individual locations - high priority

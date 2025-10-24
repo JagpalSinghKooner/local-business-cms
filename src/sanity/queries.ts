@@ -367,6 +367,165 @@ export const locationsListQ = groq`*[_type == "location" && defined(slug.current
   "intro": intro[0..1]
 }`
 
+// Query for single serviceLocation by slug - full data for page rendering
+export const serviceLocationBySlugQ = groq`*[_type == "serviceLocation" && slug.current == $slug][0]{
+  _id,
+  _updatedAt,
+  "slug": slug.current,
+  contentSource,
+  intro,
+  "service": service->{
+    _id,
+    title,
+    "slug": slug.current,
+    "intro": coalesce(body[0..1], []),
+    heroImage{
+      alt,
+      asset->{
+        url,
+        metadata{ lqip, dimensions{ width, height } }
+      }
+    },
+    "category": category->{
+      title,
+      "slug": slug.current
+    }
+  },
+  "location": location->{
+    _id,
+    city,
+    "slug": slug.current,
+    "intro": coalesce(intro, []),
+    map,
+    localSEO
+  },
+  sections[]{
+    ...,
+    "media": media{
+      ...,
+      "image": select(
+        defined(image) => {
+          alt,
+          asset->{
+            url,
+            metadata{ lqip, dimensions{ width, height } }
+          }
+        },
+        null
+      )
+    },
+    "servicesSelected": select(_type == 'section.services' => services[defined(@)]->{ _id, title, "intro": coalesce(body[0..1], []), "slug": slug.current, heroImage{ alt, asset->{ url, metadata{ lqip, dimensions{ width, height } } } }, seo }),
+    "servicesCategory": select(_type == 'section.services' => category->{
+      title,
+      "slug": slug.current
+    }),
+    "locationsSelected": select(_type == 'section.locations' => locations[defined(@)]->{ _id, city, "slug": slug.current, intro }),
+    "testimonialsSelected": select(_type == 'section.testimonials' => testimonials[defined(@)]->{ _id, author, quote, role, location, rating }),
+    "faqsSelected": select(_type == 'section.faq' => faqs[defined(@)]->{ _id, question, answer }),
+    "offersSelected": select(_type == 'section.offers' => offers[defined(@)]->{ _id, title, summary, "slug": slug.current, validFrom, validTo }),
+    ctas[]{
+      ...
+    },
+    "items": select(
+      _type == 'section.features' => items[]{
+        icon,
+        title,
+        body,
+        linkLabel,
+        "link": link
+      },
+      _type == 'section.steps' => items[]{ title, body },
+      _type == 'section.stats' => items[]{ value, label },
+      _type == 'section.logos' => items[]{
+        name,
+        url,
+        logo{ asset->{ url } }
+      },
+      _type == 'section.timeline' => items[]{
+        title,
+        subheading,
+        summary,
+        date,
+        "link": link,
+        media{
+          ...,
+          image{
+            alt,
+            asset->{
+              url,
+              metadata{ lqip, dimensions{ width, height } }
+            }
+          }
+        }
+      }
+    ),
+    "plans": select(_type == 'section.pricingTable' => plans[]{
+      title,
+      tagline,
+      price,
+      frequency,
+      description,
+      features,
+      isFeatured,
+      cta
+    }),
+    "images": select(_type == 'section.gallery' => images[]{
+      _key,
+      caption,
+      image{
+        alt,
+        asset->{
+          url,
+          metadata{ lqip, dimensions{ width, height } }
+        }
+      }
+    }),
+    "postsResolved": select(
+      _type == 'section.blogList' => select(
+        sourceMode == 'selected' => posts[defined(@)]->{ title, "slug": slug.current, "excerpt": coalesce(pt::text(body[0]), ''), "coverImage": hero.asset->url, "author": author, "publishedAt": date },
+        sourceMode == 'category' => *[_type == "post" && references(^.category._ref)] | order(date desc) [0...100]{ title, "slug": slug.current, "excerpt": coalesce(pt::text(body[0]), ''), "coverImage": hero.asset->url, "author": author, "publishedAt": date },
+        true => *[_type == "post"] | order(date desc) [0...100]{ title, "slug": slug.current, "excerpt": coalesce(pt::text(body[0]), ''), "coverImage": hero.asset->url, "author": author, "publishedAt": date }
+      )
+    )
+  },
+  displayOptions,
+  seo
+}`
+
+// Lightweight query for serviceLocation list - for sitemap/navigation
+export const serviceLocationsListQ = groq`*[_type == "serviceLocation" && defined(slug.current)] | order(_createdAt desc) [0...1000]{
+  _id,
+  _updatedAt,
+  "slug": slug.current,
+  "serviceSlug": service->slug.current,
+  "serviceTitle": service->title,
+  "locationSlug": location->slug.current,
+  "locationCity": location->city,
+  contentSource
+}`
+
+// Query for all serviceLocations for a specific service
+export const serviceLocationsByServiceQ = groq`*[_type == "serviceLocation" && service._ref == $serviceId && defined(slug.current)] | order(location->city asc) [0...100]{
+  _id,
+  "slug": slug.current,
+  "location": location->{
+    city,
+    "slug": slug.current
+  },
+  contentSource
+}`
+
+// Query for all serviceLocations for a specific location
+export const serviceLocationsByLocationQ = groq`*[_type == "serviceLocation" && location._ref == $locationId && defined(slug.current)] | order(service->title asc) [0...100]{
+  _id,
+  "slug": slug.current,
+  "service": service->{
+    title,
+    "slug": slug.current
+  },
+  contentSource
+}`
+
 export const pageBySlugQ = groq`*[_type == "page" && slug.current == $slug][0]{
   title,
   "slug": slug.current,

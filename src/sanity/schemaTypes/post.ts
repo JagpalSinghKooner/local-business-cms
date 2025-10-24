@@ -1,5 +1,4 @@
 import { defineType, defineField } from 'sanity'
-import { seoFields } from './fields/seo'
 
 export default defineType({
   name: 'post',
@@ -74,7 +73,7 @@ export default defineType({
       options: { collapsible: true, collapsed: true },
       group: 'content',
     }),
-    ...seoFields.map((f) => ({ ...f, group: 'seo' })),
+    defineField({ name: 'seo', type: 'seoUnified', group: 'seo' }),
     defineField({
       name: 'schemaVersion',
       type: 'string',

@@ -19,14 +19,19 @@ const businessTypes = [
   'LocalBusiness',
 ]
 
+/**
+ * Site Settings Schema (Enhanced & Unified)
+ *
+ * Consolidated from siteSettings + siteConfig for multi-tenant architecture.
+ * Each site = separate Sanity dataset with complete content isolation.
+ */
 export default defineType({
   name: 'siteSettings',
-  title: 'Global Settings',
+  title: 'Site Settings',
   type: 'document',
   icon: CogIcon,
-  // Note: __experimental_liveEdit removed due to TypeScript compatibility
-  // Consider re-adding when officially supported in Sanity types
   groups: [
+    { name: 'deployment', title: 'Deployment' },
     { name: 'brand', title: 'Brand' },
     { name: 'contact', title: 'Contact' },
     { name: 'business', title: 'Local Business' },
@@ -34,7 +39,47 @@ export default defineType({
     { name: 'integrations', title: 'Integrations' },
   ],
   fields: [
+    // ===================================
+    // Deployment & Multi-Tenant
+    // ===================================
+    defineField({
+      name: 'datasetName',
+      title: 'Dataset Name',
+      type: 'string',
+      group: 'deployment',
+      description: 'The Sanity dataset for this site. Must match NEXT_PUBLIC_SANITY_DATASET env var.',
+      readOnly: true,
+      initialValue: () => (typeof process !== 'undefined' && process.env?.SANITY_STUDIO_DATASET) || 'production',
+    }),
+    defineField({
+      name: 'status',
+      title: 'Site Status',
+      type: 'string',
+      group: 'deployment',
+      description: 'Current deployment status',
+      options: {
+        list: [
+          { title: '🟢 Active (Production)', value: 'active' },
+          { title: '🟡 Staging (Testing)', value: 'staging' },
+          { title: '🔴 Inactive (Disabled)', value: 'inactive' },
+          { title: '🚧 Development (Building)', value: 'development' },
+        ],
+        layout: 'radio',
+      },
+      initialValue: 'active',
+    }),
+    defineField({
+      name: 'deployedAt',
+      title: 'Last Deployed',
+      type: 'datetime',
+      group: 'deployment',
+      description: 'When this site was last deployed (auto-updated by deployment scripts)',
+      readOnly: true,
+    }),
+
+    // ===================================
     // Brand
+    // ===================================
     defineField({
       name: 'name',
       title: 'Business Name',
@@ -107,7 +152,9 @@ export default defineType({
       description: 'CSS font family for body copy',
     }),
 
+    // ===================================
     // Contact
+    // ===================================
     defineField({
       name: 'phone',
       title: 'Primary Phone',
@@ -149,7 +196,9 @@ export default defineType({
       description: 'Optional CTA text used in the header or hero CTA button',
     }),
 
-    // Local business defaults
+    // ===================================
+    // Local Business
+    // ===================================
     defineField({
       name: 'businessType',
       title: 'Schema.org Business Type',
@@ -196,7 +245,9 @@ export default defineType({
       description: 'Add authoritative profile URLs for structured data.',
     }),
 
-    // SEO defaults
+    // ===================================
+    // SEO Defaults
+    // ===================================
     defineField({
       name: 'metaTitle',
       title: 'Default Meta Title',
@@ -234,7 +285,9 @@ export default defineType({
       description: 'Defaults to "index,follow" if left blank',
     }),
 
+    // ===================================
     // Integrations
+    // ===================================
     defineField({
       name: 'googleTagManagerId',
       title: 'Google Tag Manager ID',
@@ -264,13 +317,33 @@ export default defineType({
       name: 'schemaVersion',
       type: 'string',
       title: 'Schema Version',
-      initialValue: '1',
+      initialValue: '2',
       readOnly: true,
       hidden: true,
       description: 'Internal: tracks schema version for safe migrations',
     }),
   ],
   preview: {
-    select: { title: 'name', subtitle: 'tagline', media: 'logo' },
+    select: {
+      title: 'name',
+      subtitle: 'tagline',
+      media: 'logo',
+      status: 'status',
+    },
+    prepare({ title, subtitle, media, status }) {
+      const statusEmoji =
+        {
+          active: '🟢',
+          staging: '🟡',
+          inactive: '🔴',
+          development: '🚧',
+        }[status as string] || ''
+
+      return {
+        title: statusEmoji ? `${statusEmoji} ${title}` : title || 'Site Settings',
+        subtitle: subtitle || 'Configure site-wide settings',
+        media,
+      }
+    },
   },
 })

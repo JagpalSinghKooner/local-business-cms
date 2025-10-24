@@ -47,9 +47,9 @@ export async function generateMetadata({ params }: { params: Promise<Params> }) 
       return buildSeo({
         baseUrl,
         path: `/${servicePlusCity}`,
-        title: page.metaTitle || page.title || global.site?.name,
-        description: page.metaDescription || global.site?.metaDescription,
-        image: getOgImageUrl(page.socialMedia) ?? getOgImageUrl(global.site?.ogImage) ?? null,
+        title: page.seo?.metaTitle || page.title || global.site?.name,
+        description: page.seo?.metaDescription || global.site?.metaDescription,
+        image: getOgImageUrl(page.seo?.ogImage) ?? getOgImageUrl(global.site?.ogImage) ?? null,
       })
     }
 
@@ -72,9 +72,9 @@ export async function generateMetadata({ params }: { params: Promise<Params> }) 
       return buildSeo({
         baseUrl,
         path: `/${servicePlusCity}`,
-        title: page.metaTitle || page.title || global.site?.name,
-        description: page.metaDescription || global.site?.metaDescription,
-        image: getOgImageUrl(page.socialMedia) ?? getOgImageUrl(global.site?.ogImage) ?? null,
+        title: page.seo?.metaTitle || page.title || global.site?.name,
+        description: page.seo?.metaDescription || global.site?.metaDescription,
+        image: getOgImageUrl(page.seo?.ogImage) ?? getOgImageUrl(global.site?.ogImage) ?? null,
       })
     }
 
@@ -92,7 +92,7 @@ export async function generateMetadata({ params }: { params: Promise<Params> }) 
     baseUrl,
     path: `/${servicePlusCity}`,
     title: `${service.title} in ${location.city}`,
-    description: service.seo?.description || introText,
+    description: service.seo?.metaDescription || introText,
     image: getOgImageUrl(service.seo?.ogImage) ?? getOgImageUrl(service.heroImage) ?? null,
   })
 }

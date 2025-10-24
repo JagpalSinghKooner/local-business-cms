@@ -8,6 +8,7 @@ import Footer from '@/components/layout/Footer'
 import AnalyticsScripts from '@/components/AnalyticsScripts'
 import JsonLd from '@/components/seo/JsonLd'
 import WebVitalsReporter from '@/components/WebVitalsReporter'
+import PerformanceDashboard from '@/components/PerformanceDashboard'
 import { buildLocalBusinessJsonLd } from '@/lib/jsonld'
 import { resolveDesignTokens } from '@/lib/tokens'
 import { getGlobalDataset } from '@/sanity/loaders'
@@ -44,11 +45,12 @@ export const metadata: Metadata = {
     template: '%s | Local Business',
   },
   description: 'A CMS-driven marketing site for local service businesses.',
-  viewport: {
-    width: 'device-width',
-    initialScale: 1,
-    maximumScale: 5,
-  },
+}
+
+export const viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 5,
 }
 
 const FALLBACK_NAVIGATION = {
@@ -126,6 +128,7 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
         <ErrorBoundary>
           <ScriptOverridesProvider>
             <WebVitalsReporter />
+            <PerformanceDashboard />
             <AnalyticsScripts site={site} />
             <JsonLd data={localBusinessJsonLd} />
             {site?.googleTagManagerId ? (

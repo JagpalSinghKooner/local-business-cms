@@ -36,10 +36,10 @@ export async function generateMetadata({ params }: { params: Promise<{ slug?: st
   return buildSeo({
     baseUrl,
     path: `/${slugPath}`,
-    title: page.metaTitle || page.title || global.site?.name,
-    description: page.metaDescription || global.site?.metaDescription,
+    title: page.seo?.metaTitle || page.title || global.site?.name,
+    description: page.seo?.metaDescription || global.site?.metaDescription,
     image:
-      getOgImageUrl(page.socialMedia) ??
+      getOgImageUrl(page.seo?.ogImage) ??
       getOgImageUrl(global.site?.ogImage) ??
       null,
   })

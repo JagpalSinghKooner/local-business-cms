@@ -35,11 +35,17 @@ pnpm deploy-schema-all             # Deploy schema updates to all datasets
 
 ### Development
 ```bash
-pnpm dev              # Start Next.js dev server (http://localhost:3000)
+pnpm dev              # Start Next.js dev server (port 3001) + Documentation Dashboard (port 8080)
+                      # Automatically opens both in browser
+pnpm dev:next         # Start ONLY Next.js dev server (no dashboard)
 pnpm build            # Production build
 pnpm start            # Run production build locally
 pnpm lint             # Run ESLint
 ```
+
+**Pro Tip**: `pnpm dev` now launches both:
+- **App**: http://localhost:3001 (Next.js frontend)
+- **Docs Dashboard**: http://localhost:8080/docs/audit-report.html (Technical documentation portal)
 
 ### Sanity CMS
 ```bash
@@ -97,11 +103,20 @@ Adding a new section type requires:
 - `/` - Homepage (fetches page with slug "home")
 - `/services/[service]` - Individual service pages AND service+location combinations
   - Single service: `/services/plumbing`
-  - Service + Location: `/services/plumbing-toronto`
-  - The route auto-detects combinations by checking if slug ends with a location slug
+  - **ServiceLocation (dedicated CMS document)**: `/services/plumbing-toronto`
+  - **Legacy auto-generated**: `/services/plumbing-toronto` (fallback if no serviceLocation exists)
+  - Priority: ServiceLocation document → Legacy auto-generation → Single service
+  - The route intelligently queries for dedicated serviceLocation documents first
 - `/locations/[city]` - Individual location pages
 - `/[...slug]` - Catch-all for generic CMS pages
 - `/studio` - Sanity Studio interface
+
+**ServiceLocation Pages** (NEW):
+ServiceLocation pages can be created in two ways:
+1. **Dedicated documents** (recommended): Create a `serviceLocation` document in the CMS with custom content, sections, and SEO
+2. **Auto-generated** (legacy): System auto-generates by combining service + location data
+
+The `/services/[service]` route checks for a dedicated serviceLocation document first. If none exists, it falls back to auto-generating the page.
 
 #### 3. Global Data Pattern
 Most pages need global data (site settings, navigation, services list, locations list, design tokens). This is fetched via `getGlobalDataset()` from `src/sanity/loaders.ts` and includes:
@@ -123,6 +138,15 @@ Each page should:
 2. Call `buildSeo()` to generate Next.js Metadata
 3. Optionally render JSON-LD via `<JsonLd>` component
 
+**ServiceLocation SEO** (NEW):
+ServiceLocation pages use a dedicated SEO builder:
+- Function: `buildSeoForServiceLocation()` in `src/lib/seo.ts`
+- Auto-generates professional titles: `{service} in {city} | {site}`
+- Extracts descriptions from Portable Text intro content
+- Cascading image selection with 3-level fallback priority
+- Full OpenGraph and Twitter Card support
+- Generates 1-4 JSON-LD schemas dynamically based on page content
+
 #### 5. Middleware & URL Management
 
 `middleware.ts` handles:
@@ -138,6 +162,95 @@ The framework uses a **design token system** stored in Sanity:
 - Referenced in components via `var(--token-name)`
 - Schema: `src/sanity/schemaTypes/tokens.ts`
 - Utility: `src/lib/tokens.ts`
+
+#### 7. ServiceLocation Pages (NEW - Production Ready)
+
+**Purpose**: Dedicated landing pages for service+location combinations (e.g., "Plumbing in Toronto") with custom content, SEO, and structured data.
+
+**Key Features**:
+- **Scalability**: Support for 5,000+ unique landing pages
+- **Custom Content**: Each page can have unique intro text and modular sections
+- **Elite SEO**: Auto-generated metadata + multi-schema JSON-LD (Service, LocalBusiness, FAQ, Offer)
+- **Content Inheritance**: Choose between custom sections or inherit from parent service
+- **Auto-Slug Generation**: Slugs automatically combine service + location slugs
+
+**Schema**: `src/sanity/schemaTypes/documents/serviceLocation.ts`
+
+**Core Fields**:
+- `service` (reference, required) - Parent service document
+- `location` (reference, required) - Target location
+- `slug` (auto-generated) - Combines `{service-slug}-{location-slug}`
+- `intro` (richText) - Custom intro text (SEO-critical, first 155 chars used for meta description)
+- `sections` (array) - Modular content blocks (19 section types available)
+- `seo` (seoUnified) - Custom SEO overrides (title, description, OG image, canonical, robots)
+- `contentSource` (enum: custom | inherit | ai) - Controls which sections render
+- `displayOptions` (object) - Show/hide related locations and services
+- `schemaVersion` (internal) - Schema versioning
+
+**Content Source Logic**:
+- `custom`: Renders `serviceLocation.sections` (unique content per market)
+- `inherit`: Renders `service.sections` (shared content from parent service)
+- `ai`: Reserved for future AI-generated content
+
+**SEO Automation**:
+- **Title**: Auto-generates as `{service.title} in {location.city} | {site.name}`
+- **Description**: Extracts first 155 chars from `intro` (Portable Text → plain text)
+- **Image Priority**: `serviceLocation.seo.ogImage` → `service.heroImage` → `site.defaultOgImage`
+- **Canonical URL**: Custom or auto-generated as `/services/{slug}`
+
+**JSON-LD Structured Data** (1-4 schemas per page):
+1. **Service Schema** (always): Service with areaServed, provider details
+2. **LocalBusiness Schema** (if coordinates): GeoCoordinates, postal address
+3. **FAQPage Schema** (if FAQ section detected): Questions and answers
+4. **Offer Schemas** (if offers section detected): Individual schema per offer
+
+**Queries & Loaders**:
+- `serviceLocationBySlugQ` - Main query with full sections resolution
+- `serviceLocationsListQ` - Lightweight query for sitemap (1000 limit)
+- `serviceLocationsByServiceQ` - Filter by service reference
+- `serviceLocationsByLocationQ` - Filter by location reference
+- `getServiceLocationBySlug()` - Loader for single page
+- `listServiceLocations()` - Loader for sitemap generation
+- `getServiceLocationsByService()` - Loader for related content
+- `getServiceLocationsByLocation()` - Loader for related content
+
+**Studio UX**:
+Located under **Services** → **Service + Location Pages** in Sanity Studio.
+
+**Preview Format**: Shows `{Service} in {Location} [Content Source]`
+**Example**: "Plumbing in Toronto [Custom]"
+
+**Orderings Available**:
+- Service A→Z (default)
+- Location A→Z
+- Recently Created
+
+**Sitemap Integration**:
+- Priority: **0.9** (highest - custom landing pages)
+- Legacy auto-generated: **0.85** (fallback)
+- Change frequency: weekly
+- Images: Optimized 1200x630 dimensions
+
+**Migration Path**:
+The system supports gradual migration:
+1. Create serviceLocation documents for high-value markets
+2. System prioritizes dedicated documents over auto-generated pages
+3. Legacy combinations remain as fallbacks
+4. No breaking changes to existing URLs
+
+**Example Workflow**:
+1. Navigate to Services → Service + Location Pages in Studio
+2. Click "Create" button
+3. Select service (e.g., "Plumbing")
+4. Select location (e.g., "Toronto")
+5. Slug auto-generates as "plumbing-toronto"
+6. Write custom intro (first 155 chars become meta description)
+7. Add modular sections (testimonials, FAQs, offers, etc.)
+8. Set contentSource to "custom" or "inherit"
+9. Override SEO fields if needed
+10. Publish
+
+Result: `/services/plumbing-toronto` now renders your custom content with elite SEO.
 
 ## Important File Locations
 

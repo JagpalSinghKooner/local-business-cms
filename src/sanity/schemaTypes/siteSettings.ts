@@ -1,5 +1,4 @@
 import { defineType, defineField } from "sanity";
-import { seoFields } from "./fields/seo";
 
 export default defineType({
   name: "siteSettings",
@@ -45,7 +44,7 @@ export default defineType({
       group: "local",
     }),
 
-    ...seoFields.map(f => ({ ...f, group: "seo" })),
+    defineField({ name: "seo", type: "seoUnified", group: "seo" }),
   ],
   preview: { select: { title: "name", subtitle: "tagline", media: "logo" } },
 });

@@ -1,4 +1,35 @@
 // src/lib/jsonld.ts
+
+/**
+ * Extract plain text from Portable Text blocks
+ * Used for generating structured data descriptions from CMS content
+ */
+function extractTextFromPortableText(blocks?: any[]): string {
+  if (!blocks || !Array.isArray(blocks)) return "";
+
+  return blocks
+    .filter(block => block._type === 'block')
+    .map(block => {
+      if (!block.children || !Array.isArray(block.children)) return "";
+      return block.children
+        .filter((child: any) => child._type === 'span' && typeof child.text === 'string')
+        .map((child: any) => child.text)
+        .join('');
+    })
+    .join(' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
+/**
+ * Truncate text to a specified length with ellipsis
+ */
+function truncate(s?: string, n = 155): string {
+  if (!s) return "";
+  const clean = s.replace(/\s+/g, " ").trim();
+  return clean.length > n ? clean.slice(0, n - 1).trimEnd() + "…" : clean;
+}
+
 export type LocalBusinessInput = {
   baseUrl: string;
   urlPath?: string;
@@ -128,7 +159,7 @@ export function buildLocalBusinessJsonLd(input: LocalBusinessInput) {
 
 export function buildFAQJsonLd(input: FAQInput) {
   const { baseUrl, urlPath = "/", questions } = input;
-  
+
   const normalizedBase = baseUrl.replace(/\/+$/, "");
   const url = `${normalizedBase}${urlPath.startsWith("/") ? urlPath : `/${urlPath}`}`;
 
@@ -153,7 +184,7 @@ export function buildOfferJsonLd(input: OfferInput) {
     baseUrl, urlPath = "/", name, description, price, currency = "USD",
     availability = "InStock", validFrom, validThrough, image, businessName, businessUrl
   } = input;
-  
+
   const normalizedBase = baseUrl.replace(/\/+$/, "");
   const url = `${normalizedBase}${urlPath.startsWith("/") ? urlPath : `/${urlPath}`}`;
 
@@ -190,7 +221,7 @@ export function buildServiceJsonLd(input: ServiceInput) {
     baseUrl, urlPath = "/", name, description, provider, areaServed,
     serviceType, image
   } = input;
-  
+
   const normalizedBase = baseUrl.replace(/\/+$/, "");
   const url = `${normalizedBase}${urlPath.startsWith("/") ? urlPath : `/${urlPath}`}`;
 
@@ -206,13 +237,13 @@ export function buildServiceJsonLd(input: ServiceInput) {
   if (image) obj.image = image;
   if (serviceType) obj.serviceType = serviceType;
   if (areaServed?.length) obj.areaServed = areaServed;
-  
+
   if (provider) {
     const providerObj: Record<string, unknown> = {
       "@type": "Organization",
       name: provider.name,
     };
-    
+
     if (provider.url) providerObj.url = provider.url;
     if (provider.telephone) providerObj.telephone = provider.telephone;
     if (provider.address && Object.values(provider.address).some(Boolean)) {
@@ -221,7 +252,7 @@ export function buildServiceJsonLd(input: ServiceInput) {
         ...provider.address,
       };
     }
-    
+
     obj.provider = providerObj;
   }
 
@@ -234,7 +265,7 @@ export function buildProductJsonLd(input: ProductInput) {
     price, currency = "USD", availability = "InStock", condition = "NewCondition",
     category
   } = input;
-  
+
   const normalizedBase = baseUrl.replace(/\/+$/, "");
   const url = `${normalizedBase}${urlPath.startsWith("/") ? urlPath : `/${urlPath}`}`;
 
@@ -254,7 +285,7 @@ export function buildProductJsonLd(input: ProductInput) {
   if (sku) obj.sku = sku;
   if (gtin) obj.gtin = gtin;
   if (category) obj.category = category;
-  
+
   if (price) {
     obj.offers = {
       "@type": "Offer",
@@ -265,6 +296,242 @@ export function buildProductJsonLd(input: ProductInput) {
   }
 
   return obj;
+}
+
+/**
+ * Input for building serviceLocation JSON-LD structured data
+ */
+export type ServiceLocationJsonLdInput = {
+  baseUrl: string;
+  serviceLocation: {
+    slug: string;
+    service: {
+      title: string;
+      description?: any[]; // Portable Text
+      category?: { title?: string };
+    };
+    location: {
+      city: string;
+      state?: string;
+      zip?: string;
+      coordinates?: { lat?: number; lng?: number };
+    };
+    intro?: any[]; // Portable Text
+    sections?: any[]; // For detecting FAQ/Offer sections
+  };
+  businessName: string;
+  businessPhone?: string;
+  businessUrl?: string;
+};
+
+/**
+ * Build JSON-LD structured data for serviceLocation pages
+ *
+ * Generates multiple schema types optimized for local service pages:
+ * - Service schema (always included)
+ * - LocalBusiness schema (if coordinates available)
+ * - FAQPage schema (if FAQ section exists)
+ * - Offer schema (if offers section exists)
+ *
+ * @example
+ * ```ts
+ * const schemas = buildServiceLocationJsonLd({
+ *   baseUrl: "https://example.com",
+ *   serviceLocation: {
+ *     slug: "plumbing-toronto",
+ *     service: { title: "Plumbing Services", category: { title: "Residential" } },
+ *     location: { city: "Toronto", state: "ON", coordinates: { lat: 43.6532, lng: -79.3832 } },
+ *     intro: portableTextBlocks,
+ *     sections: [{ _type: 'sectionFaq', questions: [...] }],
+ *   },
+ *   businessName: "Budd's Plumbing",
+ *   businessPhone: "+1-416-555-0123",
+ *   businessUrl: "https://example.com",
+ * });
+ * // Returns array of schema objects
+ * ```
+ */
+export function buildServiceLocationJsonLd(input: ServiceLocationJsonLdInput): Record<string, unknown>[] {
+  const { baseUrl, serviceLocation, businessName, businessPhone, businessUrl } = input;
+  const schemas: Record<string, unknown>[] = [];
+
+  const normalizedBase = baseUrl.replace(/\/+$/, "");
+  const urlPath = `/services/${serviceLocation.slug}`;
+  const url = `${normalizedBase}${urlPath}`;
+
+  // Extract description from intro Portable Text
+  let description = "";
+  if (serviceLocation.intro) {
+    const extractedText = extractTextFromPortableText(serviceLocation.intro);
+    description = truncate(extractedText, 155);
+  }
+  // Fallback to service description if no intro
+  if (!description && serviceLocation.service.description) {
+    const extractedText = extractTextFromPortableText(serviceLocation.service.description);
+    description = truncate(extractedText, 155);
+  }
+
+  // 1. Service Schema (always include)
+  const serviceSchema: Record<string, unknown> = {
+    "@context": "https://schema.org",
+    "@type": "Service",
+    "@id": `${url}#service`,
+    url,
+    name: `${serviceLocation.service.title} in ${serviceLocation.location.city}`,
+  };
+
+  if (description) {
+    serviceSchema.description = description;
+  }
+
+  // Add areaServed
+  const areaServed: string[] = [serviceLocation.location.city];
+  if (serviceLocation.location.state) {
+    areaServed.push(serviceLocation.location.state);
+  }
+  serviceSchema.areaServed = areaServed;
+
+  // Add provider (business)
+  const provider: Record<string, unknown> = {
+    "@type": "Organization",
+    name: businessName,
+  };
+  if (businessUrl) provider.url = businessUrl;
+  if (businessPhone) provider.telephone = businessPhone;
+  serviceSchema.provider = provider;
+
+  // Add service type from category if available
+  if (serviceLocation.service.category?.title) {
+    serviceSchema.serviceType = serviceLocation.service.category.title;
+  }
+
+  schemas.push(serviceSchema);
+
+  // 2. LocalBusiness Schema (if location has coordinates)
+  if (serviceLocation.location.coordinates?.lat && serviceLocation.location.coordinates?.lng) {
+    const localBusinessSchema: Record<string, unknown> = {
+      "@context": "https://schema.org",
+      "@type": "LocalBusiness",
+      "@id": `${url}#localbusiness`,
+      url,
+      name: businessName,
+    };
+
+    if (businessPhone) {
+      localBusinessSchema.telephone = businessPhone;
+    }
+
+    // Add geo coordinates
+    localBusinessSchema.geo = {
+      "@type": "GeoCoordinates",
+      latitude: serviceLocation.location.coordinates.lat,
+      longitude: serviceLocation.location.coordinates.lng,
+    };
+
+    // Add address
+    const address: Record<string, unknown> = {
+      "@type": "PostalAddress",
+      addressLocality: serviceLocation.location.city,
+    };
+    if (serviceLocation.location.state) {
+      address.addressRegion = serviceLocation.location.state;
+    }
+    if (serviceLocation.location.zip) {
+      address.postalCode = serviceLocation.location.zip;
+    }
+    localBusinessSchema.address = address;
+
+    schemas.push(localBusinessSchema);
+  }
+
+  // 3. FAQPage Schema (if FAQ section exists)
+  if (serviceLocation.sections && Array.isArray(serviceLocation.sections)) {
+    const faqSection = serviceLocation.sections.find(
+      (section: any) => section._type === 'sectionFaq'
+    );
+
+    if (faqSection && faqSection.questions && Array.isArray(faqSection.questions)) {
+      const questions = faqSection.questions
+        .filter((q: any) => q.question && q.answer)
+        .map((q: any) => {
+          // Extract text from answer if it's Portable Text
+          let answerText = "";
+          if (Array.isArray(q.answer)) {
+            answerText = extractTextFromPortableText(q.answer);
+          } else if (typeof q.answer === 'string') {
+            answerText = q.answer;
+          }
+
+          return {
+            question: q.question,
+            answer: answerText,
+          };
+        })
+        .filter((q: any) => q.answer); // Only include questions with valid answers
+
+      if (questions.length > 0) {
+        const faqSchema = buildFAQJsonLd({
+          baseUrl,
+          urlPath,
+          questions,
+        });
+        schemas.push(faqSchema);
+      }
+    }
+  }
+
+  // 4. Offer Schema (if offers section exists)
+  if (serviceLocation.sections && Array.isArray(serviceLocation.sections)) {
+    const offersSection = serviceLocation.sections.find(
+      (section: any) => section._type === 'sectionOffers'
+    );
+
+    if (offersSection && offersSection.offers && Array.isArray(offersSection.offers)) {
+      // Process each offer that has a title
+      offersSection.offers.forEach((offer: any, index: number) => {
+        if (!offer.title) return;
+
+        const offerInput: OfferInput = {
+          baseUrl,
+          urlPath: `${urlPath}#offer-${index}`,
+          name: offer.title,
+          businessName,
+          businessUrl,
+        };
+
+        // Extract description from Portable Text if available
+        if (offer.description && Array.isArray(offer.description)) {
+          offerInput.description = truncate(extractTextFromPortableText(offer.description), 200);
+        }
+
+        // Add pricing if available
+        if (offer.price) {
+          offerInput.price = offer.price;
+        }
+        if (offer.currency) {
+          offerInput.currency = offer.currency;
+        }
+
+        // Add validity dates if available
+        if (offer.validFrom) {
+          offerInput.validFrom = offer.validFrom;
+        }
+        if (offer.validThrough) {
+          offerInput.validThrough = offer.validThrough;
+        }
+
+        // Add image if available
+        if (offer.image?.asset?.url) {
+          offerInput.image = offer.image.asset.url;
+        }
+
+        const offerSchema = buildOfferJsonLd(offerInput);
+        schemas.push(offerSchema);
+      });
+    }
+  }
+
+  return schemas;
 }
 
 /**

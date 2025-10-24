@@ -3,10 +3,28 @@
 declare namespace Sanity {
   namespace Schema {
     /**
-     * Global Settings
+     * Site Settings
      */
     interface SiteSettings extends Sanity.Document {
       _type: "siteSettings";
+
+      /**
+       * Dataset Name - `String`
+The Sanity dataset for this site. Must match NEXT_PUBLIC_SANITY_DATASET env var.
+       */
+      datasetName?: string;
+
+      /**
+       * Site Status - `String`
+Current deployment status
+       */
+      status?: "active" | "staging" | "inactive" | "development";
+
+      /**
+       * Last Deployed - `Datetime`
+When this site was last deployed (auto-updated by deployment scripts)
+       */
+      deployedAt?: string;
 
       /**
        * Business Name - `String`
@@ -195,6 +213,12 @@ Defaults to "index,follow" if left blank
        * Additional Tracking Scripts - `Array`
        */
       trackingScripts?: Array<Sanity.Keyed<TrackingScript>>;
+
+      /**
+       * Schema Version - `String`
+Internal: tracks schema version for safe migrations
+       */
+      schemaVersion?: string;
     }
 
     /**
@@ -264,26 +288,156 @@ e.g., Host: example.com
 Whether this robots.txt configuration is active
        */
       isActive?: boolean;
+
+      /**
+       * Schema Version - `String`
+Internal: tracks schema version for safe migrations
+       */
+      schemaVersion?: string;
     }
 
     /**
-     * Navigation
+     * Cookie Consent
      */
+    interface CookieConsent extends Sanity.Document {
+      _type: "cookieConsent";
+
+      /**
+       * Enable Cookie Consent - `Boolean`
+Show cookie consent banner to users
+       */
+      enabled?: boolean;
+
+      /**
+       * Consent Mode - `String`
+       */
+      mode?: "opt-in" | "opt-out" | "notice";
+
+      /**
+       * Banner Text - `Text`
+       */
+      bannerText?: string;
+
+      /**
+       * Cookie Categories - `Array`
+       */
+      categories?: Array<
+        Sanity.Keyed<{
+          /**
+           * Category ID - `String`
+           */
+          id?: string;
+
+          /**
+           * Category Name - `String`
+           */
+          name?: string;
+
+          /**
+           * Description - `Text`
+           */
+          description?: string;
+
+          /**
+       * Required - `Boolean`
+Cannot be opted out
+       */
+          required?: boolean;
+
+          /**
+           * Enabled by Default - `Boolean`
+           */
+          defaultEnabled?: boolean;
+        }>
+      >;
+
+      /**
+       * Privacy Policy URL - `String`
+Link to privacy policy page
+       */
+      privacyPolicyUrl?: string;
+
+      /**
+       * Cookie Policy URL - `String`
+Link to cookie policy page
+       */
+      cookiePolicyUrl?: string;
+    }
+
+    /**
+     * Privacy Policy
+     */
+    interface PrivacyPolicy extends Sanity.Document {
+      _type: "privacyPolicy";
+
+      /**
+       * Title - `String`
+       */
+      title?: string;
+
+      /**
+       * Content - `Array`
+Privacy policy content
+       */
+      content?: Array<Sanity.Keyed<Sanity.Block>>;
+
+      /**
+       * Effective Date - `Date`
+When this version becomes effective
+       */
+      effectiveDate?: string;
+
+      /**
+       * Version - `String`
+Version number (e.g., 1.0, 2.0)
+       */
+      version?: string;
+
+      /**
+       * Last Updated - `Datetime`
+       */
+      lastUpdated?: string;
+
+      /**
+       * Policy Sections - `Array`
+       */
+      sections?: Array<
+        Sanity.Keyed<{
+          /**
+           * Heading - `String`
+           */
+          heading?: string;
+
+          /**
+           * Content - `Array`
+           */
+          content?: Array<Sanity.Keyed<Sanity.Block>>;
+        }>
+      >;
+    }
+
+    /**
+       * Navigation
+Configure site navigation menus. Each site (dataset) has its own navigation configuration.
+       */
     interface Navigation extends Sanity.Document {
       _type: "navigation";
 
       /**
        * Header Links - `Array`
+Main navigation links displayed in the header. Services and Locations are added automatically.
        */
       header?: Array<Sanity.Keyed<NavLink>>;
 
       /**
        * Footer Links - `Array`
+Links displayed in the footer navigation.
        */
       footer?: Array<Sanity.Keyed<NavLink>>;
 
       /**
        * Utility Links - `Array`
+Utility links (e.g., Privacy Policy, Terms of Service) typically displayed in footer or header utility bar.
        */
       utility?: Array<Sanity.Keyed<NavLink>>;
     }
@@ -566,6 +720,11 @@ Assign the category used for navigation, filtering and mega menu grouping
         asset: Sanity.Asset;
         crop?: Sanity.ImageCrop;
         hotspot?: Sanity.ImageHotspot;
+
+        /**
+         * Alt text - `String`
+         */
+        alt?: string;
       };
 
       /**
@@ -644,7 +803,111 @@ Optional modular sections rendered beneath the hero
       /**
        * Seo - `RegistryReference`
        */
-      seo?: Seo;
+      seo?: SeoUnified;
+
+      /**
+       * Schema Version - `String`
+Internal: tracks schema version for safe migrations
+       */
+      schemaVersion?: string;
+    }
+
+    /**
+       * Service Location
+Service-specific content for a particular location (e.g., "Plumbing in Toronto")
+       */
+    interface ServiceLocation extends Sanity.Document {
+      _type: "serviceLocation";
+
+      /**
+       * Service - `Reference`
+The service being offered
+       */
+      service?: Sanity.Reference<Service>;
+
+      /**
+       * Location - `Reference`
+The location where this service is offered
+       */
+      location?: Sanity.Reference<Location>;
+
+      /**
+       * Slug - `Slug`
+Auto-generated from service + location slugs (e.g., "plumbing-toronto")
+       */
+      slug?: {
+        _type: "slug";
+        current: string;
+      };
+
+      /**
+       * Content Source - `String`
+How content for this page is generated
+       */
+      contentSource?: "inherit" | "custom" | "ai";
+
+      /**
+       * Introduction - `RegistryReference`
+Unique opening paragraph for this service in this location (50-150 words). Critical for SEO differentiation.
+       */
+      intro?: RichText;
+
+      /**
+       * Page Sections - `Array`
+Custom sections for this service+location page. Leave empty to inherit from service page.
+       */
+      sections?: Array<
+        | Sanity.Keyed<SectionHero>
+        | Sanity.Keyed<SectionFeatures>
+        | Sanity.Keyed<SectionTestimonials>
+        | Sanity.Keyed<SectionFaq>
+        | Sanity.Keyed<SectionCta>
+        | Sanity.Keyed<SectionContact>
+        | Sanity.Keyed<SectionGallery>
+        | Sanity.Keyed<SectionOffers>
+        | Sanity.Keyed<SectionStats>
+        | Sanity.Keyed<SectionText>
+        | Sanity.Keyed<SectionMediaText>
+        | Sanity.Keyed<SectionTimeline>
+        | Sanity.Keyed<SectionQuote>
+        | Sanity.Keyed<SectionLayout>
+        | Sanity.Keyed<SectionSteps>
+        | Sanity.Keyed<SectionLogos>
+        | Sanity.Keyed<SectionPricingTable>
+        | Sanity.Keyed<SectionServices>
+        | Sanity.Keyed<SectionLocations>
+        | Sanity.Keyed<SectionBlogList>
+      >;
+
+      /**
+       * Display Options - `Object`
+Control which related content sections are shown
+       */
+      displayOptions?: {
+        /**
+       * Show nearby locations - `Boolean`
+Display other locations where this service is available
+       */
+        showNearbyLocations?: boolean;
+
+        /**
+       * Show related services - `Boolean`
+Display other services available in this location
+       */
+        showRelatedServices?: boolean;
+      };
+
+      /**
+       * Seo - `RegistryReference`
+Auto-generated from service + location data if left empty. Override for custom SEO.
+       */
+      seo?: SeoUnified;
+
+      /**
+       * Schema Version - `String`
+Internal: tracks schema version for safe migrations
+       */
+      schemaVersion?: string;
     }
 
     /**
@@ -757,7 +1020,13 @@ Used to prioritize locations in listings
       /**
        * Seo - `RegistryReference`
        */
-      seo?: Seo;
+      seo?: SeoUnified;
+
+      /**
+       * Schema Version - `String`
+Internal: tracks schema version for safe migrations
+       */
+      schemaVersion?: string;
     }
 
     /**
@@ -808,6 +1077,12 @@ Used to prioritize locations in listings
        * Seo - `RegistryReference`
        */
       seo?: Seo;
+
+      /**
+       * Schema Version - `String`
+Internal: tracks schema version for safe migrations
+       */
+      schemaVersion?: string;
     }
 
     /**
@@ -836,6 +1111,11 @@ Used to prioritize locations in listings
         asset: Sanity.Asset;
         crop?: Sanity.ImageCrop;
         hotspot?: Sanity.ImageHotspot;
+
+        /**
+         * Alt text - `String`
+         */
+        alt?: string;
       };
 
       /**
@@ -857,6 +1137,12 @@ Used to prioritize locations in listings
        * Seo - `RegistryReference`
        */
       seo?: Seo;
+
+      /**
+       * Schema Version - `String`
+Internal: tracks schema version for safe migrations
+       */
+      schemaVersion?: string;
     }
 
     /**
@@ -943,6 +1229,12 @@ Relative path where the lead submitted the form.
        * Submitted At - `Datetime`
        */
       createdAt?: string;
+
+      /**
+       * Schema Version - `String`
+Internal: tracks schema version for safe migrations
+       */
+      schemaVersion?: string;
     }
 
     /**
@@ -1025,8 +1317,9 @@ Default title applied when creating a page from this template.
     }
 
     /**
-     * Redirect
-     */
+       * Redirect
+Manage URL redirects with pattern matching, priority ordering, and loop detection. Test redirects using the validation script: pnpm redirects:validate
+       */
     interface Redirect extends Sanity.Document {
       _type: "redirect";
 
@@ -1093,6 +1386,715 @@ Auto-incremented position for redirects with same priority
        * Validation Warnings - `Array`
        */
       validationWarnings?: Array<Sanity.Keyed<string>>;
+
+      /**
+       * Schema Version - `String`
+Internal: tracks schema version for safe migrations
+       */
+      schemaVersion?: string;
+    }
+
+    /**
+     * Audit Log
+     */
+    interface AuditLog extends Sanity.Document {
+      _type: "auditLog";
+
+      /**
+       * Action - `String`
+Type of action performed
+       */
+      action?:
+        | "created"
+        | "updated"
+        | "deleted"
+        | "published"
+        | "unpublished"
+        | "workflow_changed"
+        | "scheduled";
+
+      /**
+       * Document ID - `String`
+ID of the document that was changed
+       */
+      documentId?: string;
+
+      /**
+       * Document Type - `String`
+Type of document (service, page, offer, etc.)
+       */
+      documentType?: string;
+
+      /**
+       * Document Title - `String`
+Title of the document at time of change
+       */
+      documentTitle?: string;
+
+      /**
+       * User ID - `String`
+ID of user who performed the action
+       */
+      userId?: string;
+
+      /**
+       * User Name - `String`
+Name of user who performed the action
+       */
+      userName?: string;
+
+      /**
+       * User Email - `String`
+Email of user who performed the action
+       */
+      userEmail?: string;
+
+      /**
+       * Timestamp - `Datetime`
+When the action occurred
+       */
+      timestamp?: string;
+
+      /**
+       * Changes - `Array`
+List of fields that were changed
+       */
+      changes?: Array<
+        Sanity.Keyed<{
+          /**
+           * Field Name - `String`
+           */
+          field?: string;
+
+          /**
+           * Old Value - `Text`
+           */
+          oldValue?: string;
+
+          /**
+           * New Value - `Text`
+           */
+          newValue?: string;
+        }>
+      >;
+
+      /**
+       * Metadata - `Object`
+Additional context about the change
+       */
+      metadata?: {
+        /**
+         * IP Address - `String`
+         */
+        ipAddress?: string;
+
+        /**
+         * User Agent - `String`
+         */
+        userAgent?: string;
+
+        /**
+         * Dataset - `String`
+         */
+        dataset?: string;
+
+        /**
+         * Previous Workflow State - `String`
+         */
+        previousWorkflowState?: string;
+
+        /**
+         * New Workflow State - `String`
+         */
+        newWorkflowState?: string;
+      };
+
+      /**
+       * Notes - `Text`
+Additional notes about the change
+       */
+      notes?: string;
+    }
+
+    /**
+     * Webhook
+     */
+    interface Webhook extends Sanity.Document {
+      _type: "webhook";
+
+      /**
+       * Name - `String`
+Descriptive name for this webhook
+       */
+      name?: string;
+
+      /**
+       * Webhook URL - `Url`
+The endpoint URL to send webhook events to
+       */
+      url?: string;
+
+      /**
+       * Enabled - `Boolean`
+Enable or disable this webhook
+       */
+      enabled?: boolean;
+
+      /**
+       * Events - `Array`
+Which events should trigger this webhook
+       */
+      events?: Array<Sanity.Keyed<string>>;
+
+      /**
+       * Document Types - `Array`
+Filter by document types (leave empty for all types)
+       */
+      documentTypes?: Array<Sanity.Keyed<string>>;
+
+      /**
+       * Secret Key - `String`
+Secret key for signing webhook payloads (HMAC-SHA256)
+       */
+      secret?: string;
+
+      /**
+       * Custom Headers - `Array`
+Additional HTTP headers to send with webhook requests
+       */
+      headers?: Array<
+        Sanity.Keyed<{
+          /**
+           * Header Name - `String`
+           */
+          key?: string;
+
+          /**
+           * Header Value - `String`
+           */
+          value?: string;
+        }>
+      >;
+
+      /**
+       * Retry Configuration - `Object`
+Configure retry behavior for failed webhook deliveries
+       */
+      retryConfig?: {
+        /**
+       * Max Retries - `Number`
+Maximum number of retry attempts
+       */
+        maxRetries?: number;
+
+        /**
+       * Retry Delay (seconds) - `Number`
+Initial delay between retries (exponential backoff)
+       */
+        retryDelay?: number;
+      };
+
+      /**
+       * Timeout (seconds) - `Number`
+Request timeout in seconds
+       */
+      timeout?: number;
+
+      /**
+       * Description - `Text`
+Notes about this webhook integration
+       */
+      description?: string;
+
+      /**
+       * Statistics - `Object`
+Webhook delivery statistics
+       */
+      statistics?: {
+        /**
+         * Total Deliveries - `Number`
+         */
+        totalDeliveries?: number;
+
+        /**
+         * Successful Deliveries - `Number`
+         */
+        successfulDeliveries?: number;
+
+        /**
+         * Failed Deliveries - `Number`
+         */
+        failedDeliveries?: number;
+
+        /**
+         * Last Delivery At - `Datetime`
+         */
+        lastDeliveryAt?: string;
+
+        /**
+         * Last Delivery Status - `String`
+         */
+        lastDeliveryStatus?: string;
+      };
+    }
+
+    /**
+     * Webhook Log
+     */
+    interface WebhookLog extends Sanity.Document {
+      _type: "webhookLog";
+
+      /**
+       * Webhook ID - `String`
+Reference to the webhook configuration
+       */
+      webhookId?: string;
+
+      /**
+       * Webhook Name - `String`
+Name of the webhook at time of delivery
+       */
+      webhookName?: string;
+
+      /**
+       * Event - `String`
+The event that triggered this webhook
+       */
+      event?: string;
+
+      /**
+       * Document ID - `String`
+ID of the document that triggered the webhook
+       */
+      documentId?: string;
+
+      /**
+       * Document Type - `String`
+Type of the document
+       */
+      documentType?: string;
+
+      /**
+       * Document Title - `String`
+Title of the document
+       */
+      documentTitle?: string;
+
+      /**
+       * Timestamp - `Datetime`
+When the webhook was triggered
+       */
+      timestamp?: string;
+
+      /**
+       * URL - `Url`
+The endpoint URL that was called
+       */
+      url?: string;
+
+      /**
+       * HTTP Method - `String`
+HTTP method used
+       */
+      method?: string;
+
+      /**
+       * Payload - `Text`
+The JSON payload that was sent
+       */
+      payload?: string;
+
+      /**
+       * Headers - `Text`
+HTTP headers sent with the request
+       */
+      headers?: string;
+
+      /**
+       * Status Code - `Number`
+HTTP response status code
+       */
+      statusCode?: number;
+
+      /**
+       * Response Body - `Text`
+Response body from the webhook endpoint
+       */
+      responseBody?: string;
+
+      /**
+       * Success - `Boolean`
+Whether the delivery was successful
+       */
+      success?: boolean;
+
+      /**
+       * Error - `Text`
+Error message if delivery failed
+       */
+      error?: string;
+
+      /**
+       * Duration (ms) - `Number`
+How long the request took in milliseconds
+       */
+      duration?: number;
+
+      /**
+       * Attempt Number - `Number`
+Retry attempt number (1 for initial attempt)
+       */
+      attemptNumber?: number;
+
+      /**
+       * Will Retry - `Boolean`
+Whether this delivery will be retried
+       */
+      willRetry?: boolean;
+    }
+
+    /**
+     * Approval Request
+     */
+    interface ApprovalRequest extends Sanity.Document {
+      _type: "approvalRequest";
+
+      /**
+       * Document - `Reference`
+The document requiring approval
+       */
+      document?: Sanity.Reference<
+        Page | Post | Service | Location | Offer | Coupon | CaseStudy
+      >;
+
+      /**
+       * Document Title - `String`
+Title of the document at time of request
+       */
+      documentTitle?: string;
+
+      /**
+       * Document Type - `String`
+Type of the document
+       */
+      documentType?: string;
+
+      /**
+       * Status - `String`
+Current status of the approval request
+       */
+      status?: "pending" | "approved" | "rejected" | "cancelled";
+
+      /**
+       * Requested By - `Object`
+User who requested approval
+       */
+      requestedBy?: {
+        /**
+         * User ID - `String`
+         */
+        userId?: string;
+
+        /**
+         * User Name - `String`
+         */
+        userName?: string;
+
+        /**
+         * User Email - `String`
+         */
+        userEmail?: string;
+      };
+
+      /**
+       * Requested At - `Datetime`
+When the approval was requested
+       */
+      requestedAt?: string;
+
+      /**
+       * Approvers - `Array`
+Users who can approve this request
+       */
+      approvers?: Array<
+        Sanity.Keyed<{
+          /**
+           * User ID - `String`
+           */
+          userId?: string;
+
+          /**
+           * User Name - `String`
+           */
+          userName?: string;
+
+          /**
+           * User Email - `String`
+           */
+          userEmail?: string;
+
+          /**
+       * Role - `String`
+Approver role (e.g., Content Manager, Editor)
+       */
+          role?: string;
+        }>
+      >;
+
+      /**
+       * Approval Type - `String`
+Type of approval required
+       */
+      approvalType?: "single" | "all" | "majority";
+
+      /**
+       * Approvals - `Array`
+Individual approval decisions
+       */
+      approvals?: Array<
+        Sanity.Keyed<{
+          /**
+           * User ID - `String`
+           */
+          userId?: string;
+
+          /**
+           * User Name - `String`
+           */
+          userName?: string;
+
+          /**
+           * Decision - `String`
+           */
+          decision?: "approved" | "rejected";
+
+          /**
+           * Comment - `Text`
+           */
+          comment?: string;
+
+          /**
+           * Decided At - `Datetime`
+           */
+          decidedAt?: string;
+        }>
+      >;
+
+      /**
+       * Request Notes - `Text`
+Notes from the requester
+       */
+      requestNotes?: string;
+
+      /**
+       * Final Comment - `Text`
+Final comment when request is resolved
+       */
+      finalComment?: string;
+
+      /**
+       * Resolved At - `Datetime`
+When the request was resolved (approved/rejected/cancelled)
+       */
+      resolvedAt?: string;
+
+      /**
+       * Due Date - `Datetime`
+When approval is needed by
+       */
+      dueDate?: string;
+
+      /**
+       * Priority - `String`
+Priority level for this approval
+       */
+      priority?: "low" | "normal" | "high" | "urgent";
+
+      /**
+       * Tags - `Array`
+Tags for categorizing approvals
+       */
+      tags?: Array<Sanity.Keyed<string>>;
+    }
+
+    /**
+     * Role
+     */
+    interface Role extends Sanity.Document {
+      _type: "role";
+
+      /**
+       * Role Name - `String`
+Unique name for this role
+       */
+      name?: string;
+
+      /**
+       * Display Title - `String`
+Human-readable title
+       */
+      title?: string;
+
+      /**
+       * Description - `Text`
+What this role is for
+       */
+      description?: string;
+
+      /**
+       * Permissions - `Object`
+Granular permissions for this role
+       */
+      permissions?: {
+        /**
+         * Document Permissions - `Object`
+         */
+        documents?: {
+          /**
+           * Create Documents - `Array`
+           */
+          create?: Array<Sanity.Keyed<string>>;
+
+          /**
+           * Read Documents - `Array`
+           */
+          read?: Array<Sanity.Keyed<string>>;
+
+          /**
+           * Update Documents - `Array`
+           */
+          update?: Array<Sanity.Keyed<string>>;
+
+          /**
+           * Delete Documents - `Array`
+           */
+          delete?: Array<Sanity.Keyed<string>>;
+
+          /**
+           * Publish Documents - `Array`
+           */
+          publish?: Array<Sanity.Keyed<string>>;
+        };
+
+        /**
+         * Workflow Permissions - `Object`
+         */
+        workflows?: {
+          /**
+           * Change Workflow State - `Boolean`
+           */
+          changeState?: boolean;
+
+          /**
+           * Request Approval - `Boolean`
+           */
+          requestApproval?: boolean;
+
+          /**
+           * Approve Content - `Boolean`
+           */
+          approveContent?: boolean;
+
+          /**
+           * Schedule Publishing - `Boolean`
+           */
+          schedulePublish?: boolean;
+        };
+
+        /**
+         * Feature Permissions - `Object`
+         */
+        features?: {
+          /**
+           * View Audit Logs - `Boolean`
+           */
+          viewAuditLogs?: boolean;
+
+          /**
+           * Export Audit Logs - `Boolean`
+           */
+          exportAuditLogs?: boolean;
+
+          /**
+           * Manage Webhooks - `Boolean`
+           */
+          manageWebhooks?: boolean;
+
+          /**
+           * Manage Roles - `Boolean`
+           */
+          manageRoles?: boolean;
+
+          /**
+           * Manage Users - `Boolean`
+           */
+          manageUsers?: boolean;
+
+          /**
+           * View Analytics - `Boolean`
+           */
+          viewAnalytics?: boolean;
+        };
+      };
+
+      /**
+       * System Role - `Boolean`
+System roles cannot be deleted
+       */
+      isSystem?: boolean;
+
+      /**
+       * User Count - `Number`
+Number of users with this role
+       */
+      userCount?: number;
+    }
+
+    /**
+     * User Profile
+     */
+    interface UserProfile extends Sanity.Document {
+      _type: "userProfile";
+
+      /**
+       * User ID - `String`
+Unique user identifier from authentication system
+       */
+      userId?: string;
+
+      /**
+       * Email - `String`
+       */
+      email?: string;
+
+      /**
+       * Full Name - `String`
+       */
+      name?: string;
+
+      /**
+       * Role - `Reference`
+User role with associated permissions
+       */
+      role?: Sanity.Reference<Role>;
+
+      /**
+       * Active - `Boolean`
+Whether user account is active
+       */
+      active?: boolean;
+
+      /**
+       * Last Login At - `Datetime`
+When user last logged in
+       */
+      lastLoginAt?: string;
+
+      /**
+       * Created At - `Datetime`
+When user profile was created
+       */
+      createdAt?: string;
     }
 
     /**
@@ -1232,230 +2234,15 @@ Optional fallback content. Prefer building pages with sections.
       >;
 
       /**
-       * Meta Title - `String`
-Title for search results (~60 chars).
+       * Seo - `RegistryReference`
        */
-      metaTitle?: string;
+      seo?: SeoUnified;
 
       /**
-       * Meta Description - `Text`
-Description for search results (~155 chars).
+       * Schema Version - `String`
+Internal: tracks schema version for safe migrations
        */
-      metaDescription?: string;
-
-      /**
-       * Canonical URL - `Url`
-Override the canonical URL for this page. Leave empty to use the page URL.
-       */
-      canonicalUrl?: string;
-
-      /**
-       * Meta Robots - `Object`
-       */
-      metaRobots?: {
-        /**
-         * Index - `Boolean`
-         */
-        index?: boolean;
-
-        /**
-         * Follow - `Boolean`
-         */
-        follow?: boolean;
-
-        /**
-         * No Archive - `Boolean`
-         */
-        noarchive?: boolean;
-
-        /**
-         * No Snippet - `Boolean`
-         */
-        nosnippet?: boolean;
-      };
-
-      /**
-       * Social Media - `Object`
-       */
-      socialMedia?: {
-        /**
-       * Open Graph Title - `String`
-Override title for social media sharing
-       */
-        ogTitle?: string;
-
-        /**
-       * Open Graph Description - `Text`
-Override description for social media sharing
-       */
-        ogDescription?: string;
-
-        /**
-       * Open Graph Image - `Image`
-1200×630 recommended for social media sharing
-       */
-        ogImage?: {
-          asset: Sanity.Asset;
-          crop?: Sanity.ImageCrop;
-          hotspot?: Sanity.ImageHotspot;
-        };
-
-        /**
-       * Twitter Title - `String`
-Override title for Twitter sharing
-       */
-        twitterTitle?: string;
-
-        /**
-       * Twitter Description - `Text`
-Override description for Twitter sharing
-       */
-        twitterDescription?: string;
-
-        /**
-       * Twitter Image - `Image`
-1200×630 recommended for Twitter sharing
-       */
-        twitterImage?: {
-          asset: Sanity.Asset;
-          crop?: Sanity.ImageCrop;
-          hotspot?: Sanity.ImageHotspot;
-        };
-
-        /**
-         * Twitter Card Type - `String`
-         */
-        twitterCard?: "summary" | "summary_large_image" | "app" | "player";
-      };
-
-      /**
-       * Structured Data - `Object`
-       */
-      structuredData?: {
-        /**
-         * Enable Local Business Schema - `Boolean`
-         */
-        enableLocalBusiness?: boolean;
-
-        /**
-         * Enable FAQ Schema - `Boolean`
-         */
-        enableFAQ?: boolean;
-
-        /**
-         * Enable Offer Schema - `Boolean`
-         */
-        enableOffer?: boolean;
-
-        /**
-         * Enable Service Schema - `Boolean`
-         */
-        enableService?: boolean;
-
-        /**
-         * Enable Product Schema - `Boolean`
-         */
-        enableProduct?: boolean;
-
-        /**
-       * Custom JSON-LD - `Text`
-Custom JSON-LD structured data (JSON format)
-       */
-        customJsonLd?: string;
-      };
-
-      /**
-       * Hreflang - `Array`
-Language and URL pairs for international SEO
-       */
-      hreflang?: Array<
-        Sanity.Keyed<{
-          /**
-           * Language - `String`
-           */
-          language?: string;
-
-          /**
-           * URL - `Url`
-           */
-          url?: string;
-        }>
-      >;
-
-      /**
-       * Custom Head Scripts - `Array`
-Custom scripts to inject into the page head or body
-       */
-      customHeadScripts?: Array<
-        Sanity.Keyed<{
-          /**
-           * Script Name - `String`
-           */
-          name?: string;
-
-          /**
-           * Script Content - `Text`
-           */
-          script?: string;
-
-          /**
-           * Position - `String`
-           */
-          position?: "head" | "body-start" | "body-end";
-        }>
-      >;
-
-      /**
-       * Fallback Description Source - `String`
-Fallback source for description when meta description is empty
-       */
-      fallbackDescription?: "meta" | "content" | "site";
-
-      /**
-       * Image Optimization - `Object`
-       */
-      imageOptimization?: {
-        /**
-       * Image Width - `Number`
-Default width for images on this page
-       */
-        width?: number;
-
-        /**
-       * Image Height - `Number`
-Default height for images on this page
-       */
-        height?: number;
-
-        /**
-       * Priority Loading - `Boolean`
-Load images with high priority
-       */
-        priority?: boolean;
-
-        /**
-         * Loading Strategy - `String`
-         */
-        loading?: "lazy" | "eager";
-      };
-
-      /**
-       * Pagination - `Object`
-Pagination links for series of pages
-       */
-      pagination?: {
-        /**
-       * Previous Page URL - `Url`
-URL for the previous page in a series
-       */
-        prevUrl?: string;
-
-        /**
-       * Next Page URL - `Url`
-URL for the next page in a series
-       */
-        nextUrl?: string;
-      };
+      schemaVersion?: string;
     }
 
     /**
@@ -1499,6 +2286,11 @@ URL for the next page in a series
         asset: Sanity.Asset;
         crop?: Sanity.ImageCrop;
         hotspot?: Sanity.ImageHotspot;
+
+        /**
+         * Alt text - `String`
+         */
+        alt?: string;
       };
 
       /**
@@ -1519,230 +2311,15 @@ URL for the next page in a series
       breadcrumbs?: BreadcrumbSettings;
 
       /**
-       * Meta Title - `String`
-Title for search results (~60 chars).
+       * Seo - `RegistryReference`
        */
-      metaTitle?: string;
+      seo?: SeoUnified;
 
       /**
-       * Meta Description - `Text`
-Description for search results (~155 chars).
+       * Schema Version - `String`
+Internal: tracks schema version for safe migrations
        */
-      metaDescription?: string;
-
-      /**
-       * Canonical URL - `Url`
-Override the canonical URL for this page. Leave empty to use the page URL.
-       */
-      canonicalUrl?: string;
-
-      /**
-       * Meta Robots - `Object`
-       */
-      metaRobots?: {
-        /**
-         * Index - `Boolean`
-         */
-        index?: boolean;
-
-        /**
-         * Follow - `Boolean`
-         */
-        follow?: boolean;
-
-        /**
-         * No Archive - `Boolean`
-         */
-        noarchive?: boolean;
-
-        /**
-         * No Snippet - `Boolean`
-         */
-        nosnippet?: boolean;
-      };
-
-      /**
-       * Social Media - `Object`
-       */
-      socialMedia?: {
-        /**
-       * Open Graph Title - `String`
-Override title for social media sharing
-       */
-        ogTitle?: string;
-
-        /**
-       * Open Graph Description - `Text`
-Override description for social media sharing
-       */
-        ogDescription?: string;
-
-        /**
-       * Open Graph Image - `Image`
-1200×630 recommended for social media sharing
-       */
-        ogImage?: {
-          asset: Sanity.Asset;
-          crop?: Sanity.ImageCrop;
-          hotspot?: Sanity.ImageHotspot;
-        };
-
-        /**
-       * Twitter Title - `String`
-Override title for Twitter sharing
-       */
-        twitterTitle?: string;
-
-        /**
-       * Twitter Description - `Text`
-Override description for Twitter sharing
-       */
-        twitterDescription?: string;
-
-        /**
-       * Twitter Image - `Image`
-1200×630 recommended for Twitter sharing
-       */
-        twitterImage?: {
-          asset: Sanity.Asset;
-          crop?: Sanity.ImageCrop;
-          hotspot?: Sanity.ImageHotspot;
-        };
-
-        /**
-         * Twitter Card Type - `String`
-         */
-        twitterCard?: "summary" | "summary_large_image" | "app" | "player";
-      };
-
-      /**
-       * Structured Data - `Object`
-       */
-      structuredData?: {
-        /**
-         * Enable Local Business Schema - `Boolean`
-         */
-        enableLocalBusiness?: boolean;
-
-        /**
-         * Enable FAQ Schema - `Boolean`
-         */
-        enableFAQ?: boolean;
-
-        /**
-         * Enable Offer Schema - `Boolean`
-         */
-        enableOffer?: boolean;
-
-        /**
-         * Enable Service Schema - `Boolean`
-         */
-        enableService?: boolean;
-
-        /**
-         * Enable Product Schema - `Boolean`
-         */
-        enableProduct?: boolean;
-
-        /**
-       * Custom JSON-LD - `Text`
-Custom JSON-LD structured data (JSON format)
-       */
-        customJsonLd?: string;
-      };
-
-      /**
-       * Hreflang - `Array`
-Language and URL pairs for international SEO
-       */
-      hreflang?: Array<
-        Sanity.Keyed<{
-          /**
-           * Language - `String`
-           */
-          language?: string;
-
-          /**
-           * URL - `Url`
-           */
-          url?: string;
-        }>
-      >;
-
-      /**
-       * Custom Head Scripts - `Array`
-Custom scripts to inject into the page head or body
-       */
-      customHeadScripts?: Array<
-        Sanity.Keyed<{
-          /**
-           * Script Name - `String`
-           */
-          name?: string;
-
-          /**
-           * Script Content - `Text`
-           */
-          script?: string;
-
-          /**
-           * Position - `String`
-           */
-          position?: "head" | "body-start" | "body-end";
-        }>
-      >;
-
-      /**
-       * Fallback Description Source - `String`
-Fallback source for description when meta description is empty
-       */
-      fallbackDescription?: "meta" | "content" | "site";
-
-      /**
-       * Image Optimization - `Object`
-       */
-      imageOptimization?: {
-        /**
-       * Image Width - `Number`
-Default width for images on this page
-       */
-        width?: number;
-
-        /**
-       * Image Height - `Number`
-Default height for images on this page
-       */
-        height?: number;
-
-        /**
-       * Priority Loading - `Boolean`
-Load images with high priority
-       */
-        priority?: boolean;
-
-        /**
-         * Loading Strategy - `String`
-         */
-        loading?: "lazy" | "eager";
-      };
-
-      /**
-       * Pagination - `Object`
-Pagination links for series of pages
-       */
-      pagination?: {
-        /**
-       * Previous Page URL - `Url`
-URL for the previous page in a series
-       */
-        prevUrl?: string;
-
-        /**
-       * Next Page URL - `Url`
-URL for the next page in a series
-       */
-        nextUrl?: string;
-      };
+      schemaVersion?: string;
     }
 
     /**
@@ -1803,31 +2380,88 @@ New path (e.g. /new-page) or full URL (https://example.com/new-page).
       link?: Link;
     };
 
-    type Seo = {
-      _type: "seo";
+    type SeoUnified = {
+      _type: "seoUnified";
 
       /**
        * Meta Title - `String`
+Leave empty to auto-generate from page content (~60 chars)
        */
-      title?: string;
+      metaTitle?: string;
 
       /**
        * Meta Description - `Text`
+Leave empty to auto-generate (~155 chars)
        */
-      description?: string;
+      metaDescription?: string;
 
       /**
        * Canonical URL - `Url`
+Override canonical URL (rarely needed - leave empty for auto-generation)
        */
-      canonical?: string;
+      canonicalUrl?: string;
 
       /**
-       * Open Graph Image - `Image`
+       * Social Share Image - `Image`
+1200×630px recommended. Falls back to page hero image if empty.
        */
       ogImage?: {
         asset: Sanity.Asset;
         crop?: Sanity.ImageCrop;
         hotspot?: Sanity.ImageHotspot;
+
+        /**
+         * Alt text - `String`
+         */
+        alt?: string;
+      };
+
+      /**
+       * Social Title Override - `String`
+Optional. Defaults to meta title if empty.
+       */
+      ogTitle?: string;
+
+      /**
+       * Social Description Override - `Text`
+Optional. Defaults to meta description if empty.
+       */
+      ogDescription?: string;
+
+      /**
+       * Hide from Search Engines - `Boolean`
+Check to add "noindex" meta tag (prevents Google indexing)
+       */
+      noIndex?: boolean;
+
+      /**
+       * No Follow Links - `Boolean`
+Check to add "nofollow" meta tag (prevents Google following links)
+       */
+      noFollow?: boolean;
+
+      /**
+       * Structured Data (JSON-LD) - `Object`
+Control which Schema.org structured data to include
+       */
+      structuredData?: {
+        /**
+       * Enable Service Schema - `Boolean`
+Automatically enabled for service pages
+       */
+        enableService?: boolean;
+
+        /**
+       * Enable FAQ Schema - `Boolean`
+Auto-enabled if page has FAQ section
+       */
+        enableFAQ?: boolean;
+
+        /**
+       * Enable Offer Schema - `Boolean`
+Enable special offer structured data
+       */
+        enableOffer?: boolean;
       };
     };
 
@@ -2034,6 +2668,71 @@ Use a full URL including https://. Mailto: and tel: are also supported.
        * Open in new tab - `Boolean`
        */
       openInNewTab?: boolean;
+    };
+
+    type CrossSiteReference = {
+      _type: "crossSiteReference";
+
+      /**
+       * Source Dataset - `String`
+The dataset to fetch content from (e.g., site-shared, site-budds)
+       */
+      dataset?: "site-shared" | "site-budds" | "site-hvac";
+
+      /**
+       * Document ID - `String`
+The _id of the document to reference
+       */
+      documentId?: string;
+
+      /**
+       * Document Type - `String`
+Optional: The _type of the document (for validation)
+       */
+      documentType?: "faq" | "service" | "post" | "testimonial" | "page";
+
+      /**
+       * Preview - `Object`
+Preview information (auto-populated)
+       */
+      preview?: {
+        /**
+         * Title - `String`
+         */
+        title?: string;
+
+        /**
+         * Description - `Text`
+         */
+        description?: string;
+      };
+    };
+
+    type WorkflowState = {
+      _type: "workflowState";
+
+      /**
+       * Current State - `String`
+       */
+      state?: "draft" | "in_review" | "approved" | "published" | "archived";
+
+      /**
+       * State Changed At - `Datetime`
+When the workflow state was last changed
+       */
+      changedAt?: string;
+
+      /**
+       * Changed By - `String`
+User who changed the workflow state
+       */
+      changedBy?: string;
+
+      /**
+       * Notes - `Text`
+Optional notes about the current state
+       */
+      notes?: string;
     };
 
     type BreadcrumbItem = {
@@ -4426,10 +5125,13 @@ Only used in Studio to identify this layout block.
     type Document =
       | SiteSettings
       | RobotsTxt
+      | CookieConsent
+      | PrivacyPolicy
       | Navigation
       | Tokens
       | ServiceCategory
       | Service
+      | ServiceLocation
       | Location
       | Offer
       | CaseStudy
@@ -4437,6 +5139,12 @@ Only used in Studio to identify this layout block.
       | Lead
       | PageTemplate
       | Redirect
+      | AuditLog
+      | Webhook
+      | WebhookLog
+      | ApprovalRequest
+      | Role
+      | UserProfile
       | Testimonial
       | Faq
       | Page

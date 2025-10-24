@@ -1,7 +1,6 @@
 import { type SchemaTypeDefinition } from 'sanity'
 
 import siteSettings from './singletons/siteSettings'
-import siteConfig from './singletons/siteConfig'
 import robotsTxt from './singletons/robotsTxt'
 import cookieConsent from './singletons/cookieConsent'
 import privacyPolicy from './singletons/privacyPolicy'
@@ -9,6 +8,7 @@ import navigation from './navigation'
 import tokens from './tokens'
 
 import service from './documents/service'
+import serviceLocation from './documents/serviceLocation'
 import location from './documents/location'
 import offer from './documents/offer'
 import caseStudy from './documents/caseStudy'
@@ -32,7 +32,7 @@ import category from './category'
 import serviceCategory from './serviceCategory'
 
 import navLink from './navLink'
-import seo from './objects/seo'
+import seoUnified from './objects/seoUnified'
 import richText from './objects/richText'
 import address from './objects/address'
 import galleryImage from './objects/galleryImage'
@@ -49,8 +49,7 @@ import { sectionTypes } from './objects/sections'
 import { breadcrumbObjects } from './objects/breadcrumbs'
 
 const documentTypes: SchemaTypeDefinition[] = [
-  siteSettings,
-  siteConfig, // Multi-tenant site configuration (enhanced version of siteSettings)
+  siteSettings, // Unified site configuration (merged siteSettings + siteConfig)
   robotsTxt,
   cookieConsent,
   privacyPolicy,
@@ -58,6 +57,7 @@ const documentTypes: SchemaTypeDefinition[] = [
   tokens,
   serviceCategory,
   service,
+  serviceLocation,
   location,
   offer,
   caseStudy,
@@ -81,7 +81,7 @@ const documentTypes: SchemaTypeDefinition[] = [
 
 const objectTypes: SchemaTypeDefinition[] = [
   navLink,
-  seo,
+  seoUnified,
   richText,
   address,
   galleryImage,

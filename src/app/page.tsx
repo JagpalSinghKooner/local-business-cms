@@ -24,13 +24,13 @@ export async function generateMetadata() {
   return buildSeo({
     baseUrl,
     path: '/',
-    title: page?.metaTitle || page?.title || global.site?.name || 'Local Business',
+    title: page?.seo?.metaTitle || page?.title || global.site?.name || 'Local Business',
     description:
-      page?.metaDescription ||
+      page?.seo?.metaDescription ||
       global.site?.metaDescription ||
       global.site?.tagline ||
       'Professional services delivered by trusted local experts.',
-    image: getOgImageUrl(page?.socialMedia) ?? getOgImageUrl(global.site?.ogImage) ?? null,
+    image: getOgImageUrl(page?.seo?.ogImage) ?? getOgImageUrl(global.site?.ogImage) ?? null,
   })
 }
 

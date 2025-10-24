@@ -7,16 +7,18 @@ import Portable from '@/components/Portable'
 import ServiceCard from '@/components/cards/ServiceCard'
 import { SectionRenderer } from '@/components/sections'
 import Breadcrumbs from '@/components/navigation/Breadcrumbs'
-import { buildSeo } from '@/lib/seo'
+import { buildSeo, buildSeoForServiceLocation } from '@/lib/seo'
 import { resolveLink } from '@/lib/links'
 import { portableTextToPlainText } from '@/lib/portableText'
 import { buildBreadcrumbs } from '@/lib/breadcrumbs'
-import { getGlobalDataset, getServiceBySlug, getLocationBySlug, listOffers } from '@/sanity/loaders'
+import { getGlobalDataset, getServiceBySlug, getLocationBySlug, listOffers, getServiceLocationBySlug } from '@/sanity/loaders'
 import { ApplyScriptOverrides } from '@/components/scripts/ScriptOverridesProvider'
 import Container from '@/components/layout/Container'
 import ServicePreview from '@/components/preview/ServicePreview'
 import { env } from '@/lib/env'
 import { getOgImageUrl, getImageUrl, getImageAlt } from '@/types/sanity-helpers'
+import { buildServiceLocationJsonLd } from '@/lib/jsonld'
+import JsonLd from '@/components/seo/JsonLd'
 
 type Params = { service: string }
 type LocationRef = { city: string; slug: string }
@@ -67,12 +69,202 @@ function splitServiceAndLocation(
   return null
 }
 
+/**
+ * Render a dedicated serviceLocation page (custom content from CMS)
+ */
+async function renderServiceLocationPage({
+  serviceLocation,
+  global,
+  offers,
+  slug,
+}: {
+  serviceLocation: any // Type from loaders
+  global: any
+  offers: any[]
+  slug: string
+}) {
+  const service = serviceLocation.service
+  const location = serviceLocation.location
+  const baseUrl = env.NEXT_PUBLIC_SITE_URL
+
+  // Generate JSON-LD schemas
+  const jsonLdSchemas = buildServiceLocationJsonLd({
+    baseUrl,
+    serviceLocation: {
+      slug: serviceLocation.slug ?? slug,
+      service: {
+        title: service?.title ?? 'Service',
+        description: service?.intro,
+        category: service?.category,
+      },
+      location: {
+        city: location?.city ?? 'Location',
+        state: location?.localSEO?.state,
+        zip: location?.localSEO?.zip,
+        coordinates: location?.map ? { lat: location.map.lat, lng: location.map.lng } : undefined,
+      },
+      intro: serviceLocation.intro,
+      sections: serviceLocation.sections,
+    },
+    businessName: global.site?.name ?? 'Local Business',
+    businessPhone: global.site?.phone,
+    businessUrl: baseUrl,
+  })
+
+  // Use custom sections if contentSource is 'custom', otherwise inherit from service
+  const sections =
+    serviceLocation.contentSource === 'custom'
+      ? serviceLocation.sections ?? []
+      : service?.sections ?? []
+
+  // Build breadcrumbs
+  const breadcrumbs = buildBreadcrumbs({
+    path: `/services/${slug}`,
+    currentLabel: `${service?.title ?? 'Service'} in ${location?.city ?? 'Location'}`,
+    settings: serviceLocation.breadcrumbs ?? null,
+    navigation: global.navigation,
+    pages: global.pages,
+    homeLabel: global.site?.name ?? 'Home',
+  })
+
+  // Display options
+  const displayOptions = serviceLocation.displayOptions ?? service?.displayOptions ?? {}
+  const showRelatedLocations = displayOptions.showRelatedLocations !== false
+  const showOtherServices = displayOptions.showOtherServices !== false
+
+  const otherLocations = global.locations
+    .filter((item: any) => item.slug !== location?.slug)
+    .slice(0, 6)
+  const otherServices = global.services.filter((item: any) => item.slug !== service?.slug)
+
+  return (
+    <main className="pb-16">
+      {/* JSON-LD Structured Data */}
+      {jsonLdSchemas.map((schema, index) => (
+        <JsonLd key={index} data={schema} />
+      ))}
+
+      <ApplyScriptOverrides
+        overrides={serviceLocation.scriptOverrides?.map((o: any) => ({
+          scriptKey: o.scriptKey ?? '',
+          enabled: o.enabled ?? true,
+        }))}
+      />
+
+      <Breadcrumbs trail={breadcrumbs} />
+
+      <section className="bg-surface-muted py-16">
+        <Container className="space-y-4">
+          <p className="text-sm uppercase tracking-[0.2em] text-muted">
+            {service?.category?.title ?? 'Local Service'}
+          </p>
+          <h1 className="text-4xl font-semibold text-strong">
+            {service?.title ?? 'Service'} in {location?.city ?? 'Location'}
+          </h1>
+          {serviceLocation.intro ? (
+            <Portable value={serviceLocation.intro.slice(0, 2)} className="mt-4 text-base text-muted" />
+          ) : service?.intro ? (
+            <Portable value={service.intro.slice(0, 1)} className="mt-4 text-base text-muted" />
+          ) : null}
+          <div className="flex flex-wrap gap-3">
+            <Link
+              href="/contact"
+              className="bg-brand inline-flex items-center rounded-full px-5 py-2 text-sm font-semibold transition hover:opacity-90"
+            >
+              Request service
+            </Link>
+            {service?.slug && (
+              <Link
+                href={`/services/${service.slug}`}
+                className="inline-flex items-center rounded-full border border-divider px-5 py-2 text-sm font-semibold text-strong hover:border-brand"
+              >
+                View full service
+              </Link>
+            )}
+          </div>
+        </Container>
+      </section>
+
+      {/* Render custom sections */}
+      {sections.length ? (
+        <SectionRenderer
+          sections={sections}
+          services={global.services}
+          locations={global.locations}
+          offers={offers}
+          site={global.site}
+          pagePath={`/services/${slug}`}
+        />
+      ) : null}
+
+      {/* Related locations and services */}
+      {showRelatedLocations && otherLocations.length ? (
+        <section className="border-y border-divider bg-surface py-16">
+          <Container className="space-y-6">
+            <h2 className="text-2xl font-semibold text-strong">Nearby service areas</h2>
+            <ul className="flex flex-wrap gap-3 text-sm text-muted">
+              {otherLocations.map((item: any) => (
+                <li key={item.slug}>
+                  <Link
+                    href={`/locations/${item.slug}`}
+                    className="rounded-full border border-divider px-4 py-2 hover:border-brand"
+                  >
+                    {item.city}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </Container>
+        </section>
+      ) : null}
+
+      {showOtherServices && otherServices.length ? (
+        <section className="py-16">
+          <Container className="space-y-6">
+            <h2 className="text-2xl font-semibold text-strong">Related services</h2>
+            <ul className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+              {otherServices.map((item: any) => (
+                <li key={item.slug}>
+                  <ServiceCard service={item} locationSlug={location?.slug} />
+                </li>
+              ))}
+            </ul>
+          </Container>
+        </section>
+      ) : null}
+    </main>
+  )
+}
+
 export async function generateMetadata({ params }: { params: Promise<Params> }) {
   const { service: slug } = await params
   const global = await getGlobalDataset()
   const baseUrl = env.NEXT_PUBLIC_SITE_URL
 
-  // Check if this is a service+location combination
+  // FIRST: Check for dedicated serviceLocation document
+  const serviceLocation = await getServiceLocationBySlug(slug)
+
+  if (serviceLocation) {
+    // Use custom serviceLocation metadata
+    return buildSeoForServiceLocation({
+      baseUrl,
+      serviceLocation: {
+        slug: serviceLocation.slug ?? slug,
+        service: {
+          title: serviceLocation.service?.title ?? 'Service',
+          heroImage: serviceLocation.service?.heroImage,
+        },
+        location: {
+          city: serviceLocation.location?.city ?? 'Location',
+        },
+        intro: serviceLocation.intro,
+        seo: serviceLocation.seo,
+      },
+      siteName: global.site?.name ?? 'Local Business',
+    })
+  }
+
+  // FALLBACK: Check if this is a legacy service+location combination
   const parts = splitServiceAndLocation(slug, global.locations)
 
   if (parts) {
@@ -97,7 +289,7 @@ export async function generateMetadata({ params }: { params: Promise<Params> }) 
       baseUrl,
       path: `/services/${slug}`,
       title: `${service.title} in ${location.city}`,
-      description: service.seo?.description || introText,
+      description: service.seo?.metaDescription || introText,
       image: getOgImageUrl(service.seo?.ogImage) ?? getImageUrl(service.heroImage) ?? null,
     })
   }
@@ -119,8 +311,8 @@ export async function generateMetadata({ params }: { params: Promise<Params> }) 
   return buildSeo({
     baseUrl,
     path: `/services/${slug}`,
-    title: service.seo?.title || service.title,
-    description: service.seo?.description || introText,
+    title: service.seo?.metaTitle || service.title,
+    description: service.seo?.metaDescription || introText,
     image: getOgImageUrl(service.seo?.ogImage) ?? getImageUrl(service.heroImage) ?? null,
   })
 }
@@ -140,7 +332,15 @@ export default async function ServicePage({ params }: { params: Promise<Params> 
   const global = await getGlobalDataset()
   const offers = await listOffers()
 
-  // Check if this is a service+location combination
+  // FIRST: Check for dedicated serviceLocation document
+  const serviceLocation = await getServiceLocationBySlug(slug)
+
+  if (serviceLocation) {
+    // Render custom serviceLocation page
+    return renderServiceLocationPage({ serviceLocation, global, offers, slug })
+  }
+
+  // FALLBACK: Check if this is a legacy service+location combination
   const parts = splitServiceAndLocation(slug, global.locations)
 
   if (parts) {

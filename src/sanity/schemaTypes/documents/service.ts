@@ -143,7 +143,7 @@ export default defineType({
         }),
       ],
     }),
-    defineField({ name: 'seo', type: 'seo' }),
+    defineField({ name: 'seo', type: 'seoUnified' }),
     defineField({
       name: 'schemaVersion',
       type: 'string',

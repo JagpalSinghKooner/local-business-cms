@@ -946,7 +946,8 @@
     <script>
       // State
       let documentsCache = {}
-      const BASE_PATH = './'
+      // Since this HTML is served from /docs/, go up one level to reach project root
+      const BASE_PATH = '../'
 
       // Initialize
       document.addEventListener('DOMContentLoaded', () => {
